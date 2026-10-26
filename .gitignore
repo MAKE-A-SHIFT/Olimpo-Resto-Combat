@@ -22,6 +22,8 @@ extracted_assets/
 output_stories/
 tools/temp_*
 tools/preview_*
+tools/*.png
+tools/*.html
 
 # Local environment
 .env

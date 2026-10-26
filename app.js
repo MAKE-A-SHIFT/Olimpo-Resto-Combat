@@ -83,145 +83,446 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'tostados_paraguayos', name: 'Tostados Paraguayos-Italianos (Mozzarella + Jamón)', price: 7000 }
   ];
 
-  // --- PHYSICAL GOALS DATA (From clean PDF specification) ---
-  const goalsData = {
-    perdida_peso: {
-      title: '1. Pérdida de Peso & Grasa',
-      strategy: 'Déficit calórico limpio y controlado con saciedad mecánica alta. Doble volumen de verduras frescas y ensaladas crocantes para cero hambre.',
-      prot: '180g (Pollo o Vacuno)',
-      carbs: '50g secos (125g cocido)',
-      veg: '300g (Doble Ensalada)',
-      cal: '~410 kcal'
+  // --- PHYSICAL GOALS DATA (MULTILINGUAL) ---
+  const goalsDataMultilingual = {
+    es: {
+      perdida_peso: {
+        title: '1. Pérdida de Peso & Grasa',
+        strategy: 'Déficit calórico limpio y controlado con saciedad mecánica alta. Doble volumen de verduras frescas y ensaladas crocantes para cero hambre.',
+        prot: '180g (Pollo o Vacuno)',
+        carbs: '50g secos (125g cocido)',
+        veg: '300g (Doble Ensalada)'
+      },
+      definicion: {
+        title: '2. Definición / Secado Atlético',
+        strategy: 'Protección muscular máxima con aminoácidos y carbohidratos calculados post-entrenamiento para oxidar grasa manteniendo fuerza explosiva.',
+        prot: '200 - 220g',
+        carbs: '75g secos (185g cocido)',
+        veg: '250g (Wok / Ensalada)'
+      },
+      mantenimiento: {
+        title: '3. Mantenimiento (Regla de Oro Oficial)',
+        strategy: 'Equilibrio metabólico exacto del Club Olimpo: 1/3 Proteínas, 1/3 Carbohidratos limpios y 1/3 Fibras & Fruta fresca para rendimiento constante.',
+        prot: '200g (1/3 del Plato)',
+        carbs: '100g secos (250g cocido)',
+        veg: '200 - 250g + 1 Fruta'
+      },
+      ganancia_masa: {
+        title: '4. Ganancia de Masa & Hipertrofia',
+        strategy: 'Sobrecarga glucogénica limpia y alta densidad de aminoácidos para construcción muscular limpia y potencia demoledora en los rounds.',
+        prot: '220g (Proteína pura)',
+        carbs: '150g secos (375g cocido)',
+        veg: '200g Verduras + Fruta'
+      }
     },
-    definicion: {
-      title: '2. Definición / Secado Atlético',
-      strategy: 'Protección muscular máxima con aminoácidos y carbohidratos calculados post-entrenamiento para oxidar grasa manteniendo fuerza explosiva.',
-      prot: '200 - 220g',
-      carbs: '75g secos (185g cocido)',
-      veg: '250g (Wok / Ensalada)',
-      cal: '~490 kcal'
+    fr: {
+      perdida_peso: {
+        title: '1. Perte de Poids & Sèche Adipeuse',
+        strategy: 'Déficit calorique propre et contrôlé avec une haute satiété mécanique. Double portion de crudités fraîches et salades croquantes pour zéro sensation de faim.',
+        prot: '180g (Poulet ou Bœuf maigre)',
+        carbs: '50g crus (125g cuit)',
+        veg: '300g (Double Salade)'
+      },
+      definicion: {
+        title: '2. Définition & Sèche Athlétique',
+        strategy: 'Protection musculaire maximale avec acides aminés et glucides ciblés post-entraînement pour brûler le gras tout en préservant l\'explosivité.',
+        prot: '200 - 220g',
+        carbs: '75g crus (185g cuit)',
+        veg: '250g (Wok / Crudités)'
+      },
+      mantenimiento: {
+        title: '3. Maintien Athlétique (Règle d\'Or)',
+        strategy: 'Équilibre métabolique exact du Complexe Olimpo : 1/3 Protéines, 1/3 Glucides propres et 1/3 Fibres & Fruit frais pour une endurance et vitalité constantes.',
+        prot: '200g (1/3 de l\'Assiette)',
+        carbs: '100g crus (250g cuit)',
+        veg: '200 - 250g + 1 Fruit frais'
+      },
+      ganancia_masa: {
+        title: '4. Prise de Masse Musculaire Propre',
+        strategy: 'Surplus glucidique sain et haute densité d\'acides aminés pour bâtir de la fibre musculaire dense et générer une puissance destructrice sur le ring.',
+        prot: '220g (Protéine pure)',
+        carbs: '150g crus (375g cuit)',
+        veg: '200g Légumes + Fruits'
+      }
     },
-    mantenimiento: {
-      title: '3. Mantenimiento (Regla de Oro Oficial)',
-      strategy: 'Equilibrio metabólico exacto del Club Olimpo: 1/3 Proteínas, 1/3 Carbohidratos limpios y 1/3 Fibras & Fruta fresca para rendimiento constante.',
-      prot: '200g (1/3 del Plato)',
-      carbs: '100g secos (250g cocido)',
-      veg: '200 - 250g + 1 Fruta',
-      cal: '~540 kcal'
-    },
-    ganancia_masa: {
-      title: '4. Ganancia de Masa & Hipertrofia',
-      strategy: 'Sobrecarga glucogénica limpia y alta densidad de aminoácidos para construcción muscular limpia y potencia demoledora en los rounds.',
-      prot: '220g (Proteína pura)',
-      carbs: '150g secos (375g cocido)',
-      veg: '200g Verduras + Fruta',
-      cal: '~680 kcal'
+    en: {
+      perdida_peso: {
+        title: '1. Weight Loss & Fat Shredding',
+        strategy: 'Clean and controlled caloric deficit with high mechanical satiety. Double fresh crisp vegetables and garden salads for zero hunger pangs.',
+        prot: '180g (Chicken or Lean Beef)',
+        carbs: '50g raw (125g cooked)',
+        veg: '300g (Double Salad)'
+      },
+      definicion: {
+        title: '2. Athletic Cutting & Muscle Definition',
+        strategy: 'Maximal muscle preservation with targeted amino acids and post-workout clean carbs to oxidize fat while maintaining explosive power.',
+        prot: '200 - 220g',
+        carbs: '75g raw (185g cooked)',
+        veg: '250g (Wok / Salad)'
+      },
+      mantenimiento: {
+        title: '3. Athletic Maintenance (Golden Rule)',
+        strategy: 'Exact Olimpo metabolic balance: 1/3 Pure Protein, 1/3 Clean Carbs and 1/3 Fiber & Fresh Fruit for continuous high energy on the mats.',
+        prot: '200g (1/3 of Plate)',
+        carbs: '100g raw (250g cooked)',
+        veg: '200 - 250g + 1 Fresh Fruit'
+      },
+      ganancia_masa: {
+        title: '4. Muscle Growth & Hypertrophy',
+        strategy: 'Clean glycogen surplus and dense amino acids for quality muscle hypertrophy and devastating striking impact across all rounds.',
+        prot: '220g (Pure Protein)',
+        carbs: '150g raw (375g cooked)',
+        veg: '200g Vegetables + Fruit'
+      }
     }
   };
 
-  // --- WEEKLY DISHES DATA ---
-  const weeklyDishes = [
-    {
-      day: 'Lunes',
-      name: 'El Explosivo',
-      sub: 'Pollo Plancha + Arroz Blanco + Ensalada',
-      desc: 'Pechuga de pollo grillada 200g, arroz blanco al vapor (o mandioca de noche), ensalada fresca de tomates y lechuga con fruta de estación (naranja/manzana). Asimilación rápida y máxima energía.',
-      img: 'stories/assets/new_menu/lunes_explosivo.jpg',
-      badge: '25G',
-      protein: '45g',
-      carbs: '55g',
-      fats: '8g',
-      cal: '480 kcal'
-    },
-    {
-      day: 'Martes',
-      name: 'El Sparring',
-      sub: 'Fideos Salteados al Wok + Tiras de Carne',
-      desc: 'Fideos con tiernas tiras de carne vacuna magra 180g, brócoli fresco, zanahorias y pimientos crujientes salteados en salsa ligera con toque de sésamo y manzana roja.',
-      img: 'stories/assets/new_menu/martes_sparring.jpg',
-      badge: '25G',
-      protein: '48g',
-      carbs: '65g',
-      fats: '12g',
-      cal: '560 kcal'
-    },
-    {
-      day: 'Miércoles',
-      name: 'El Clásico Potencia',
-      sub: 'Stroganoff Gourmet de Carne o Pollo',
-      desc: 'Stroganoff tradicional con carne tierna dorada a fuego lento en salsa cremosa liviana con cebollas caramelizadas y perejil fresco, acompañado de arroz blanco y ensalada verde.',
-      img: 'stories/assets/new_menu/miercoles_stroganoff.jpg',
-      badge: '25G',
-      protein: '46g',
-      carbs: '58g',
-      fats: '14g',
-      cal: '540 kcal'
-    },
-    {
-      day: 'Jueves',
-      name: 'Especial Dubaï',
-      sub: 'Tataki de Lomo Sellado en Abanico',
-      desc: 'Tataki de carne roja 200g sellado a fuego vivo con centro rosado tierno, arroz blanco, cubos de piña fresca dorada, zanahorias glaseadas, chauchas salteadas y rabanitos crocantes.',
-      img: 'stories/assets/new_menu/jueves_dubai.jpg',
-      badge: '25G',
-      protein: '50g',
-      carbs: '60g',
-      fats: '10g',
-      cal: '530 kcal'
-    },
-    {
-      day: 'Viernes',
-      name: 'Guiso del Peleador',
-      sub: 'Guiso Tradicional de Pollo y Fideos',
-      desc: 'Guiso suculento tradicional con 200g de pollo jugoso, fideos, zanahorias, cebolla y arvejas en caldo caliente reconfortante con banana y naranja. Ideal recarga de glucógeno.',
-      img: 'stories/assets/new_menu/viernes_guiso.jpg',
-      badge: '25G',
-      protein: '48g',
-      carbs: '70g',
-      fats: '11g',
-      cal: '570 kcal'
-    },
-    {
-      day: 'Sábado',
-      name: 'El Placer Atlético',
-      sub: 'Milanesa Dorada de Pollo + Puré Casero',
-      desc: 'Milanesa crocante dorada de pollo 200g con cremoso puré casero de papas a la manteca, ensalada fresca y gajo de limón. La recompensa glucémica post-semana de entrenamiento duro.',
-      img: 'stories/assets/new_menu/sabado_milanesa.jpg',
-      badge: '25G',
-      protein: '47g',
-      carbs: '62g',
-      fats: '15g',
-      cal: '580 kcal'
-    }
-  ];
+  // --- WEEKLY DISHES DATA (MULTILINGUAL) ---
+  const weeklyDishesData = {
+    es: [
+      {
+        id: 'lunes_explosivo',
+        day: 'Lunes',
+        name: 'El Explosivo',
+        sub: 'Pollo Plancha + Arroz Blanco + Ensalada',
+        desc: 'Pechuga de pollo grillada 200g, arroz blanco al vapor (o mandioca de noche), ensalada fresca de tomates y lechuga con fruta de estación (naranja/manzana). Asimilación rápida y máxima energía.',
+        img: 'stories/assets/new_menu/lunes_explosivo.jpg',
+        badge: '25G',
+        protein: '45g',
+        carbs: '55g',
+        fats: '8g',
+        cal: '480 kcal',
+        btnText: 'Pedir Plato'
+      },
+      {
+        id: 'martes_sparring',
+        day: 'Martes',
+        name: 'El Sparring',
+        sub: 'Fideos Salteados al Wok + Tiras de Carne',
+        desc: 'Fideos con tiernas tiras de carne vacuna magra 180g, brócoli fresco, zanahorias y pimientos crujientes salteados en salsa ligera con toque de sésamo y manzana roja.',
+        img: 'stories/assets/new_menu/martes_sparring.jpg',
+        badge: '25G',
+        protein: '48g',
+        carbs: '65g',
+        fats: '12g',
+        cal: '560 kcal',
+        btnText: 'Pedir Plato'
+      },
+      {
+        id: 'miercoles_stroganoff',
+        day: 'Miércoles',
+        name: 'El Clásico Potencia',
+        sub: 'Stroganoff Gourmet de Carne o Pollo',
+        desc: 'Stroganoff tradicional con carne tierna dorada a fuego lento en salsa cremosa liviana con cebollas caramelizadas y perejil fresco, acompañado de arroz blanco y ensalada verde.',
+        img: 'stories/assets/new_menu/miercoles_stroganoff.jpg',
+        badge: '25G',
+        protein: '46g',
+        carbs: '58g',
+        fats: '14g',
+        cal: '540 kcal',
+        btnText: 'Pedir Plato'
+      },
+      {
+        id: 'jueves_dubai',
+        day: 'Jueves',
+        name: 'Especial Dubaï',
+        sub: 'Tataki de Lomo Sellado en Abanico',
+        desc: 'Tataki de carne roja 200g sellado a fuego vivo con centro rosado tierno, arroz blanco, cubos de piña fresca dorada, zanahorias glaseadas, chauchas salteadas y rabanitos crocantes.',
+        img: 'stories/assets/new_menu/jueves_dubai.jpg',
+        badge: '25G',
+        protein: '50g',
+        carbs: '60g',
+        fats: '10g',
+        cal: '530 kcal',
+        btnText: 'Pedir Plato'
+      },
+      {
+        id: 'viernes_guiso',
+        day: 'Viernes',
+        name: 'Guiso del Peleador',
+        sub: 'Guiso Tradicional de Pollo y Fideos',
+        desc: 'Guiso suculento tradicional con 200g de pollo jugoso, fideos, zanahorias, cebolla y arvejas en caldo caliente reconfortante con banana y naranja. Ideal recarga de glucógeno.',
+        img: 'stories/assets/new_menu/viernes_guiso.jpg',
+        badge: '25G',
+        protein: '48g',
+        carbs: '70g',
+        fats: '11g',
+        cal: '570 kcal',
+        btnText: 'Pedir Plato'
+      },
+      {
+        id: 'sabado_milanesa',
+        day: 'Sábado',
+        name: 'El Placer Atlético',
+        sub: 'Milanesa Dorada de Pollo + Puré Casero',
+        desc: 'Milanesa crocante dorada de pollo 200g con cremoso puré casero de papas a la manteca, ensalada fresca y gajo de limón. La recompensa glucémica post-semana de entrenamiento duro.',
+        img: 'stories/assets/new_menu/sabado_milanesa.jpg',
+        badge: '25G',
+        protein: '47g',
+        carbs: '62g',
+        fats: '15g',
+        cal: '580 kcal',
+        btnText: 'Pedir Plato'
+      }
+    ],
+    fr: [
+      {
+        id: 'lunes_explosivo',
+        day: 'Lundi',
+        name: 'El Explosivo',
+        sub: 'Poulet Grillé + Riz Blanc + Salade',
+        desc: 'Blanc de poulet grillé 200g, riz blanc vapeur (ou manioc le soir), salade fraîche tomates-laitue avec fruit de saison (orange/pomme). Assimilation rapide et énergie maximale.',
+        img: 'stories/assets/new_menu/lunes_explosivo.jpg',
+        badge: '25G',
+        protein: '45g',
+        carbs: '55g',
+        fats: '8g',
+        cal: '480 kcal',
+        btnText: 'Commander'
+      },
+      {
+        id: 'martes_sparring',
+        day: 'Mardi',
+        name: 'El Sparring',
+        sub: 'Wok de Pâtes Sautées + Émincé de Bœuf',
+        desc: 'Pâtes sautées avec tendres lamelles de bœuf maigre 180g, brocoli croquant, carottes et poivrons dans une sauce légère au sésame, accompagnés d\'une pomme rouge croquante.',
+        img: 'stories/assets/new_menu/martes_sparring.jpg',
+        badge: '25G',
+        protein: '48g',
+        carbs: '65g',
+        fats: '12g',
+        cal: '560 kcal',
+        btnText: 'Commander'
+      },
+      {
+        id: 'miercoles_stroganoff',
+        day: 'Mercredi',
+        name: 'El Clásico Potencia',
+        sub: 'Stroganoff Gourmet de Bœuf ou Poulet',
+        desc: 'Stroganoff traditionnel avec viande tendre mijotée doucement dans une crème légère aux oignons fondants et persil frais, servi avec riz blanc vapeur et salade verte.',
+        img: 'stories/assets/new_menu/miercoles_stroganoff.jpg',
+        badge: '25G',
+        protein: '46g',
+        carbs: '58g',
+        fats: '14g',
+        cal: '540 kcal',
+        btnText: 'Commander'
+      },
+      {
+        id: 'jueves_dubai',
+        day: 'Jeudi',
+        name: 'Spécial Dubaï',
+        sub: 'Tataki de Bœuf Saisi en Éventail',
+        desc: 'Tataki de filet de bœuf 200g saisi vif au cœur tendre rosé, riz blanc vapeur, cubes d\'ananas rôtis, carottes glacées, haricots verts sautés et radis croquants.',
+        img: 'stories/assets/new_menu/jueves_dubai.jpg',
+        badge: '25G',
+        protein: '50g',
+        carbs: '60g',
+        fats: '10g',
+        cal: '530 kcal',
+        btnText: 'Commander'
+      },
+      {
+        id: 'viernes_guiso',
+        day: 'Vendredi',
+        name: 'Guiso del Peleador',
+        sub: 'Ragoût Traditionnel Poulet & Pâtes',
+        desc: 'Guiso réconfortant du combattant avec 200g de poulet juteux, pâtes, carottes, oignons et petits pois dans un bouillon riche chaud, avec banane et orange. Recharge glycogénique idéale.',
+        img: 'stories/assets/new_menu/viernes_guiso.jpg',
+        badge: '25G',
+        protein: '48g',
+        carbs: '70g',
+        fats: '11g',
+        cal: '570 kcal',
+        btnText: 'Commander'
+      },
+      {
+        id: 'sabado_milanesa',
+        day: 'Samedi',
+        name: 'El Placer Atlético',
+        sub: 'Milanaise Dorée de Poulet + Purée Maison',
+        desc: 'Milanaise croustillante dorée au four de poulet 200g avec purée onctueuse maison de pommes de terre, salade fraîche et quartier de citron. La juste récompense après une semaine intense.',
+        img: 'stories/assets/new_menu/sabado_milanesa.jpg',
+        badge: '25G',
+        protein: '47g',
+        carbs: '62g',
+        fats: '15g',
+        cal: '580 kcal',
+        btnText: 'Commander'
+      }
+    ],
+    en: [
+      {
+        id: 'lunes_explosivo',
+        day: 'Monday',
+        name: 'The Explosive',
+        sub: 'Grilled Chicken + White Rice + Fresh Salad',
+        desc: 'Grilled chicken breast 200g, steamed white rice (or evening cassava), fresh tomato-lettuce salad with seasonal whole fruit (orange/apple). Quick absorption and peak athletic energy.',
+        img: 'stories/assets/new_menu/lunes_explosivo.jpg',
+        badge: '25G',
+        protein: '45g',
+        carbs: '55g',
+        fats: '8g',
+        cal: '480 kcal',
+        btnText: 'Order Meal'
+      },
+      {
+        id: 'martes_sparring',
+        day: 'Tuesday',
+        name: 'The Sparring',
+        sub: 'Wok Sautéed Noodles + Sliced Lean Beef',
+        desc: 'Stir-fried noodles with 180g tender lean beef strips, crisp broccoli, carrots, and sweet peppers in light sesame reduction, paired with a fresh red apple.',
+        img: 'stories/assets/new_menu/martes_sparring.jpg',
+        badge: '25G',
+        protein: '48g',
+        carbs: '65g',
+        fats: '12g',
+        cal: '560 kcal',
+        btnText: 'Order Meal'
+      },
+      {
+        id: 'miercoles_stroganoff',
+        day: 'Wednesday',
+        name: 'Classic Power',
+        sub: 'Gourmet Beef or Chicken Stroganoff',
+        desc: 'Traditional slow-simmered tender beef stroganoff in a delicate cream sauce with caramelized onions and fresh parsley, served with steamed white rice and garden salad.',
+        img: 'stories/assets/new_menu/miercoles_stroganoff.jpg',
+        badge: '25G',
+        protein: '46g',
+        carbs: '58g',
+        fats: '14g',
+        cal: '540 kcal',
+        btnText: 'Order Meal'
+      },
+      {
+        id: 'jueves_dubai',
+        day: 'Thursday',
+        name: 'Dubai Special',
+        sub: 'Seared Beef Tenderloin Tataki',
+        desc: 'Flame-seared 200g lean beef tataki with tender pink center, steamed rice, roasted golden pineapple cubes, glazed baby carrots, green beans, and crisp radish.',
+        img: 'stories/assets/new_menu/jueves_dubai.jpg',
+        badge: '25G',
+        protein: '50g',
+        carbs: '60g',
+        fats: '10g',
+        cal: '530 kcal',
+        btnText: 'Order Meal'
+      },
+      {
+        id: 'viernes_guiso',
+        day: 'Friday',
+        name: 'Fighter Stew',
+        sub: 'Traditional Hearty Chicken & Pasta Stew',
+        desc: 'Rich traditional fighter stew packed with 200g juicy chicken, pasta, sweet carrots, onions, and sweet peas in warming broth with banana and orange. Ideal glycogen reload.',
+        img: 'stories/assets/new_menu/viernes_guiso.jpg',
+        badge: '25G',
+        protein: '48g',
+        carbs: '70g',
+        fats: '11g',
+        cal: '570 kcal',
+        btnText: 'Order Meal'
+      },
+      {
+        id: 'sabado_milanesa',
+        day: 'Saturday',
+        name: 'Athletic Pleasure',
+        sub: 'Golden Chicken Milanesa + Homemade Mash',
+        desc: 'Golden crispy chicken breast milanesa 200g with rich buttery mashed potatoes, fresh crisp salad, and fresh lemon wedge. The ultimate clean glycemic reward post-training.',
+        img: 'stories/assets/new_menu/sabado_milanesa.jpg',
+        badge: '25G',
+        protein: '47g',
+        carbs: '62g',
+        fats: '15g',
+        cal: '580 kcal',
+        btnText: 'Order Meal'
+      }
+    ]
+  };
 
-  // --- FLYERS DATA (A4 PRINTABLE 2-PAGE FLYER: RECTO & VERSO) ---
-  const flyers = [
-    {
-      id: 1,
-      side: 'Recto',
-      tag: 'Página 1 • Recto',
-      title: 'Menú Semanal & Packs de Suscripción',
-      desc: 'Los 6 almuerzos completos (Lunes a Sábado), la regla de oro 1/3 y la grilla oficial de packs semanales y mensuales con beneficio de débito automático Bancard (-5%).',
-      file: 'flyer_recto_preview.png',
-      preview: 'stories/assets/flyer_recto_preview.png'
-    },
-    {
-      id: 2,
-      side: 'Verso',
-      tag: 'Página 2 • Verso',
-      title: 'Comida Rápida, Bebidas & Academia de Combate',
-      desc: 'Línea de street-food proteico para ganancia muscular, bebidas funcionales de recuperación, horarios de cocina y sala de entrenamiento en Bristol de Areguá.',
-      file: 'flyer_verso_preview.png',
-      preview: 'stories/assets/flyer_verso_preview.png'
-    }
-  ];
+  // --- FLYERS DATA (MULTILINGUAL) ---
+  const flyersDataMultilingual = {
+    es: [
+      {
+        id: 1,
+        side: 'Recto',
+        tag: 'Página 1 • Recto',
+        title: 'Menú Semanal & Packs de Suscripción',
+        desc: 'Los 6 almuerzos completos (Lunes a Sábado), la regla de oro 1/3 y la grilla oficial de packs semanales y mensuales con beneficio de débito automático Bancard (-5%).',
+        preview: 'stories/assets/flyer_recto_preview.png',
+        btnZoom: '🔍 Zoom Vista Previa',
+        btnPdf: '📄 Descargar PDF'
+      },
+      {
+        id: 2,
+        side: 'Verso',
+        tag: 'Página 2 • Verso',
+        title: 'Comida Rápida, Bebidas & Academia de Combate',
+        desc: 'Línea de street-food proteico para ganancia muscular, bebidas funcionales de recuperación, horarios de cocina y sala de entrenamiento en Bristol de Areguá.',
+        preview: 'stories/assets/flyer_verso_preview.png',
+        btnZoom: '🔍 Zoom Vista Previa',
+        btnPdf: '📄 Descargar PDF'
+      }
+    ],
+    fr: [
+      {
+        id: 1,
+        side: 'Recto',
+        tag: 'Page 1 • Recto',
+        title: 'Menu de la Semaine & Packs d\'Abonnement',
+        desc: 'Les 6 déjeuners complets (Lundi au Samedi), la règle d\'or 1/3 et la grille officielle des packs hebdomadaires et mensuels avec remise débit automatique Bancard (-5%).',
+        preview: 'stories/assets/flyer_recto_preview.png',
+        btnZoom: '🔍 Aperçu Zoom',
+        btnPdf: '📄 Télécharger le PDF'
+      },
+      {
+        id: 2,
+        side: 'Verso',
+        tag: 'Page 2 • Verso',
+        title: 'Street-Food, Boissons & Salle de Combat',
+        desc: 'Ligne de street-food protéinée pour la prise musculaire, boissons de récupération, horaires de cuisine et de cours de combat à Bristol d\'Areguá.',
+        preview: 'stories/assets/flyer_verso_preview.png',
+        btnZoom: '🔍 Aperçu Zoom',
+        btnPdf: '📄 Télécharger le PDF'
+      }
+    ],
+    en: [
+      {
+        id: 1,
+        side: 'Front',
+        tag: 'Page 1 • Front',
+        title: 'Weekly Menu & Subscription Packs',
+        desc: 'All 6 athletic lunches (Monday to Saturday), 1/3 golden rule, and official weekly and monthly pricing table with Bancard auto-debit benefit (-5%).',
+        preview: 'stories/assets/flyer_recto_preview.png',
+        btnZoom: '🔍 Zoom Preview',
+        btnPdf: '📄 Download PDF'
+      },
+      {
+        id: 2,
+        side: 'Back',
+        tag: 'Page 2 • Back',
+        title: 'Street-Food, Drinks & Combat Gym',
+        desc: 'High-protein street-food line for lean mass gain, recovery beverages, kitchen operating hours, and combat training facility in Bristol of Areguá.',
+        preview: 'stories/assets/flyer_verso_preview.png',
+        btnZoom: '🔍 Zoom Preview',
+        btnPdf: '📄 Download PDF'
+      }
+    ]
+  };
 
-  // --- RENDER WEEKLY DISHES ---
-  const dishesGrid = document.getElementById('dishesGrid');
-  if (dishesGrid) {
-    dishesGrid.innerHTML = weeklyDishes.map(dish => `
-      <div class="dish-card" data-day="${dish.day}">
+  // --- RENDER WEEKLY DISHES (MULTILINGUAL) ---
+  function renderWeeklyDishes(lang) {
+    const dishesGrid = document.getElementById('dishesGrid');
+    if (!dishesGrid) return;
+    const currentLang = lang || state.lang || 'es';
+    const dishes = weeklyDishesData[currentLang] || weeklyDishesData.es;
+    const macroLabels = {
+      es: { prot: 'Prot:', gluc: 'Carb:', lip: 'Gras:', cal: 'Cal:' },
+      fr: { prot: 'Prot:', gluc: 'Gluc:', lip: 'Lip:', cal: 'Cal:' },
+      en: { prot: 'Prot:', gluc: 'Carbs:', lip: 'Fat:', cal: 'Cal:' }
+    }[currentLang] || { prot: 'Prot:', gluc: 'Carb:', lip: 'Gras:', cal: 'Cal:' };
+
+    dishesGrid.innerHTML = dishes.map((dish, idx) => `
+      <div class="dish-card" data-day="${weeklyDishesData.es[idx].day}">
         <div class="card-lisere-top"></div>
         <div class="dish-img-wrap">
           <img src="${dish.img}" alt="${dish.name}" loading="lazy">
@@ -232,15 +533,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="dish-sub">${dish.sub}</div>
           <p class="dish-desc">${dish.desc}</p>
           <div class="dish-macros">
-            <div class="macro-item"><span>Prot:</span> <strong>${dish.protein}</strong></div>
-            <div class="macro-item"><span>Gluc:</span> <strong>${dish.carbs}</strong></div>
-            <div class="macro-item"><span>Lip:</span> <strong>${dish.fats}</strong></div>
-            <div class="macro-item"><span>Cal:</span> <strong>${dish.cal}</strong></div>
+            <div class="macro-item"><span>${macroLabels.prot}</span> <strong>${dish.protein}</strong></div>
+            <div class="macro-item"><span>${macroLabels.gluc}</span> <strong>${dish.carbs}</strong></div>
+            <div class="macro-item"><span>${macroLabels.lip}</span> <strong>${dish.fats}</strong></div>
+            <div class="macro-item"><span>${macroLabels.cal}</span> <strong>${dish.cal}</strong></div>
           </div>
           <div class="dish-footer">
             <span class="dish-price-val">25.000 ₲</span>
-            <button class="btn-dish-order" onclick="window.openCheckout('plato_unico', '${dish.name}')">
-              Commander
+            <button class="btn-dish-order" onclick="window.openCheckout('plato_unico', '${weeklyDishesData.es[idx].name}')">
+              ${dish.btnText}
             </button>
           </div>
         </div>
@@ -248,10 +549,13 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // --- RENDER FLYERS ---
-  const flyersGrid = document.getElementById('flyersGrid');
-  if (flyersGrid) {
-    flyersGrid.innerHTML = flyers.map(flyer => `
+  // --- RENDER FLYERS (MULTILINGUAL) ---
+  function renderFlyers(lang) {
+    const flyersGrid = document.getElementById('flyersGrid');
+    if (!flyersGrid) return;
+    const currentLang = lang || state.lang || 'es';
+    const items = flyersDataMultilingual[currentLang] || flyersDataMultilingual.es;
+    flyersGrid.innerHTML = items.map(flyer => `
       <div class="flyer-thumb-card">
         <div class="card-lisere-top"></div>
         <div class="flyer-img-container" onclick="window.openFlyerLightbox('${flyer.preview}', '${flyer.title}')">
@@ -263,10 +567,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <p class="flyer-desc-text">${flyer.desc}</p>
           <div class="flyer-actions">
             <button type="button" class="btn-flyer-zoom" onclick="window.openFlyerLightbox('${flyer.preview}', '${flyer.title}')">
-              🔍 Zoom Preview
+              ${flyer.btnZoom}
             </button>
             <a href="stories/assets/Menu_Oficial_Restaurante_del_Olimpo.pdf" target="_blank" rel="noopener noreferrer" class="btn-flyer-zoom btn-flyer-pdf">
-              📄 Descargar PDF
+              ${flyer.btnPdf}
             </a>
           </div>
         </div>
@@ -274,120 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // --- PHYSICAL GOALS SELECTOR LOGIC ---
-  const goalButtons = document.querySelectorAll('.btn-goal-tab');
-  const goalTitleElem = document.getElementById('goalTitle');
-  const goalStrategyElem = document.getElementById('goalStrategy');
-  const macroProtElem = document.getElementById('macroProt');
-  const macroCarbsElem = document.getElementById('macroCarbs');
-  const macroVegElem = document.getElementById('macroVeg');
-
-  goalButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      goalButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const goalKey = btn.getAttribute('data-goal');
-      state.activeGoal = goalKey;
-      const data = goalsData[goalKey];
-      if (data) {
-        if (goalTitleElem) goalTitleElem.textContent = data.title;
-        if (goalStrategyElem) goalStrategyElem.textContent = data.strategy;
-        if (macroProtElem) macroProtElem.textContent = data.prot;
-        if (macroCarbsElem) macroCarbsElem.textContent = data.carbs;
-        if (macroVegElem) macroVegElem.textContent = data.veg;
-      }
-    });
-  });
-
-  // --- DISHES FILTER TABS (DAYS) ---
-  const menuDayTabs = document.querySelectorAll('.btn-menu-tab');
-  menuDayTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      menuDayTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const targetDay = tab.getAttribute('data-filter');
-      const cards = document.querySelectorAll('.dish-card');
-      cards.forEach(card => {
-        if (targetDay === 'all' || card.getAttribute('data-day') === targetDay) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  });
-
-  // --- PRICING CYCLE TOGGLE (SEMANAL / MENSUAL) ---
-  const cycleToggles = document.querySelectorAll('.btn-cycle-toggle');
-  cycleToggles.forEach(btn => {
-    btn.addEventListener('click', () => {
-      cycleToggles.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.selectedCycle = btn.getAttribute('data-cycle');
-      updatePricingDisplay();
-      recalculateCheckoutSummary();
-    });
-  });
-
-  // --- UPDATE PRICING DISPLAY WITH STRIKETHROUGH & MULTILINGUAL LABELS ---
-  function updatePricingDisplay() {
-    const cycle = state.selectedCycle;
-    const isAutoDebit = state.autoDebitActive;
-    const lang = state.lang || 'es';
-
-    const unitLabels = {
-      es: { sem: 'sem', mes: 'mes', ahorras: 'Ahorrás', plato: 'plato', club: 'Acceso Libre Ilimitado' },
-      fr: { sem: 'sem', mes: 'mois', ahorras: 'Économisez', plato: 'plat', club: 'Accès Libre Illimité' },
-      en: { sem: 'wk', mes: 'mo', ahorras: 'Save', plato: 'meal', club: 'Unlimited All-Access' }
-    };
-    const u = unitLabels[lang] || unitLabels.es;
-
-    const data = pricingData[cycle];
-    for (const [key, val] of Object.entries(data)) {
-      if (key === 'plato_unico') continue;
-      const basePrice = val.price;
-      const discountedPrice = Math.round(basePrice * 0.95);
-      const savings = basePrice - discountedPrice;
-
-      const strikeWrap = document.getElementById(`strikeWrap_${key}`);
-      const priceMain = document.getElementById(`price_${key}`);
-      const perMealElem = document.getElementById(`perMeal_${key}`);
-
-      const cycleUnit = cycle === 'semanal' ? u.sem : u.mes;
-
-      if (isAutoDebit) {
-        if (strikeWrap) {
-          strikeWrap.style.display = 'flex';
-          strikeWrap.innerHTML = `
-            <span class="old-price-line">${basePrice.toLocaleString('es-PY')} ₲</span>
-            <span class="discount-save-pill">${u.ahorras} ${savings.toLocaleString('es-PY')} ₲</span>
-          `;
-        }
-        if (priceMain) {
-          priceMain.innerHTML = `${discountedPrice.toLocaleString('es-PY')} ₲ <span>/${cycleUnit}</span>`;
-        }
-        if (perMealElem) {
-          if (key === 'club_kickboxing') {
-            perMealElem.textContent = u.club;
-          } else {
-            perMealElem.textContent = `${Math.round(val.perMeal * 0.95).toLocaleString('es-PY')} ₲ / ${u.plato}`;
-          }
-        }
-      } else {
-        if (strikeWrap) strikeWrap.style.display = 'none';
-        if (priceMain) {
-          priceMain.innerHTML = `${basePrice.toLocaleString('es-PY')} ₲ <span>/${cycleUnit}</span>`;
-        }
-        if (perMealElem) {
-          if (key === 'club_kickboxing') {
-            perMealElem.textContent = u.club;
-          } else {
-            perMealElem.textContent = `${val.perMeal.toLocaleString('es-PY')} ₲ / ${u.plato}`;
-          }
-        }
-      }
-    }
-  }
+  // Initial renders
+  renderWeeklyDishes(state.lang || 'es');
+  renderFlyers(state.lang || 'es');
 
   // Initial pricing update
   updatePricingDisplay();
@@ -404,8 +597,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const mealsCount = parseInt(sliderMeals.value, 10);
     const clubCount = parseInt(sliderClub.value, 10);
 
-    valMeals.textContent = `${mealsCount} personas`;
-    valClub.textContent = `${clubCount} personas`;
+    const peopleWord = {
+      es: 'personas',
+      fr: 'personnes',
+      en: 'people'
+    }[state.lang || 'es'] || 'personas';
+
+    valMeals.textContent = `${mealsCount} ${peopleWord}`;
+    valClub.textContent = `${clubCount} ${peopleWord}`;
 
     // 10% on meal subscription (~50.000 ₲ / month / user)
     // 15% on club membership (15% of 150.000 = 22.500 ₲ / month / user)
@@ -953,364 +1152,892 @@ document.addEventListener('DOMContentLoaded', () => {
   window.showToast = showToast;
 
   // ==========================================================================
-  // MULTILINGUAL ENGINE (ESPAÑOL / FRANÇAIS) WITH DROPDOWN SELECTOR
+  // MULTILINGUAL ENGINE (ESPAÑOL / FRANÇAIS / ENGLISH) - 100% AUDITED
   // ==========================================================================
   const translations = {
-    es: {
-      alertBar: 'Cupo diario: 50 platos frescos cocinados cada mañana • Lunes a Sábado en Areguá • Sin Reserva previa',
-      navHome: 'Inicio',
-      navFacility: 'El Complejo',
-      navFightClub: 'Fight Club',
-      navRestoFit: 'Restaurante',
-      navFlyers: 'Flyers',
-      navPricing: 'Tarifas',
-      navAffiliates: 'Afiliados',
-      navContact: 'Acceso',
-      navJoin: 'Unirse',
-      heroTag: 'Club Oficial de Combate & Nutrición Atlética • Bristol de Areguá',
-      heroTitle1: 'FORJÁ TU CUERPO DE',
-      heroTitleWarrior: 'GUERRERO',
-      heroTitle2: 'ALIMENTÁ TU POTENCIA EN EL',
-      heroTitleOlimpo: 'OLIMPO',
-      heroLead: 'El primer complejo de Areguá que fusiona la rigurosa técnica del <strong>Kickboxing K-1</strong> y el <strong>Boxeo Tradicional Inglés</strong> con una <strong>nutrición deportiva calibrada a los macronutrientes</strong> (1/3 Proteína, 1/3 Carbohidratos limpios, 1/3 Fibras). Cocinado fresco cada día.',
-      btnViewPacks: 'Elegir Plan',
-      btnGoToClub: '📍 Ir al Gimnasio',
-      heroProofAthletes: '+50 Atletas',
-      heroProofCommunity: 'Comunidad Olimpo',
-      showcaseBadge: 'Ecosistema Olimpo',
-      showcaseLive: 'Abierto Lun - Sáb',
-      showcaseSub: 'Pack Fighter Pro (2 Platos/Día)',
-      btnShowcaseOrder: 'Pedir Ahora',
-      facilityTag: 'PROYECTO EN EXPANSIÓN & COMUNIDAD DE PELEA',
-      facilityTitle: 'UN PROYECTO QUE CRECE CON VOS <span>• ¡EL CLUB YA ESTÁ ABIERTO Y OPERATIVO!</span>',
-      facilityPunchline1: '→ ¡Vení a entrenar a combatir!',
-      facilityPunchline2: '→ ¡Y alimentá tu cuerpo directamente después de tu sesión!',
-      facilityDesc: 'En el Olimpo eliminamos la gran traba de los atletas: entrenar duro y arruinar el esfuerzo comiendo mal por falta de tiempo o comidas adaptadas. Nuestro complejo reúne bajo el mismo techo una sala de combate y una cocina deportiva.',
-      evolutionBadge: '📐 PLANOS DEL PROYECTO • CLUB 100% OPERATIVO',
-      facilityProjectNotice: 'Estas imágenes corresponden a los <strong>planos arquitectónicos y la visión final de nuestro complejo</strong>. Estamos aún en fase de construcción y ampliación, pero <strong>el club está totalmente abierto y operativo para todos los entrenamientos diarios</strong> (Kickboxing K-1 y Boxeo Tradicional Inglés). ¡Vení a formar parte de los cimientos y de la evolución de nuestra comunidad!',
-      rotatorSlide1: '🥊 1. La Sala de Combate (Ring & Sacos) • Club Ya Abierto',
-      rotatorSlide2: '🥗 2. El Restaurante Atlético • En Obras de Terminación',
-      rotatorHint: 'Planos del proyecto • Rotación auto',
-      clubPill: 'Academia de Combate',
-      clubTitle: 'FIGHTING CLUB <span>OLIMPO TEAM</span>',
-      clubSubtitle: 'Desarrollá una disciplina de acero, velocidad explosiva y potencia en el ring. Especialización estricta en Kickboxing K-1 Rules y Boxeo Tradicional Inglés. Cero suelo, cero grappling: pegada pura y esquives.',
-      restoPill: 'Nutrición Deportiva',
-      restoTitle: 'RESTAURANTE DEL <span>OLIMPO</span>',
-      restoSubtitle: 'La verdadera comida que tu cuerpo necesita después del esfuerzo. Platos frescos preparados cada mañana con ingredientes limpios, sin aceites industriales y pesados al gramo.',
-      goldenRuleTitle: 'La Regla de Oro del Plato Atlético Olimpo',
-      flyersPill: 'Soporte Oficial para Imprimir',
-      flyersTitle: 'FLYER OFICIAL <span>RECTO & VERSO (PDF)</span>',
-      flyersSubtitle: 'Menú completo y planes de suscripción condensados en 1 sola hoja de doble cara (2 páginas A4 en PDF listo para imprimir o compartir).',
-      btnOpenPdf: 'Descargar Flyer Oficial de 2 Páginas en PDF',
-      pdfHint: 'Documento oficial en alta resolución • Formato A4 Recto/Verso',
-      pricingPill: 'Tarifas & Membresías',
-      pricingTitle: 'PLANES DE <span>SUSCRIPCIÓN</span>',
-      pricingSubtitle: 'Elegí tu plan. Activá el <strong>débito automático Bancard</strong> para acceder a un 5% de descuento inmediato y asegurar tus comidas y entrenamientos sin interrupciones.',
-      cycleWeekly: 'Semana (6 Días)',
-      cycleMonthly: 'Mes Completo (Lun a Sáb)',
-      adControlTitle: '💳 Débito Automático Bancard :',
-      adControlDisc: '5% de Descuento Inmediato Incluido',
-      planTypeClub: 'Academia de Combate',
-      planTitleClub: 'Club Kickboxing & Boxeo',
-      planFeatClub1: 'Acceso libre a las clases de <strong>Kickboxing K-1 Rules</strong>',
-      planFeatClub2: 'Clases de <strong>Boxeo Tradicional Inglés</strong>',
-      planFeatClub3: 'Acceso al ring, bolsas pesadas de 60kg y guanteo',
-      planFeatClub4: '1er Día de prueba gratis sin compromiso',
-      planFeatClub5: 'Acompañamiento técnico por peleadores experimentados',
-      btnSelectClub: 'Inscribirse al Club (150k)',
-      planType1Plato: 'Nutrición Diaria',
-      planTitle1Plato: 'Pack 1 Plato / Día',
-      planFeat1Plato1: '1 comida completa por día: Almuerzo o Cena',
-      planFeat1Plato2: 'Recetas frescas rotativas de Lunes a Sábado',
-      planFeat1Plato3: '200g de proteína pura + carbohidratos limpios + ensalada',
-      planFeat1Plato4: 'Frutas frescas de estación incluidas en cada comida',
-      planFeat1Plato5: 'Retiro directo en el club o delivery (+20%)',
-      btnSelect1Plato: 'Elegir 1 Plato/Día',
-      ribbonPopular: '⭐ Plan Más Popular',
-      planTypeFighterPro: 'Atleta & Peleador',
-      planTitleFighterPro: 'Fighter Pro (2 Platos)',
-      planFeatFighter1: '<strong>2 comidas completas por día:</strong> Almuerzo + Cena',
-      planFeatFighter2: 'Cero compras, cero cocina después de entrenar duro',
-      planFeatFighter3: 'Freno al catabolismo nocturno: recuperación máxima',
-      planFeatFighter4: 'Platos calientes herméticos listos para llevar',
-      planFeatFighter5: 'Precio ultra competitivo: menos de 19.000 ₲ por comida limpia',
-      btnSelectFighter: 'Elegir Fighter Pro',
-      ribbonElite: '🏆 Transformación Total',
-      planTypeElite: 'Pack Híbrido Definitivo',
-      planTitleElite: 'Combo Fighter Elite',
-      planFeatElite1: '<strong>Acceso completo ilimitado</strong> a Kickboxing & Boxeo',
-      planFeatElite2: '<strong>2 comidas atléticas por día</strong> preparadas en el club',
-      planFeatElite3: 'Seguimiento mensual de composición corporal y peso',
-      planFeatElite4: 'Prioridad de atención en cocina y delivery',
-      planFeatElite5: 'La experiencia total del Olimpo al mejor precio',
-      btnSelectElite: 'Elegir Pack Elite',
-      modalTitle: 'Inscripción & Pago Seguro (Paraguay)',
-      step1Badge: 'Paso 1',
-      step1Title: 'Entrenamiento en el Club de Combate (Bristol de Areguá)',
-      step1Desc: 'Kickboxing K-1 Rules & Boxeo Tradicional Inglés. Ring de combate y bolsas pesadas.',
-      quoteMain: '« Entrenar es el 50% del trabajo, la otra mitad es alimentarse bien. »',
-      quoteSub: '« ¡Entrenar duro sin comer bien es como remar sin remos! » — Regla de oro del Olimpo',
-      step2Badge: 'Paso 2',
-      step2Title: 'Elegí tu Programa Nutritivo (Cocina del Club)',
-      adTitle: '🔄 Activar Débito Automático Bancard (-5% de descuento)',
-      adSub: 'Renovación automática cada mes. Cancelable en cualquier momento en 1 clic.',
-      blockServices: '3. Servicios & Delivery',
-      lblDelivery: '<strong>Servicio de Delivery a Domicilio (+20% del abono)</strong> — Retiro en el club gratis.',
-      lblDoubleProt: 'Doble Porción de Proteína (+2x Carne/Pollo : +10.000 ₲ por comida)',
-      blockCustomer: '4. Tus Datos de Contacto',
-      lblCustName: 'Nombre & Apellido *',
-      lblCustPhone: 'WhatsApp / Teléfono *',
-      lblCustCI: 'C.I. o RUC (para la factura legal paraguaya) *',
-      lblCustAddress: 'Dirección de Delivery o Retiro en el Club',
-      blockPayment: '5. Medio de Pago Localizado en Paraguay',
-      sumDiscountLabel: 'Descuento Débito Automático (-5%) :',
-      sumDeliveryLabel: 'Delivery Areguá (+20% del abono) :',
-      sumProtLabel: 'Doble Porción de Proteína :',
-      sumTotalLabel: 'TOTAL A PAGAR :',
-      lblLegalAccept: 'Acepto las <a href="#" onclick="window.openLegalModal(); return false;" style="color: var(--brand-blue-light); text-decoration: underline;">condiciones legales & sanitarias</a> aplicables a gimnasios y gastronomía en Paraguay.',
-      btnSubmitOrder: 'Confirmar Pedido & Enviar a WhatsApp (+595 995 620416)',
-      affPill: 'Ingresos Pasivos',
-      affTitle: 'PROGRAMA DE <span>EMBAJADORES & AFILIADOS</span>',
-      contactPill: 'Acceso & Contacto',
-      contactTitle: 'SUMATE AL <span>OLIMPO EN AREGUÁ</span>'
+    "es": {
+        "alertBar": "Cupo diario: 50 platos frescos cocinados cada mañana • Lunes a Sábado en Areguá • Sin Reserva previa",
+        "navHome": "Inicio",
+        "navFacility": "El Complejo",
+        "navFightClub": "Fight Club",
+        "navRestoFit": "Restaurante",
+        "navFlyers": "Flyers",
+        "navPricing": "Tarifas",
+        "navAffiliates": "Afiliados",
+        "navContact": "Acceso",
+        "navJoin": "Unirse",
+        "navBrandSub": "Club & Resto Fit",
+        "heroTag": "Club Oficial de Combate & Nutrición Atlética • Bristol de Areguá",
+        "heroTitle1": "FORJÁ TU CUERPO DE",
+        "heroTitleWarrior": "GUERRERO",
+        "heroTitle2": "ALIMENTÁ TU POTENCIA EN EL",
+        "heroTitleOlimpo": "OLIMPO",
+        "heroLead": "El primer complejo de Areguá que fusiona la rigurosa técnica del <strong>Kickboxing K-1</strong> y el <strong>Boxeo Tradicional Inglés</strong> con una <strong>nutrición deportiva calibrada a los macronutrientes</strong> (1/3 Proteína, 1/3 Carbohidratos limpios, 1/3 Fibras). Cocinado fresco cada día.",
+        "btnViewPacks": "Elegir Plan",
+        "btnGoToClub": "📍 Ir al Gimnasio",
+        "heroProofAthletes": "+50 Atletas",
+        "heroProofCommunity": "Comunidad Olimpo",
+        "heroDuoClubTitle": "Fighting Club",
+        "heroDuoClubSub": "Kickboxing • Boxeo Inglés • 150k/mes",
+        "heroDuoRestoTitle": "Restaurante Fit",
+        "heroDuoRestoSub": "200g Pollo • Macros Pesados",
+        "showcaseBadge": "Ecosistema Olimpo",
+        "showcaseLive": "Abierto Lun - Sáb",
+        "showcaseSub": "Pack Fighter Pro (2 Platos/Día)",
+        "showcasePriceVal": "Desde 18.801 ₲ / plato",
+        "btnShowcaseOrder": "Pedir Ahora",
+        "facilityTag": "PROYECTO EN EXPANSIÓN & COMUNIDAD DE PELEA",
+        "facilityTitle": "UN PROYECTO QUE CRECE CON VOS <span>• ¡EL CLUB YA ESTÁ ABIERTO Y OPERATIVO!</span>",
+        "facilityPunchline1": "→ ¡Vení a entrenar a combatir!",
+        "facilityPunchline2": "→ ¡Y alimentá tu cuerpo directamente después de tu sesión!",
+        "facilityDesc": "En el Olimpo eliminamos la gran traba de los atletas: entrenar duro y arruinar el esfuerzo comiendo mal por falta de tiempo o comidas adaptadas. Nuestro complejo reúne bajo el mismo techo una sala de combate y una cocina deportiva.",
+        "evolutionBadge": "📐 PLANOS DEL PROYECTO • CLUB 100% OPERATIVO",
+        "facilityProjectNotice": "Estas imágenes corresponden a los <strong>planos arquitectónicos y la visión final de nuestro complejo</strong>. Estamos aún en fase de construcción y ampliación, pero <strong>el club está totalmente abierto y operativo para todos los entrenamientos diarios</strong> (Kickboxing K-1 y Boxeo Tradicional Inglés). ¡Vení a formar parte de los cimientos y de la evolución de nuestra comunidad!",
+        "rotatorSlide1": "🥊 1. La Sala de Combate (Ring & Sacos) • Club Ya Abierto",
+        "rotatorSlide2": "🥗 2. El Restaurante Atlético • En Obras de Terminación",
+        "rotatorHint": "Planos del proyecto • Rotación auto",
+        "facilityCard1Badge": "1. Corazón del Complejo",
+        "facilityCard1Title": "🥊 La Sala de Combate (Fighting Club)",
+        "facilityCard1Desc": "Un espacio pensado para la rigurosa disciplina pugilística. Sin máquinas innecesarias: un ring de combate, bolsas pesadas de golpeo para el acondicionamiento, superficies de apoyo firmes y entrenadores dedicados al <strong>Kickboxing K-1</strong> y al <strong>Boxeo Tradicional Inglés</strong>.",
+        "facilityCard1Price": "Tarifa Membresía : 150.000 ₲ / mes • Día de prueba gratis disponible",
+        "facilityCard2Badge": "2. Integrado al Gimnasio",
+        "facilityCard2Title": "🥗 El Restaurante Atlético del Club",
+        "facilityCard2Desc": "La cocina del club opera cada mañana desde las 06:00 para preparar los 50 platos del día. Cada plato respeta la Regla de Oro (1/3 Proteínas, 1/3 Carbohidratos limpios, 1/3 Fibras y fruta). Comés exactamente lo que tu metabolismo necesita para regenerar los tejidos y potenciar tu rendimiento.",
+        "facilityCard2Quote": "« Entrenar es el 50% del trabajo, la otra mitad es alimentarse bien. »",
+        "clubPill": "Academia de Combate",
+        "clubTitle": "FIGHTING CLUB <span>OLIMPO TEAM</span>",
+        "clubSubtitle": "Desarrollá una disciplina de acero, velocidad explosiva y potencia en el ring. Especialización estricta en Kickboxing K-1 Rules y Boxeo Tradicional Inglés. Cero suelo, cero grappling: pegada pura y esquives.",
+        "schedHeaderTitle": "Horarios de las Sesiones de Combate",
+        "schedHeaderSub": "Entrenamientos de Lunes a Sábado en el club (Bristol de Areguá, cerca del Cacique).",
+        "btnBookTrial": "Reservar un Día de Prueba Gratis",
+        "schedSlot1": "🌅 Mañana (07:00 – 08:30)",
+        "schedClass1": "Acondicionamiento Físico & Bolsas de Golpeo",
+        "schedMeta1": "Cardio de combate, fortalecimiento del core y combinaciones en bolsas pesadas.",
+        "schedSlot2": "☀️ Mediodía (12:30 – 14:00)",
+        "schedClass2": "Boxeo Tradicional Inglés",
+        "schedMeta2": "Juego de piernas, esquives rotativos y trabajo técnico con manoplas de foco.",
+        "schedSlot3": "🌙 Tarde / Noche (18:00 – 19:30)",
+        "schedClass3": "Kickboxing K-1 Rules Colectivo",
+        "schedMeta3": "Clase principal: puños, patadas, barridos, combinaciones y alta intensidad.",
+        "schedSlot4": "🔥 Avanzados (19:30 – 21:00)",
+        "schedClass4": "Guanteo Controlado & Perfeccionamiento",
+        "schedMeta4": "Sparring técnico con protecciones completas y simulación táctica en ring.",
+        "restoPill": "Nutrición Deportiva",
+        "restoTitle": "RESTAURANTE DEL <span>OLIMPO</span>",
+        "restoSubtitle": "La verdadera comida que tu cuerpo necesita después del esfuerzo. Platos frescos preparados cada mañana con ingredientes limpios, sin aceites industriales y pesados al gramo.",
+        "goldenRuleTitle": "La Regla de Oro del Plato Atlético Olimpo",
+        "goldenRuleSubtitle": "Equilibrio metabólico pensado para secar el tejido adiposo y reparar las fibras musculares.",
+        "triadBadge1": "1/3 del Plato",
+        "triadTitle1": "Proteínas Puras",
+        "triadDesc1": "Pechuga de pollo grillada (200g), carne vacuna magra o huevos frescos para la reconstrucción muscular.",
+        "triadBadge2": "1/3 del Plato",
+        "triadTitle2": "Carbohidratos Limpios",
+        "triadDesc2": "Arroz blanco al vapor, fideos salteados al wok o mandioca tierna para recargar el glucógeno.",
+        "triadBadge3": "1/3 del Plato",
+        "triadTitle3": "Fibras & Vitaminas",
+        "triadDesc3": "Ensaladas frescas crocantes, verduras al wok y frutas de estación enteras (naranja, manzana, banana).",
+        "goalsHeaderTitle": "Calibrá Tu Plato Según Tu Objetivo Actual",
+        "goalsHeaderSub": "Hacé clic en tu perfil para ver cómo balanceamos tus porciones en cocina:",
+        "goalTabWeightLoss": "1. Pérdida de Peso",
+        "goalTabCutting": "2. Definición & Secado",
+        "goalTabMaintenance": "3. Mantenimiento (Regla de Oro)",
+        "goalTabBulking": "4. Ganancia de Masa",
+        "macroLabelProt": "Proteína",
+        "macroLabelCarbs": "Carbohidratos",
+        "macroLabelVeg": "Fibras & Fruta",
+        "tabAllDishes": "Todos los Platos",
+        "tabMonday": "Lunes",
+        "tabTuesday": "Martes",
+        "tabWednesday": "Miércoles",
+        "tabThursday": "Jueves",
+        "tabFriday": "Viernes",
+        "tabSaturday": "Sábado",
+        "flyersPill": "Soporte Oficial para Imprimir",
+        "flyersTitle": "FLYER OFICIAL <span>RECTO & VERSO (PDF)</span>",
+        "flyersSubtitle": "Menú completo y planes de suscripción condensados en 1 sola hoja de doble cara (2 páginas A4 en PDF listo para imprimir o compartir).",
+        "btnOpenPdf": "Descargar Flyer Oficial de 2 Páginas en PDF",
+        "pdfHint": "Documento oficial en alta resolución • Formato A4 Recto/Verso",
+        "pricingPill": "Tarifas & Membresías",
+        "pricingTitle": "PLANES DE <span>SUSCRIPCIÓN</span>",
+        "pricingSubtitle": "Elegí tu plan. Activá el <strong>débito automático Bancard</strong> para acceder a un 5% de descuento inmediato y asegurar tus comidas y entrenamientos sin interrupciones.",
+        "cycleWeekly": "Semana (6 Días)",
+        "cycleMonthly": "Mes Completo (Lun a Sáb)",
+        "adControlTitle": "💳 Débito Automático Bancard :",
+        "adControlDisc": "5% de Descuento Inmediato Incluido",
+        "planTypeClub": "Academia de Combate",
+        "planTitleClub": "Club Kickboxing & Boxeo",
+        "planFeatClub1": "Acceso libre a las clases de <strong>Kickboxing K-1 Rules</strong>",
+        "planFeatClub2": "Clases de <strong>Boxeo Tradicional Inglés</strong>",
+        "planFeatClub3": "Acceso al ring, bolsas pesadas de 60kg y guanteo",
+        "planFeatClub4": "1er Día de prueba gratis sin compromiso",
+        "planFeatClub5": "Acompañamiento técnico por peleadores experimentados",
+        "btnSelectClub": "Inscribirse al Club (150k)",
+        "planType1Plato": "Nutrición Diaria",
+        "planTitle1Plato": "Pack 1 Plato / Día",
+        "planFeat1Plato1": "1 comida completa por día: Almuerzo o Cena",
+        "planFeat1Plato2": "Recetas frescas rotativas de Lunes a Sábado",
+        "planFeat1Plato3": "200g de proteína pura + carbohidratos limpios + ensalada",
+        "planFeat1Plato4": "Frutas frescas de estación incluidas en cada comida",
+        "planFeat1Plato5": "Retiro directo en el club o delivery (+20%)",
+        "btnSelect1Plato": "Elegir 1 Plato/Día",
+        "ribbonPopular": "⭐ Plan Más Popular",
+        "planTypeFighterPro": "Atleta & Peleador",
+        "planTitleFighterPro": "Fighter Pro (2 Platos)",
+        "planFeatFighter1": "<strong>2 comidas completas por día:</strong> Almuerzo + Cena",
+        "planFeatFighter2": "Cero compras, cero cocina después de entrenar duro",
+        "planFeatFighter3": "Freno al catabolismo nocturno: recuperación máxima",
+        "planFeatFighter4": "Platos calientes herméticos listos para llevar",
+        "planFeatFighter5": "Precio ultra competitivo: menos de 19.000 ₲ por comida limpia",
+        "btnSelectFighter": "Elegir Fighter Pro",
+        "ribbonElite": "🏆 Transformación Total",
+        "planTypeElite": "Pack Híbrido Definitivo",
+        "planTitleElite": "Combo Fighter Elite",
+        "planFeatElite1": "<strong>Acceso completo ilimitado</strong> a Kickboxing & Boxeo",
+        "planFeatElite2": "<strong>2 comidas atléticas por día</strong> preparadas en el club",
+        "planFeatElite3": "Seguimiento mensual de composición corporal y peso",
+        "planFeatElite4": "Prioridad de atención en cocina y delivery",
+        "planFeatElite5": "La experiencia total del Olimpo al mejor precio",
+        "btnSelectElite": "Elegir Pack Elite",
+        "affPill": "Ingresos Pasivos",
+        "affTitle": "PROGRAMA DE <span>EMBAJADORES & AFILIADOS</span>",
+        "affSubtitle": "¿Entrenás en el club o te encantan nuestros platos? Invitá a tus amigos, compañeros de combate y colegas y <strong>ganá hasta un 15% de comisión recurrente</strong> cada mes mientras sigan activos.",
+        "affHowTitle": "¿Cómo Funciona el Sistema de Afiliados?",
+        "affHowSteps": "1. Generá tu enlace de referido exclusivo abajo.<br>2. Compartilo en WhatsApp, Instagram o directamente en el club.<br>3. Apenas un referido pide su pack o se inscribe al club, tu comisión se acredita automáticamente.<br>4. Retirá tus ganancias cuando quieras por transferencia SIPAP, billetera Tigo Money o en efectivo en recepción.",
+        "affStat1Label": "Comisiones Packs Nutrición",
+        "affStat2Label": "Comisiones Membresías Club",
+        "affStat3Num": "Mes tras Mes",
+        "affStat3Label": "Ingresos Recurrentes",
+        "affStat4Label": "Pago Directo en Paraguay",
+        "calcTitle": "Simulador de Ganancias Mensuales por Referidos",
+        "calcLabelMeals": "Amigos suscritos a las comidas (Packs de nutrición) :",
+        "calcLabelClub": "Amigos inscritos a las clases de Kickboxing & Boxeo :",
+        "calcResultLabel": "Ingresos Estimados Por Mes :",
+        "calcResultNote": "¡Con unas pocas personas recomendadas, tu propia membresía y tus comidas te salen totalmente GRATIS y con dinero extra en el bolsillo!",
+        "linkGenTitle": "Generador de Tu Enlace de Embajador",
+        "linkGenSub": "Ingresá tu nombre o alias deportivo para crear tu enlace rastreado :",
+        "affAliasPlaceholder": "Ej: GUERRERO_ALEX",
+        "btnGenLink": "Generar Mi Enlace",
+        "btnCopyLink": "📋 Copiar el Enlace",
+        "btnShareWa": "📲 Compartir en WhatsApp",
+        "dashTitle": "Panel de Control del Afiliado",
+        "btnWithdraw": "💸 Solicitar Retiro de Ganancias",
+        "dashClicks": "Clics en tu enlace",
+        "dashSignups": "Referidos inscritos",
+        "dashTotalEarn": "Comisiones totales",
+        "dashBalance": "Saldo disponible",
+        "contactPill": "Acceso & Contacto",
+        "contactTitle": "SUMATE AL <span>OLIMPO EN AREGUÁ</span>",
+        "contactSubtitle": "Dirección oficial: <strong>Bristol de Areguá, cerca del Cacique</strong> (Av. Mariscal Estigarribia), Areguá, Paraguay. Retiro directo en el club o servicio de delivery (+20%).",
+        "contactHoursTitle": "Horarios de Servicio & Retiro",
+        "contactLocLabel": "📍 Ubicación :",
+        "contactLocVal": "Bristol de Areguá, cerca del Cacique",
+        "contactLunchLabel": "Servicio Almuerzo :",
+        "contactDinnerLabel": "Servicio Cena :",
+        "contactDaysLabel": "Días de Atención :",
+        "contactDaysVal": "Lunes a Sábado",
+        "contactSundayLabel": "Domingo :",
+        "contactSundayVal": "Cerrado (Descanso del Guerrero)",
+        "contactDeliveryLabel": "Servicio de Delivery :",
+        "contactDeliveryVal": "+20% del monto del pedido",
+        "btnGoogleMaps": "📍 Abrir en Google Maps",
+        "btnWaze": "🚗 Abrir en Waze",
+        "btnContactWa": "💬 Escribir al WhatsApp (+595 995 620416)",
+        "faqTitle": "Preguntas Frecuentes",
+        "faqQ1": "¿Es necesario reservar con anticipación para comer o entrenar?",
+        "faqA1": "No. La regla oficial del complejo es <strong>Sin Reserva Previa</strong>. Vení directamente a la sede (Bristol de Areguá, cerca del Cacique) para tu primera clase de prueba o para disfrutar de tu plato del día.",
+        "faqQ2": "¿Puedo pedir comidas sin estar inscrito en el club de combate?",
+        "faqA2": "¡Totalmente! Podés suscribirte únicamente a un pack de nutrición (1 o 2 platos al día) o pedir platos individuales desde 7.000 ₲ hasta 25.000 ₲. ¡Por cada 5 platos comprados, el 6to es 100% GRATIS!",
+        "faqQ3": "¿Cuánto cuesta la membresía al club de Kickboxing & Boxeo?",
+        "faqA3": "La cuota mensual es de <strong>150.000 ₲ / mes</strong> (150k PYG) con acceso libre a todos los entrenamientos. El primer día de prueba es 100% gratis.",
+        "faqQ4": "¿Cómo funciona el débito automático Bancard?",
+        "faqA4": "Es procesado con seguridad por Bancard Paraguay bajo encriptación PCI-DSS. Accedés a un descuento inmediato del 5% en tu cuota y podés pausar o cancelar en cualquier momento sin costo alguno.",
+        "modalTitle": "Inscripción & Pago Seguro (Paraguay)",
+        "step1Badge": "Paso 1",
+        "step1Title": "Entrenamiento en el Club de Combate (Bristol de Areguá)",
+        "step1Desc": "Kickboxing K-1 Rules & Boxeo Tradicional Inglés. Ring de combate y bolsas pesadas.",
+        "quoteMain": "« Entrenar es el 50% del trabajo, la otra mitad es alimentarse bien. »",
+        "quoteSub": "« ¡Entrenar duro sin comer bien es como remar sin remos! » — Regla de oro del Olimpo",
+        "step2Badge": "Paso 2",
+        "step2Title": "Elegí tu Programa Nutritivo (Cocina del Club)",
+        "lblSelectDish": "Seleccioná tu Plato o Street-Food :",
+        "lblPlateQuantity": "Cantidad de Platos (¡5 comprados = el 6to GRATIS!) :",
+        "adTitle": "🔄 Activar Débito Automático Bancard (-5% de descuento)",
+        "adSub": "Renovación automática cada mes. Cancelable en cualquier momento en 1 clic.",
+        "blockServices": "3. Servicios & Delivery",
+        "lblDelivery": "<strong>Servicio de Delivery a Domicilio (+20% del abono)</strong> — Retiro en el club gratis.",
+        "lblDoubleProt": "Doble Porción de Proteína (+2x Carne/Pollo : +10.000 ₲ por comida)",
+        "blockCustomer": "4. Tus Datos de Contacto",
+        "lblCustName": "Nombre & Apellido *",
+        "custNamePlaceholder": "Ej: Carlos Benítez",
+        "lblCustPhone": "WhatsApp / Teléfono *",
+        "lblCustCI": "C.I. o RUC (para la factura legal paraguaya) *",
+        "lblCustAddress": "Dirección de Delivery o Retiro en el Club",
+        "custAddressPlaceholder": "Ej: Retiro en el club de Areguá o dirección completa",
+        "blockPayment": "5. Medio de Pago Localizado en Paraguay",
+        "gwBancard": "Bancard vPOS",
+        "gwSipap": "SIPAP Transferencia",
+        "gwTigo": "Tigo Money",
+        "gwQr": "QR Bancard",
+        "txtBancardTitle": "🔒 Pasarela Oficial Bancard vPOS (Tarjetas de Crédito & Débito Paraguay)",
+        "lblCardNum": "Número de Tarjeta (Visa, Mastercard, Panal, Cabal)",
+        "lblCardExp": "Fecha de Expiración (MM/AA)",
+        "lblCardCvv": "Código de Seguridad CVV",
+        "txtBancardSecurity": "✓ Tokenización segura PCI-DSS certificada por Bancard Paraguay. Listo para débito automático.",
+        "txtSipapTitle": "🏦 Datos Bancarios SIPAP (Transferencia Interbancaria en Guaraníes) :",
+        "sipapBankLabel": "Banco :",
+        "sipapHolderLabel": "Titular :",
+        "sipapRucLabel": "RUC :",
+        "sipapAccountLabel": "Caja de Ahorro Gs :",
+        "sipapCityLabel": "Sede :",
+        "btnCopySipap": "📋 Copiar Datos SIPAP para Transferir",
+        "txtTigoTitle": "📱 Débito Instantáneo en Billetera Móvil (Tigo Money / Personal) :",
+        "lblTigoPhone": "Número de Teléfono de Billetera (Paraguay)",
+        "txtTigoNote": "Se enviará una notificación a tu teléfono para ingresar tu PIN y confirmar el pago.",
+        "txtQrTitle": "📲 Escaneá desde la app de tu banco en Paraguay (QR Simple)",
+        "txtQrCompatible": "Compatible con Itaú, Continental, Ueno, Familiar, Sudameris, Atlas y GNB.",
+        "sumDiscountLabel": "Descuento Débito Automático (-5%) :",
+        "sumDeliveryLabel": "Delivery Areguá (+20% del abono) :",
+        "sumProtLabel": "Doble Porción de Proteína :",
+        "sumTotalLabel": "TOTAL A PAGAR :",
+        "lblLegalAccept": "Acepto las <a href=\"#\" onclick=\"window.openLegalModal(); return false;\" style=\"color: var(--brand-blue-light); text-decoration: underline;\">condiciones legales & sanitarias</a> aplicables a gimnasios y gastronomía en Paraguay.",
+        "btnSubmitOrder": "Confirmar Pedido & Enviar a WhatsApp (+595 995 620416)",
+        "legalModalTitle": "Condiciones Legales & Reglamentarias (Paraguay)",
+        "legalArt1Title": "1. Identificación y Establecimiento (Areguá, Paraguay)",
+        "legalArt1Text": "El complejo <strong>« Olimpo Team Kickboxing & Restaurante del Olimpo »</strong> está ubicado en Bristol de Areguá, cerca del Cacique (Avenida Mariscal Estigarribia), ciudad de Areguá, Departamento Central, República del Paraguay. Teléfono oficial de contacto y WhatsApp: +595 995 620416.",
+        "legalArt2Title": "2. Reglamentación Sanitaria & Alimentaria (INAN / MSPyBS)",
+        "legalArt2Text": "Todas las preparaciones culinarias servidas por el Restaurante del Olimpo cumplen rigurosamente con las normativas sanitarias dictadas por el <strong>Instituto Nacional de Alimentación y Nutrición (INAN)</strong> y el Ministerio de Salud Pública y Bienestar Social del Paraguay. Los macronutrientes se pesan y se preparan frescos en el día. Se respeta estrictamente la cadena de frío para todas las carnes frescas y productos fermentados.",
+        "legalArt3Title": "3. Aptitud Física & Práctica de Deportes de Combate (Ley N° 2874/06 del Deporte)",
+        "legalArt3Text": "De conformidad con las leyes deportivas del Paraguay, cada socio de las clases de <strong>Kickboxing K-1 Rules</strong> y <strong>Boxeo Tradicional Inglés</strong> manifiesta encontrarse en óptimas condiciones físicas y cardiovasculares. El uso de protecciones personales reglamentarias (vendas, bucal, guantes de boxeo) es obligatorio en sesiones de guanteo.",
+        "legalArt4Title": "4. Débito Automático Bancard & Cancelaciones",
+        "legalArt4Text": "Las membresías con « Débito Automático » cuentan con un 5% de descuento contractual. Los cobros recurrentes son procesados por <strong>Bancard vPOS Paraguay</strong> con certificación PCI-DSS. Podés cancelar o pausar el débito en cualquier momento por WhatsApp (+595 995 620416) con 48 hs de anticipación sin ninguna penalidad.",
+        "legalArt5Title": "5. Facturación Legal (Ley N° 6380/19 de Modernización Tributaria)",
+        "legalArt5Text": "Todas las operaciones cuentan con Factura Legal oficial paraguaya con IVA incluido (10% y 5%). Los clientes proporcionan su número de RUC o Cédula de Identidad (C.I.) al confirmar su orden.",
+        "legalArt6Title": "6. Servicio de Delivery a Domicilio",
+        "legalArt6Text": "El servicio de delivery cubre Areguá y alrededores con un recargo del 20% del valor del pedido. Los retiros directos en el club (Bristol de Areguá) son 100% gratuitos en horarios de servicio (11:00 a 13:00 y 18:00 a 20:30).",
+        "btnLegalClose": "Entendido y Acepto",
+        "btnLightboxPdf": "📄 Abrir PDF Completo",
+        "btnLightboxPng": "⬇ PNG",
+        "btnLightboxClose": "Cerrar",
+        "mobileStickyHome": "Inicio",
+        "mobileStickyClub": "Club (150k)",
+        "mobileStickyMenu": "Menú",
+        "mobileStickyGains": "Ganancias",
+        "mobileStickyOrder": "Pedir",
+        "footerDesc": "El primer complejo de Areguá que combina ring de Kickboxing K-1, Boxeo Tradicional Inglés y cocina deportiva saludable calibrada a los macronutrientes.",
+        "footerLoc": "📍 Sede: Bristol de Areguá, cerca del Cacique (Areguá, Paraguay)",
+        "footerWa": "WhatsApp : +595 995 620416 (¡Sin Reserva Previa!)",
+        "footerCol1Title": "Fighting Club",
+        "footerLnkClub1": "Kickboxing K-1 Rules",
+        "footerLnkClub2": "Boxeo Tradicional Inglés",
+        "footerLnkClub3": "Bolsas Pesadas & Manoplas",
+        "footerLnkClub4": "Horarios de Entrenamiento",
+        "footerLnkClub5": "Membresía Club (150.000 ₲)",
+        "footerCol2Title": "Restaurante Fit",
+        "footerLnkResto1": "La Regla de Oro (1/3, 1/3, 1/3)",
+        "footerLnkResto2": "Menú de la Semana",
+        "footerLnkResto3": "Street-Food Proteico",
+        "footerLnkResto4": "Bebidas de Recuperación",
+        "footerLnkResto5": "Descargar Flyers Oficiales",
+        "footerCol3Title": "Afiliados & Legal",
+        "footerLnkAff1": "Programa Embajadores (15%)",
+        "footerLnkAff2": "Calculador de Ganancias",
+        "footerLnkAff3": "Generar Enlace Rastreado",
+        "footerLnkAff4": "Condiciones Legales (Paraguay)",
+        "footerLnkAff5": "Atención al Cliente & WhatsApp",
+        "footerCopyright": "© 2026 Olimpo Team Kickboxing & Restaurante del Olimpo. Bristol de Areguá, cerca del Cacique, Paraguay.",
+        "footerCroTag": "Arquitectura de alto rendimiento deportivo y nutrición real.",
+        "affBannerGuest": "🤝 Invitado oficial de:",
+        "affBannerBenefit": "• Tu beneficio de descuento y fidelidad está activo en tu pedido."
     },
-    fr: {
-      alertBar: 'Cuota del día : 50 plats frais cuisinés chaque matin • Lundi au Samedi à Areguá • Sans Réservation requise',
-      navHome: 'Accueil',
-      navFacility: 'Le Complexe',
-      navFightClub: 'Fight Club',
-      navRestoFit: 'Restaurant',
-      navFlyers: 'Flyers',
-      navPricing: 'Tarifs',
-      navAffiliates: 'Affiliation',
-      navContact: 'Accès',
-      navJoin: 'Rejoindre',
-      heroTag: 'Club Officiel de Combat & Nutrition Athlétique • Bristol d\'Areguá',
-      heroTitle1: 'FORGE TON CORPS DE',
-      heroTitleWarrior: 'GUERRIER',
-      heroTitle2: 'NOURRIS TA PUISSANCE À',
-      heroTitleOlimpo: 'L\'OLYMPE',
-      heroLead: 'Le premier complexe d\'Areguá fusionnant la rigueur du <strong>Kickboxing K-1</strong> et de la <strong>Boxe Traditionnelle Anglaise</strong> avec une <strong>nutrition sportive calibrée aux macronutriments</strong> (1/3 Protéine, 1/3 Glucides propres, 1/3 Fibres). Cuisiné frais sur place chaque matin.',
-      btnViewPacks: 'Choisir un Plan',
-      btnGoToClub: '📍 Se rendre au club',
-      heroProofAthletes: '+50 Athlètes',
-      heroProofCommunity: 'Communauté Olimpo',
-      showcaseBadge: 'Écosystème Olimpo',
-      showcaseLive: 'Ouvert Lun - Sam',
-      showcaseSub: 'Pack Fighter Pro (2 Plats/Jour)',
-      btnShowcaseOrder: 'Commander',
-      facilityTag: 'PROJET EN EXPANSION & COMMUNAUTÉ COMBAT',
-      facilityTitle: 'UN PROJET QUI GRANDIT AVEC VOUS <span>• LE CLUB EST DÉJÀ OUVERT !</span>',
-      facilityPunchline1: '→ Viens t\'entraîner à combattre !',
-      facilityPunchline2: '→ Et nourris ton corps directement après ta séance !',
-      facilityDesc: 'À l\'Olympe, nous avons éliminé le plus grand obstacle des athlètes : s\'entraîner dur puis gâcher ses efforts par manque de temps ou de repas adaptés. Notre complexe réunit sous le même toit une salle de combat et une cuisine sportive.',
-      evolutionBadge: '📐 PLANS DU PROJET & CLUB 100% OPÉRATIONNEL',
-      facilityProjectNotice: 'Ces visuels représentent les <strong>plans architecturaux et la vision finale de notre complexe</strong>. Nous sommes encore en cours de travaux et d\'aménagement, mais <strong>le club est d\'ores et déjà 100% ouvert et opérationnel</strong> pour tous tes entraînements de Kickboxing K-1 et de Boxe Traditionnelle Anglaise. Viens faire partie des pionniers et participe directement à l\'évolution du club !',
-      rotatorSlide1: '🥊 1. La Salle de Combat (Ring & Sacs) • Club Déjà Ouvert',
-      rotatorSlide2: '🥗 2. Le Restaurant Athlétique • En Cours de Finition',
-      rotatorHint: 'Plans du projet • Rotation auto',
-      clubPill: 'Académie de Combat',
-      clubTitle: 'FIGHTING CLUB <span>OLIMPO TEAM</span>',
-      clubSubtitle: 'Développe une discipline d\'acier, une vitesse explosive et une puissance musculaire sur le ring. Spécialisation rigoureuse en Kickboxing K-1 Rules et Boxe Traditionnelle Anglaise. Aucun combat au sol ni grappling : frappe pure, esquives et puissance.',
-      restoPill: 'Nutrition Sportive',
-      restoTitle: 'RESTAURANT DE L\'<span>OLYMPE</span>',
-      restoSubtitle: 'La vraie alimentation dont ton corps a besoin après l\'effort. Des repas frais cuisinés chaque matin avec des ingrédients sains, sans huiles industrielles et pesés au gramme près.',
-      goldenRuleTitle: 'La Règle d\'Or de l\'Assiette Athlétique Olympe',
-      flyersPill: 'Support Officiel Imprimable',
-      flyersTitle: 'FLYER OFFICIEL <span>RECTO & VERSO (PDF)</span>',
-      flyersSubtitle: 'Menu complet et formules d\'abonnement réunis sur 1 seule feuille recto/verso (PDF 2 pages A4 prêt à imprimer ou partager).',
-      btnOpenPdf: 'Télécharger le Flyer Officiel 2 Pages en PDF',
-      pdfHint: 'Document officiel en haute résolution • Format A4 Recto/Verso',
-      pricingPill: 'Tarifs & Abonnements',
-      pricingTitle: 'PLANS D\'<span>ABONNEMENT</span>',
-      pricingSubtitle: 'Choisis ton plan. Active le <strong>débit automatique Bancard</strong> pour bénéficier d\'une remise fidélité de 5% et sécuriser tes entraînements et repas frais sans coupure.',
-      cycleWeekly: 'Semaine (6 Jours)',
-      cycleMonthly: 'Mois Complet (Lun au Sam)',
-      adControlTitle: '💳 Débit Automatique Bancard :',
-      adControlDisc: '5% de Remise Immédiate Incluse',
-      planTypeClub: 'Académie de Combat',
-      planTitleClub: 'Club Kickboxing & Boxe',
-      planFeatClub1: 'Accès libre aux cours de <strong>Kickboxing K-1 Rules</strong>',
-      planFeatClub2: 'Cours de <strong>Boxe Traditionnelle Anglaise</strong>',
-      planFeatClub3: 'Accès au ring, sacs lourds de 60kg et leçons de frappe',
-      planFeatClub4: 'Jour d\'essai gratuit offert sans engagement',
-      planFeatClub5: 'Encadrement technique par des combattants d\'expérience',
-      btnSelectClub: 'S\'inscrire au Club (150k)',
-      planType1Plato: 'Nutrition Quotidienne',
-      planTitle1Plato: 'Pack 1 Plat / Jour',
-      planFeat1Plato1: '1 repas complet par jour : Déjeuner ou Dîner',
-      planFeat1Plato2: 'Recettes tournantes fraîches du Lundi au Samedi',
-      planFeat1Plato3: '200g de protéine pure + glucides propres + salade',
-      planFeat1Plato4: 'Fruits de saison frais inclus à chaque repas',
-      planFeat1Plato5: 'Retrait direct à la salle ou livraison (+20%)',
-      btnSelect1Plato: 'Choisir 1 Plat/Jour',
-      ribbonPopular: '⭐ Plan le Plus Populaire',
-      planTypeFighterPro: 'Athlète & Combattant',
-      planTitleFighterPro: 'Fighter Pro (2 Plats)',
-      planFeatFighter1: '<strong>2 repas complets par jour :</strong> Midi + Soir',
-      planFeatFighter2: 'Zéro courses, zéro corvée de cuisine après l\'entraînement',
-      planFeatFighter3: 'Stop au catabolisme nocturne : récupération maximale',
-      planFeatFighter4: 'Plats chauds hermétiques prêts à emporter',
-      planFeatFighter5: 'Tarif ultra-compétitif : moins de 19.000 ₲ le repas sain',
-      btnSelectFighter: 'Choisir Fighter Pro',
-      ribbonElite: '🏆 Transformation Totale',
-      planTypeElite: 'Pack Hybride Ultime',
-      planTitleElite: 'Combo Fighter Elite',
-      planFeatElite1: '<strong>Accès complet illimité</strong> aux cours de Kickboxing & Boxe',
-      planFeatElite2: '<strong>2 repas athlétiques par jour</strong> préparés à la salle',
-      planFeatElite3: 'Suivi mensuel de composition corporelle et poids',
-      planFeatElite4: 'Priorité de service en cuisine et à la livraison',
-      planFeatElite5: 'L\'expérience totale de l\'Olympe au meilleur prix',
-      btnSelectElite: 'Choisir le Pack Elite',
-      modalTitle: 'Inscription & Paiement Sécurisé (Paraguay)',
-      step1Badge: 'Étape 1',
-      step1Title: 'Entraînement au Club de Combat (Bristol d\'Areguá)',
-      step1Desc: 'Kickboxing K-1 Rules & Boxe Traditionnelle Anglaise. Ring de frappe et sacs lourds.',
-      quoteMain: '« S\'entraîner c\'est 50% du travail, l\'autre moitié c\'est de bien se nourrir. »',
-      quoteSub: '« S\'entraîner dur sans bien manger, c\'est comme ramer sans rames ! » — Règle d\'or de l\'Olympe',
-      step2Badge: 'Étape 2',
-      step2Title: 'Choisis ton Programme Nutritif (Cuisine du Club)',
-      adTitle: '🔄 Activer le Débit Automatique Bancard (-5% de remise)',
-      adSub: 'Renouvellement automatique chaque mois. Résiliable à tout moment en 1 clic.',
-      blockServices: '3. Services & Livraison',
-      lblDelivery: '<strong>Service Livraison à Domicile (+20% de l\'abonnement)</strong> — Retrait au club gratuit sinon.',
-      lblDoubleProt: 'Double Portion de Protéine (+2x Viande/Poulet : +10.000 ₲ par repas)',
-      blockCustomer: '4. Vos Coordonnées',
-      lblCustName: 'Nom & Prénom *',
-      lblCustPhone: 'WhatsApp / Téléphone *',
-      lblCustCI: 'C.I. ou RUC (pour la facture paraguayenne) *',
-      lblCustAddress: 'Adresse de Livraison ou Retrait au Club',
-      blockPayment: '5. Moyen de Paiement Localisé au Paraguay',
-      sumDiscountLabel: 'Remise Débit Automatique (-5%) :',
-      sumDeliveryLabel: 'Livraison Areguá (+20% abonnement) :',
-      sumProtLabel: 'Double Portion Protéine :',
-      sumTotalLabel: 'TOTAL À RÉGLER :',
-      lblLegalAccept: 'J\'accepte les <a href="#" onclick="window.openLegalModal(); return false;" style="color: var(--brand-blue-light); text-decoration: underline;">conditions légales & sanitaires</a> applicables aux clubs de sport et à la restauration au Paraguay.',
-      btnSubmitOrder: 'Valider la Commande & Transmettre sur WhatsApp (+595 995 620416)',
-      affPill: 'Revenus Passifs',
-      affTitle: 'PROGRAMME D\'<span>AMBASSADEURS & AFFILIATION</span>',
-      contactPill: 'Accès & Contact',
-      contactTitle: 'REJOINS L\'<span>OLYMPE À AREGUÁ</span>'
+    "fr": {
+        "alertBar": "Cuota del día : 50 plats frais cuisinés chaque matin • Lundi au Samedi à Areguá • Sans Réservation requise",
+        "navHome": "Accueil",
+        "navFacility": "Le Complexe",
+        "navFightClub": "Fight Club",
+        "navRestoFit": "Restaurant",
+        "navFlyers": "Flyers",
+        "navPricing": "Tarifs",
+        "navAffiliates": "Affiliation",
+        "navContact": "Accès",
+        "navJoin": "Rejoindre",
+        "navBrandSub": "Club & Resto Fit",
+        "heroTag": "Club Officiel de Combat & Nutrition Athlétique • Bristol d'Areguá",
+        "heroTitle1": "FORGE TON CORPS DE",
+        "heroTitleWarrior": "GUERRIER",
+        "heroTitle2": "NOURRIS TA PUISSANCE À",
+        "heroTitleOlimpo": "L'OLYMPE",
+        "heroLead": "Le premier complexe d'Areguá fusionnant la rigueur du <strong>Kickboxing K-1</strong> et de la <strong>Boxe Traditionnelle Anglaise</strong> avec une <strong>nutrition sportive calibrée aux macronutriments</strong> (1/3 Protéine, 1/3 Glucides propres, 1/3 Fibres). Cuisiné frais sur place chaque matin.",
+        "btnViewPacks": "Choisir un Plan",
+        "btnGoToClub": "📍 Se rendre au club",
+        "heroProofAthletes": "+50 Athlètes",
+        "heroProofCommunity": "Communauté Olimpo",
+        "heroDuoClubTitle": "Fighting Club",
+        "heroDuoClubSub": "Kickboxing • Boxe Anglaise • 150k/mois",
+        "heroDuoRestoTitle": "Restaurant Fit",
+        "heroDuoRestoSub": "200g Poulet • Macros Pesés",
+        "showcaseBadge": "Écosystème Olimpo",
+        "showcaseLive": "Ouvert Lun - Sam",
+        "showcaseSub": "Pack Fighter Pro (2 Plats/Jour)",
+        "showcasePriceVal": "Dès 18.801 ₲ / plat",
+        "btnShowcaseOrder": "Commander",
+        "facilityTag": "PROJET EN EXPANSION & COMMUNAUTÉ COMBAT",
+        "facilityTitle": "UN PROJET QUI GRANDIT AVEC VOUS <span>• LE CLUB EST DÉJÀ OUVERT !</span>",
+        "facilityPunchline1": "→ Viens t'entraîner à combattre !",
+        "facilityPunchline2": "→ Et nourris ton corps directement après ta séance !",
+        "facilityDesc": "À l'Olympe, nous avons éliminé le plus grand obstacle des athlètes : s'entraîner dur puis gâcher ses efforts par manque de temps ou de repas adaptés. Notre complexe réunit sous le même toit une salle de combat et une cuisine sportive.",
+        "evolutionBadge": "📐 PLANS DU PROJET & CLUB 100% OPÉRATIONNEL",
+        "facilityProjectNotice": "Ces visuels représentent les <strong>plans architecturaux et la vision finale de notre complexe</strong>. Nous sommes encore en cours de travaux et d'aménagement, mais <strong>le club est d'ores et déjà 100% ouvert et opérationnel</strong> pour tous tes entraînements de Kickboxing K-1 et de Boxe Traditionnelle Anglaise. Viens faire partie des pionniers et participe directement à l'évolution du club !",
+        "rotatorSlide1": "🥊 1. La Salle de Combat (Ring & Sacs) • Club Déjà Ouvert",
+        "rotatorSlide2": "🥗 2. Le Restaurant Athlétique • En Cours de Finition",
+        "rotatorHint": "Plans du projet • Rotation auto",
+        "facilityCard1Badge": "1. Cœur du Complexe",
+        "facilityCard1Title": "🥊 La Salle de Combat (Fighting Club)",
+        "facilityCard1Desc": "Un espace pensé pour la rigueur pugilistique. Pas de gadgets inutiles : un ring de combat, des sacs de frappe lourds pour le conditionnement, des surfaces d'appuis fermes et des entraîneurs chevronnés dédiés au <strong>Kickboxing K-1</strong> et à la <strong>Boxe Traditionnelle Anglaise</strong>.",
+        "facilityCard1Price": "Tarif Adhésion : 150.000 ₲ / mois • Jour d'essai gratuit disponible",
+        "facilityCard2Badge": "2. Intégré à la Salle",
+        "facilityCard2Title": "🥗 Le Restaurant Athlétique du Club",
+        "facilityCard2Desc": "La cuisine du club opère chaque matin dès 06h00 pour concocter les 50 repas du jour. Chaque assiette respecte la Règle d'Or (1/3 Protéines, 1/3 Glucides propres, 1/3 Fibres et fruit). Tu manges exactement ce que ton métabolisme réclame pour réparer les tissus et exploser tes performances.",
+        "facilityCard2Quote": "« S'entraîner c'est 50% du travail, l'autre moitié c'est de bien se nourrir. »",
+        "clubPill": "Académie de Combat",
+        "clubTitle": "FIGHTING CLUB <span>OLIMPO TEAM</span>",
+        "clubSubtitle": "Développe une discipline d'acier, une vitesse explosive et une puissance musculaire sur le ring. Spécialisation rigoureuse en Kickboxing K-1 Rules et Boxe Traditionnelle Anglaise. Aucun combat au sol ni grappling : frappe pure, esquives et puissance.",
+        "schedHeaderTitle": "Planning des Séances de Combat",
+        "schedHeaderSub": "Entraînements du Lundi au Samedi au club (Bristol d'Areguá, près du Cacique).",
+        "btnBookTrial": "Réserver un Essai Gratuit",
+        "schedSlot1": "🌅 Matin (07:00 – 08:30)",
+        "schedClass1": "Condition Physique & Sacs de Frappe",
+        "schedMeta1": "Cardio combat, renforcement du tronc et combinaisons aux sacs lourds.",
+        "schedSlot2": "☀️ Midi (12:30 – 14:00)",
+        "schedClass2": "Boxe Traditionnelle Anglaise",
+        "schedMeta2": "Jeu de jambes, esquives rotatives et travail technique aux pattes d'ours.",
+        "schedSlot3": "🌙 Soir (18:00 – 19:30)",
+        "schedClass3": "Kickboxing K-1 Rules Collectif",
+        "schedMeta3": "Cours phare : poings-pieds, balayages, enchaînements et haute intensité.",
+        "schedSlot4": "🔥 Avancé (19:30 – 21:00)",
+        "schedClass4": "Sparring Contrôlé & Perfectionnement",
+        "schedMeta4": "Assauts souples avec protections intégrales et mise en situation de ring.",
+        "restoPill": "Nutrition Sportive",
+        "restoTitle": "RESTAURANT DE L'<span>OLYMPE</span>",
+        "restoSubtitle": "La vraie alimentation dont ton corps a besoin après l'effort. Des repas frais cuisinés chaque matin avec des ingrédients sains, sans huiles industrielles et pesés au gramme près.",
+        "goldenRuleTitle": "La Règle d'Or de l'Assiette Athlétique Olympe",
+        "goldenRuleSubtitle": "Équilibre métabolique pensé pour sécher le tissu adipeux et réparer les fibres musculaires.",
+        "triadBadge1": "1/3 de l'Assiette",
+        "triadTitle1": "Protéines Pures",
+        "triadDesc1": "Blanc de poulet grillé (200g), bœuf maigre ou œufs frais pour la reconstruction musculaire.",
+        "triadBadge2": "1/3 de l'Assiette",
+        "triadTitle2": "Glucides Propres",
+        "triadDesc2": "Riz blanc vapeur, pâtes au wok ou manioc fondant pour recharger les réserves de glycogène.",
+        "triadBadge3": "1/3 de l'Assiette",
+        "triadTitle3": "Fibres & Vitamines",
+        "triadDesc3": "Salades croquantes fraîches, légumes sautés au wok et fruits de saison entiers (orange, pomme, banane).",
+        "goalsHeaderTitle": "Calibre Ton Assiette Selon Ton Objectif Actuel",
+        "goalsHeaderSub": "Clique sur ton profil pour voir comment nous équilibrons tes portions en cuisine :",
+        "goalTabWeightLoss": "1. Perte de Poids",
+        "goalTabCutting": "2. Sèche & Définition",
+        "goalTabMaintenance": "3. Maintien (Règle d'Or)",
+        "goalTabBulking": "4. Prise de Masse",
+        "macroLabelProt": "Protéine",
+        "macroLabelCarbs": "Glucides",
+        "macroLabelVeg": "Fibres & Fruit",
+        "tabAllDishes": "Tous les Plats",
+        "tabMonday": "Lundi",
+        "tabTuesday": "Mardi",
+        "tabWednesday": "Mercredi",
+        "tabThursday": "Jeudi",
+        "tabFriday": "Vendredi",
+        "tabSaturday": "Samedi",
+        "flyersPill": "Support Officiel Imprimable",
+        "flyersTitle": "FLYER OFFICIEL <span>RECTO & VERSO (PDF)</span>",
+        "flyersSubtitle": "Menu complet et formules d'abonnement réunis sur 1 seule feuille recto/verso (PDF 2 pages A4 prêt à imprimer ou partager).",
+        "btnOpenPdf": "Télécharger le Flyer Officiel 2 Pages en PDF",
+        "pdfHint": "Document officiel en haute résolution • Format A4 Recto/Verso",
+        "pricingPill": "Tarifs & Abonnements",
+        "pricingTitle": "PLANS D'<span>ABONNEMENT</span>",
+        "pricingSubtitle": "Choisis ton plan. Active le <strong>débit automatique Bancard</strong> pour bénéficier d'une remise fidélité de 5% et sécuriser tes entraînements et repas frais sans coupure.",
+        "cycleWeekly": "Semaine (6 Jours)",
+        "cycleMonthly": "Mois Complet (Lun au Sam)",
+        "adControlTitle": "💳 Débit Automatique Bancard :",
+        "adControlDisc": "5% de Remise Immédiate Incluse",
+        "planTypeClub": "Académie de Combat",
+        "planTitleClub": "Club Kickboxing & Boxe",
+        "planFeatClub1": "Accès libre aux cours de <strong>Kickboxing K-1 Rules</strong>",
+        "planFeatClub2": "Cours de <strong>Boxe Traditionnelle Anglaise</strong>",
+        "planFeatClub3": "Accès au ring, sacs lourds de 60kg et leçons de frappe",
+        "planFeatClub4": "Jour d'essai gratuit offert sans engagement",
+        "planFeatClub5": "Encadrement technique par des combattants d'expérience",
+        "btnSelectClub": "S'inscrire au Club (150k)",
+        "planType1Plato": "Nutrition Quotidienne",
+        "planTitle1Plato": "Pack 1 Plat / Jour",
+        "planFeat1Plato1": "1 repas complet par jour : Déjeuner ou Dîner",
+        "planFeat1Plato2": "Recettes tournantes fraîches du Lundi au Samedi",
+        "planFeat1Plato3": "200g de protéine pure + glucides propres + salade",
+        "planFeat1Plato4": "Fruits de saison frais inclus à chaque repas",
+        "planFeat1Plato5": "Retrait direct à la salle ou livraison (+20%)",
+        "btnSelect1Plato": "Choisir 1 Plat/Jour",
+        "ribbonPopular": "⭐ Plan le Plus Populaire",
+        "planTypeFighterPro": "Athlète & Combattant",
+        "planTitleFighterPro": "Fighter Pro (2 Plats)",
+        "planFeatFighter1": "<strong>2 repas complets par jour :</strong> Midi + Soir",
+        "planFeatFighter2": "Zéro courses, zéro corvée de cuisine après l'entraînement",
+        "planFeatFighter3": "Stop au catabolisme nocturne : récupération maximale",
+        "planFeatFighter4": "Plats chauds hermétiques prêts à emporter",
+        "planFeatFighter5": "Tarif ultra-compétitif : moins de 19.000 ₲ le repas sain",
+        "btnSelectFighter": "Choisir Fighter Pro",
+        "ribbonElite": "🏆 Transformation Totale",
+        "planTypeElite": "Pack Hybride Ultime",
+        "planTitleElite": "Combo Fighter Elite",
+        "planFeatElite1": "<strong>Accès complet illimité</strong> aux cours de Kickboxing & Boxe",
+        "planFeatElite2": "<strong>2 repas athlétiques par jour</strong> préparés à la salle",
+        "planFeatElite3": "Suivi mensuel de composition corporelle et poids",
+        "planFeatElite4": "Priorité de service en cuisine et à la livraison",
+        "planFeatElite5": "L'expérience totale de l'Olympe au meilleur prix",
+        "btnSelectElite": "Choisir le Pack Elite",
+        "affPill": "Revenus Passifs",
+        "affTitle": "PROGRAMME D'<span>AMBASSADEURS & AFFILIATION</span>",
+        "affSubtitle": "Tu t'entraînes au club ou tu adores nos plats ? Invite tes amis, tes partenaires de combat et tes collègues et <strong>touche jusqu'à 15% de commission récurrente</strong> chaque mois tant qu'ils restent abonnés.",
+        "affHowTitle": "Comment Fonctionne le Système d'Affiliation ?",
+        "affHowSteps": "1. Génère ton lien de parrainage exclusif ci-dessous.<br>2. Partage-le sur WhatsApp, Instagram ou directement au club.<br>3. Dès qu'un filleul commande son pack de repas ou s'inscrit au club, ta commission est créditée automatiquement.<br>4. Retire tes gains quand tu veux par virement bancaire SIPAP, portefeuille Tigo Money ou en espèces à la réception du club.",
+        "affStat1Label": "Commissions Packs Nutrition",
+        "affStat2Label": "Commissions Abonnements Club",
+        "affStat3Num": "Mois après Mois",
+        "affStat3Label": "Rémunération Récurrente",
+        "affStat4Label": "Paiement Direct au Paraguay",
+        "calcTitle": "Simulateur de Gains Mensuels par Filleuls",
+        "calcLabelMeals": "Amis abonnés aux repas (Packs de nutrition) :",
+        "calcLabelClub": "Amis inscrits aux cours de Kickboxing & Boxe :",
+        "calcResultLabel": "Revenus Estimés Par Mois :",
+        "calcResultNote": "Avec quelques personnes parrainées, ton propre abonnement et tes repas te reviennent totalement GRATUITS avec de l'argent en plus !",
+        "linkGenTitle": "Générateur de Ton Lien Ambassadeur",
+        "linkGenSub": "Renseigne ton prénom ou ton pseudo sportif pour créer ton lien tracké :",
+        "affAliasPlaceholder": "Ex: GUERRIER_ALEX",
+        "btnGenLink": "Générer Mon Lien",
+        "btnCopyLink": "📋 Copier le Lien",
+        "btnShareWa": "📲 Partager sur WhatsApp",
+        "dashTitle": "Aperçu de Ton Tableau de Bord Affilié",
+        "btnWithdraw": "💸 Demander un Virement de Gains",
+        "dashClicks": "Clics sur ton lien",
+        "dashSignups": "Filleuls inscrits",
+        "dashTotalEarn": "Commissions totales",
+        "dashBalance": "Solde disponible",
+        "contactPill": "Accès & Contact",
+        "contactTitle": "REJOINS L'<span>OLYMPE À AREGUÁ</span>",
+        "contactSubtitle": "Adresse officielle : <strong>Bristol d'Areguá, près du Cacique</strong> (Av. Mariscal Estigarribia), Areguá, Paraguay. Retrait sur place au club ou service de livraison à domicile (+20%).",
+        "contactHoursTitle": "Horaires de Service & Retrait",
+        "contactLocLabel": "📍 Emplacement :",
+        "contactLocVal": "Bristol d'Areguá, près du Cacique",
+        "contactLunchLabel": "Service Midi (Déjeuner) :",
+        "contactDinnerLabel": "Service Soir (Dîner) :",
+        "contactDaysLabel": "Jours d'Ouverture :",
+        "contactDaysVal": "Lundi au Samedi",
+        "contactSundayLabel": "Dimanche :",
+        "contactSundayVal": "Fermé (Repos du Guerrier)",
+        "contactDeliveryLabel": "Service Livraison :",
+        "contactDeliveryVal": "+20% du montant de commande",
+        "btnGoogleMaps": "📍 Ouvrir dans Google Maps",
+        "btnWaze": "🚗 Ouvrir dans Waze",
+        "btnContactWa": "💬 Écrire sur WhatsApp (+595 995 620416)",
+        "faqTitle": "Questions Fréquentes",
+        "faqQ1": "Faut-il réserver à l'avance pour manger ou s'entraîner ?",
+        "faqA1": "Non. La règle officielle du complexe est <strong>Sans Réservation</strong>. Viens directement sur place (Bristol d'Areguá, près du Cacique) pour ton premier cours d'essai ou pour manger ton plat du jour.",
+        "faqQ2": "Puis-je commander des repas sans m'inscrire au club ?",
+        "faqA2": "Tout à fait ! Tu peux souscrire à un pack de nutrition seul (1 ou 2 plats/jour) ou commander des plats à l'unité dès 7.000 ₲ à 25.000 ₲. Tous les 5 plats achetés, le 6ème est 100% OFFERT !",
+        "faqQ3": "Combien coûte l'adhésion au club de Kickboxing & Boxe ?",
+        "faqA3": "L'adhésion mensuelle est de <strong>150.000 ₲ / mois</strong> (150k PYG) en accès libre à tous les cours. Le premier jour d'essai est 100% gratuit.",
+        "faqQ4": "Comment fonctionne le débit automatique Bancard ?",
+        "faqA4": "Il est sécurisé par Bancard Paraguay avec cryptage PCI-DSS. Tu profites d'une remise immédiate de 5% sur ton abonnement et tu peux annuler ou suspendre à tout moment sans frais.",
+        "modalTitle": "Inscription & Paiement Sécurisé (Paraguay)",
+        "step1Badge": "Étape 1",
+        "step1Title": "Entraînement au Club de Combat (Bristol d'Areguá)",
+        "step1Desc": "Kickboxing K-1 Rules & Boxe Traditionnelle Anglaise. Ring de frappe et sacs lourds.",
+        "quoteMain": "« S'entraîner c'est 50% du travail, l'autre moitié c'est de bien se nourrir. »",
+        "quoteSub": "« S'entraîner dur sans bien manger, c'est comme ramer sans rames ! » — Règle d'or de l'Olympe",
+        "step2Badge": "Étape 2",
+        "step2Title": "Choisis ton Programme Nutritif (Cuisine du Club)",
+        "lblSelectDish": "Sélectionne ton Plat ou Street-Food :",
+        "lblPlateQuantity": "Nombre de Plats (5 achetés = le 6ème OFFERT !) :",
+        "adTitle": "🔄 Activer le Débit Automatique Bancard (-5% de remise)",
+        "adSub": "Renouvellement automatique chaque mois. Résiliable à tout moment en 1 clic.",
+        "blockServices": "3. Services & Livraison",
+        "lblDelivery": "<strong>Service Livraison à Domicile (+20% de l'abonnement)</strong> — Retrait au club gratuit sinon.",
+        "lblDoubleProt": "Double Portion de Protéine (+2x Viande/Poulet : +10.000 ₲ par repas)",
+        "blockCustomer": "4. Vos Coordonnées",
+        "lblCustName": "Nom & Prénom *",
+        "custNamePlaceholder": "Ex: Jean Dupont",
+        "lblCustPhone": "WhatsApp / Téléphone *",
+        "lblCustCI": "C.I. ou RUC (pour la facture paraguayenne) *",
+        "lblCustAddress": "Adresse de Livraison ou Retrait au Club",
+        "custAddressPlaceholder": "Ex: Retrait au club d'Areguá ou adresse complète",
+        "blockPayment": "5. Moyen de Paiement Localisé au Paraguay",
+        "gwBancard": "Bancard vPOS",
+        "gwSipap": "SIPAP Virement",
+        "gwTigo": "Tigo Money",
+        "gwQr": "QR Bancard",
+        "txtBancardTitle": "🔒 Passerelle Officielle Bancard vPOS (Cartes de Crédit & Débit Paraguay)",
+        "lblCardNum": "Numéro de Carte (Visa, Mastercard, Panal, Cabal)",
+        "lblCardExp": "Date d'expiration (MM/AA)",
+        "lblCardCvv": "Code CVV",
+        "txtBancardSecurity": "✓ Tokenisation sécurisée PCI-DSS certifiée par Bancard Paraguay. Prêt pour débit automatique.",
+        "txtSipapTitle": "🏦 Coordonnées Bancaires SIPAP (Virement Interbancaire en Guaraníes) :",
+        "sipapBankLabel": "Banque :",
+        "sipapHolderLabel": "Titulaire :",
+        "sipapRucLabel": "RUC :",
+        "sipapAccountLabel": "Caisse d'Épargne Gs :",
+        "sipapCityLabel": "Lieu :",
+        "btnCopySipap": "📋 Copier les Données SIPAP pour Virer",
+        "txtTigoTitle": "📱 Débit Instantané sur Portefeuille Mobile (Tigo Money / Personal) :",
+        "lblTigoPhone": "Numéro de Téléphone Portefeuille (Paraguay)",
+        "txtTigoNote": "Une notification push sera envoyée sur votre téléphone pour saisir votre code PIN et approuver le paiement.",
+        "txtQrTitle": "📲 Scannez depuis l'application de votre banque au Paraguay (QR Simple)",
+        "txtQrCompatible": "Compatible avec Itaú, Continental, Ueno, Familiar, Sudameris, Atlas et GNB.",
+        "sumDiscountLabel": "Remise Débit Automatique (-5%) :",
+        "sumDeliveryLabel": "Livraison Areguá (+20% abonnement) :",
+        "sumProtLabel": "Double Portion Protéine :",
+        "sumTotalLabel": "TOTAL À RÉGLER :",
+        "lblLegalAccept": "J'accepte les <a href=\"#\" onclick=\"window.openLegalModal(); return false;\" style=\"color: var(--brand-blue-light); text-decoration: underline;\">conditions légales & sanitaires</a> applicables aux clubs de sport et à la restauration au Paraguay.",
+        "btnSubmitOrder": "Valider la Commande & Transmettre sur WhatsApp (+595 995 620416)",
+        "legalModalTitle": "Conditions Légales & Réglementaires (Paraguay)",
+        "legalArt1Title": "1. Identification et Établissement (Areguá, Paraguay)",
+        "legalArt1Text": "Le complexe <strong>« Olimpo Team Kickboxing & Restaurante del Olimpo »</strong> est situé à Bristol d'Areguá, près du Cacique (Avenida Mariscal Estigarribia), ville d'Areguá, Département Central, République du Paraguay. Téléphone officiel de contact et WhatsApp : +595 995 620416.",
+        "legalArt2Title": "2. Réglementation Sanitaire & Alimentaire (INAN / MSPyBS)",
+        "legalArt2Text": "Toutes les préparations culinaires servies par le Restaurante del Olimpo respectent les normes d'hygiène et de manipulation des aliments édictées par l'<strong>Instituto Nacional de Alimentación y Nutrición (INAN)</strong> et le Ministère de la Santé Publique et du Bien-être Social du Paraguay. Les macronutriments sont pesés et préparés le jour même. La chaîne du froid est strictement observée pour l'ensemble des viandes fraîches (poulet, bœuf) et produits laitiers (kéfir artisanal).",
+        "legalArt3Title": "3. Aptitude Physique & Pratique des Sports de Combat (Ley N° 2874/06 del Deporte)",
+        "legalArt3Text": "Conformément aux lois paraguayennes régissant les activités physiques et sportives, tout adhérent aux cours de <strong>Kickboxing K-1 Rules</strong> et de <strong>Boxe Traditionnelle Anglaise</strong> atteste être en bonne condition cardiovasculaire et apte à la pratique sportive d'intensité modérée à haute. Le port des protections individuelles (bandes, protège-dents, gants réglementaires) est obligatoire lors des séances de sparring contrôlé.",
+        "legalArt4Title": "4. Débit Automatique Bancard & Modalités d'Annulation",
+        "legalArt4Text": "Les abonnements souscrits avec l'option « Débit Automatique » bénéficient d'une réduction contractuelle de 5%. Les règlements sont opérés de manière récurrente via la plateforme sécurisée <strong>Bancard vPOS Paraguay</strong> (certifiée PCI-DSS). L'utilisateur peut suspendre ou annuler son prélèvement automatique à tout moment par simple message WhatsApp au +595 995 620416 au moins 48 heures avant la date de renouvellement, sans aucune pénalité de sortie.",
+        "legalArt5Title": "5. Facturation Légale (Ley N° 6380/19 de Modernización Tributaria)",
+        "legalArt5Text": "Toutes les opérations font l'objet d'une Factura Legal officielle (Tributación Paraguay - DNIT) avec TVA incluse (10% et 5%). Les adhérents et clients fournissent leur numéro de RUC ou Cédula de Identidad (C.I.) lors de la validation pour l'émission fiscale.",
+        "legalArt6Title": "6. Service de Livraison à Domicile",
+        "legalArt6Text": "Le service de livraison couvre le périmètre d'Areguá et environs immédiats avec un supplément de 20% du montant de l'abonnement ou commande. Les retraits directs au club (Bristol d'Areguá) sont 100% gratuits aux horaires de service (11h00-13h00 et 18h00-20h30).",
+        "btnLegalClose": "J'ai compris et j'accepte",
+        "btnLightboxPdf": "📄 Ouvrir le PDF Complet",
+        "btnLightboxPng": "⬇ PNG",
+        "btnLightboxClose": "Fermer",
+        "mobileStickyHome": "Accueil",
+        "mobileStickyClub": "Club (150k)",
+        "mobileStickyMenu": "Menu",
+        "mobileStickyGains": "Gains",
+        "mobileStickyOrder": "Commander",
+        "footerDesc": "Le premier complexe d'Areguá combinant ring de Kickboxing K-1, Boxe Traditionnelle Anglaise et cuisine saine calibrée aux macronutriments pour athlètes.",
+        "footerLoc": "📍 Sede: Bristol d'Areguá, près du Cacique (Areguá, Paraguay)",
+        "footerWa": "WhatsApp : +595 995 620416 (¡Sans Réservation!)",
+        "footerCol1Title": "Fighting Club",
+        "footerLnkClub1": "Kickboxing K-1 Rules",
+        "footerLnkClub2": "Boxe Traditionnelle Anglaise",
+        "footerLnkClub3": "Sacs Lourds & Pattes d'Ours",
+        "footerLnkClub4": "Planning des Entraînements",
+        "footerLnkClub5": "Adhésion Club (150.000 ₲)",
+        "footerCol2Title": "Restaurant Fit",
+        "footerLnkResto1": "La Règle d'Or (1/3, 1/3, 1/3)",
+        "footerLnkResto2": "Carte de la Semaine",
+        "footerLnkResto3": "Street-Food Protéinée",
+        "footerLnkResto4": "Boissons Récupération",
+        "footerLnkResto5": "Télécharger les Flyers",
+        "footerCol3Title": "Affiliation & Légal",
+        "footerLnkAff1": "Programme Ambassadeur (15%)",
+        "footerLnkAff2": "Calculateur de Gains",
+        "footerLnkAff3": "Générer son Lien Tracké",
+        "footerLnkAff4": "Conditions Légales (Paraguay)",
+        "footerLnkAff5": "Service Client & WhatsApp",
+        "footerCopyright": "© 2026 Olimpo Team Kickboxing & Restaurant de l'Olympe. Bristol d'Areguá, près du Cacique, Paraguay.",
+        "footerCroTag": "Architecture marketing CRO & alternance visuelle sobre.",
+        "affBannerGuest": "🤝 Invité officiel de :",
+        "affBannerBenefit": "• Ton avantage fidélité et remise est actif sur ta commande."
     },
-    en: {
-      alertBar: 'Daily capacity: 50 fresh meals cooked every morning • Monday to Saturday in Areguá • No reservation required',
-      navHome: 'Home',
-      navFacility: 'The Complex',
-      navFightClub: 'Fight Club',
-      navRestoFit: 'Restaurant',
-      navFlyers: 'Flyers',
-      navPricing: 'Pricing',
-      navAffiliates: 'Affiliates',
-      navContact: 'Location',
-      navJoin: 'Join Club',
-      heroTag: 'Official Combat Club & Athletic Nutrition • Bristol of Areguá',
-      heroTitle1: 'FORGE YOUR WARRIOR',
-      heroTitleWarrior: 'BODY',
-      heroTitle2: 'FUEL YOUR POWER AT',
-      heroTitleOlimpo: 'OLIMPO',
-      heroLead: 'The first complex in Areguá fusing the rigorous technique of <strong>K-1 Kickboxing</strong> and <strong>Traditional Boxing</strong> with <strong>calibrated sports nutrition</strong> (1/3 Protein, 1/3 Clean Carbs, 1/3 Fibers). Cooked fresh every morning.',
-      btnViewPacks: 'Choose a Plan',
-      btnGoToClub: '📍 Get Directions (GPS)',
-      heroProofAthletes: '+50 Athletes',
-      heroProofCommunity: 'Olimpo Community',
-      showcaseBadge: 'Olimpo Ecosystem',
-      showcaseLive: 'Open Mon - Sat',
-      showcaseSub: 'Fighter Pro Pack (2 Meals/Day)',
-      btnShowcaseOrder: 'Order Now',
-      facilityTag: 'EXPANDING PROJECT & ACTIVE FIGHT COMMUNITY',
-      facilityTitle: 'A PROJECT GROWING WITH YOU <span>• THE CLUB IS ALREADY OPEN & ACTIVE!</span>',
-      facilityPunchline1: '→ Come train to fight!',
-      facilityPunchline2: '→ And fuel your body right after your session!',
-      facilityDesc: 'At Olimpo, we eliminated the biggest obstacle for athletes: training hard and wasting efforts due to poor nutrition and lack of time. Our complex unites under one roof a fight club and athletic sports kitchen.',
-      evolutionBadge: '📐 MASTERPLAN BLUEPRINTS • CLUB 100% OPERATIONAL',
-      facilityProjectNotice: 'These visuals showcase the <strong>architectural masterplan and final vision of our complex</strong>. We are actively finishing build-out, but <strong>the club is 100% open and fully operational for all daily fight workouts</strong> (K-1 Kickboxing & Traditional Boxing). Join the Olimpo community from day one and take part in the club’s evolution!',
-      rotatorSlide1: '🥊 1. Combat Training Gym (Ring & Bags) • Open Now',
-      rotatorSlide2: '🥗 2. Integrated Fit Restaurant • Finishing Works',
-      rotatorHint: 'Project masterplan • Auto rotation',
-      clubPill: 'Fight Academy',
-      clubTitle: 'FIGHTING CLUB <span>OLIMPO TEAM</span>',
-      clubSubtitle: 'Develop iron discipline, explosive speed and ring power. Strict specialization in K-1 Rules Kickboxing and Traditional Boxing. No ground combat, no grappling: pure striking and evasions.',
-      restoPill: 'Sports Nutrition',
-      restoTitle: 'OLIMPO <span>RESTAURANT</span>',
-      restoSubtitle: 'Real athletic nutrition your body needs after hard training. Fresh meals cooked every morning with clean ingredients, zero industrial fry oils and weighed to the gram.',
-      goldenRuleTitle: 'The Golden Rule of the Olimpo Athlete Plate',
-      flyersPill: 'Official Printable Asset',
-      flyersTitle: 'OFFICIAL FLYER <span>FRONT & BACK (PDF)</span>',
-      flyersSubtitle: 'Complete weekly menu and subscription packs consolidated on a single 2-sided sheet (2-page A4 PDF ready to print or share).',
-      btnOpenPdf: 'Download Official 2-Page PDF Flyer',
-      pdfHint: 'Official high-resolution document • A4 Front & Back format',
-      pricingPill: 'Rates & Memberships',
-      pricingTitle: 'SUBSCRIPTION <span>PLANS</span>',
-      pricingSubtitle: 'Choose your plan. Activate <strong>Bancard auto-debit</strong> to get an immediate 5% discount and secure your uninterrupted workouts and fresh meals.',
-      cycleWeekly: 'Weekly (6 Days)',
-      cycleMonthly: 'Full Month (Mon to Sat)',
-      adControlTitle: '💳 Bancard Auto-Debit:',
-      adControlDisc: '5% Instant Discount Included',
-      planTypeClub: 'Fight Academy',
-      planTitleClub: 'Kickboxing & Boxing Club',
-      planFeatClub1: 'Full access to <strong>K-1 Rules Kickboxing</strong> classes',
-      planFeatClub2: '<strong>Traditional Boxing</strong> training sessions',
-      planFeatClub3: 'Access to official ring, 60kg heavy bags & pad work',
-      planFeatClub4: '1st Free trial day included without commitment',
-      planFeatClub5: 'Technical coaching by experienced fighters',
-      btnSelectClub: 'Join the Club (150k)',
-      planType1Plato: 'Daily Nutrition',
-      planTitle1Plato: '1 Meal / Day Pack',
-      planFeat1Plato1: '1 complete athlete meal per day: Lunch or Dinner',
-      planFeat1Plato2: 'Rotating fresh menu from Monday to Saturday',
-      planFeat1Plato3: '200g pure protein + clean carbs + fresh salad',
-      planFeat1Plato4: 'Fresh seasonal fruits included with every meal',
-      planFeat1Plato5: 'Direct club pickup or home delivery (+20%)',
-      btnSelect1Plato: 'Choose 1 Meal/Day',
-      ribbonPopular: '⭐ Most Popular Plan',
-      planTypeFighterPro: 'Athlete & Fighter',
-      planTitleFighterPro: 'Fighter Pro (2 Meals)',
-      planFeatFighter1: '<strong>2 complete meals per day:</strong> Lunch + Dinner',
-      planFeatFighter2: 'Zero grocery shopping, zero cooking after tough workouts',
-      planFeatFighter3: 'Prevent nocturnal catabolism: maximum muscle recovery',
-      planFeatFighter4: 'Sealed hot containers ready to eat or take away',
-      planFeatFighter5: 'Ultra-competitive rate: under 19,000 ₲ per clean meal',
-      btnSelectFighter: 'Choose Fighter Pro',
-      ribbonElite: '🏆 Total Transformation',
-      planTypeElite: 'Ultimate Hybrid Pack',
-      planTitleElite: 'Fighter Elite Combo',
-      planFeatElite1: '<strong>Full unlimited access</strong> to Kickboxing & Boxing',
-      planFeatElite2: '<strong>2 athletic meals per day</strong> cooked fresh at the gym',
-      planFeatElite3: 'Monthly body composition and weight tracking',
-      planFeatElite4: 'VIP service priority in kitchen and delivery',
-      planFeatElite5: 'The complete Olimpo experience at the best price',
-      btnSelectElite: 'Choose Elite Pack',
-      modalTitle: 'Checkout & Secure Payment (Paraguay)',
-      step1Badge: 'Step 1',
-      step1Title: 'Fight Club Training (Bristol of Areguá)',
-      step1Desc: 'K-1 Rules Kickboxing & Traditional Boxing. Official ring and heavy bags.',
-      quoteMain: '« Training is 50% of the work, the other half is proper nutrition. »',
-      quoteSub: '« Training hard without eating well is like rowing without oars! » — Olimpo Golden Rule',
-      step2Badge: 'Step 2',
-      step2Title: 'Choose Your Nutrition Plan (Club Kitchen)',
-      adTitle: '🔄 Enable Bancard Auto-Debit (5% instant discount)',
-      adSub: 'Automatic renewal every month. Cancel anytime with 1 click.',
-      blockServices: '3. Services & Delivery',
-      lblDelivery: '<strong>Home Delivery Service (+20% of subscription)</strong> — Free pickup at the club otherwise.',
-      lblDoubleProt: 'Double Protein Portion (+2x Meat/Chicken: +10,000 ₲ per meal)',
-      blockCustomer: '4. Your Contact Details',
-      lblCustName: 'Full Name *',
-      lblCustPhone: 'WhatsApp / Phone *',
-      lblCustCI: 'C.I. or RUC (for official Paraguay invoice) *',
-      lblCustAddress: 'Delivery Address or Club Pickup',
-      blockPayment: '5. Payment Gateway in Paraguay',
-      sumDiscountLabel: 'Auto-Debit Discount (-5%):',
-      sumDeliveryLabel: 'Areguá Delivery (+20%):',
-      sumProtLabel: 'Double Protein Portion:',
-      sumTotalLabel: 'TOTAL DUE:',
-      lblLegalAccept: 'I accept the <a href="#" onclick="window.openLegalModal(); return false;" style="color: var(--brand-blue-light); text-decoration: underline;">legal & sanitary terms</a> applicable to sports clubs and dining in Paraguay.',
-      btnSubmitOrder: 'Confirm Order & Send to WhatsApp (+595 995 620416)',
-      affPill: 'Passive Income',
-      affTitle: 'AMBASSADORS & <span>AFFILIATE PROGRAM</span>',
-      contactPill: 'Access & Contact',
-      contactTitle: 'JOIN <span>OLIMPO IN AREGUÁ</span>'
+    "en": {
+        "alertBar": "Daily capacity: 50 fresh meals cooked every morning • Monday to Saturday in Areguá • No reservation required",
+        "navHome": "Home",
+        "navFacility": "The Complex",
+        "navFightClub": "Fight Club",
+        "navRestoFit": "Restaurant",
+        "navFlyers": "Flyers",
+        "navPricing": "Pricing",
+        "navAffiliates": "Affiliates",
+        "navContact": "Location",
+        "navJoin": "Join Club",
+        "navBrandSub": "Club & Fit Resto",
+        "heroTag": "Official Combat Club & Athletic Nutrition • Bristol of Areguá",
+        "heroTitle1": "FORGE YOUR WARRIOR",
+        "heroTitleWarrior": "BODY",
+        "heroTitle2": "FUEL YOUR POWER AT",
+        "heroTitleOlimpo": "OLIMPO",
+        "heroLead": "The first complex in Areguá fusing the rigorous technique of <strong>K-1 Kickboxing</strong> and <strong>Traditional Boxing</strong> with <strong>calibrated sports nutrition</strong> (1/3 Protein, 1/3 Clean Carbs, 1/3 Fibers). Cooked fresh every morning.",
+        "btnViewPacks": "Choose a Plan",
+        "btnGoToClub": "📍 Get Directions (GPS)",
+        "heroProofAthletes": "+50 Athletes",
+        "heroProofCommunity": "Olimpo Community",
+        "heroDuoClubTitle": "Fighting Club",
+        "heroDuoClubSub": "Kickboxing • Boxing • 150k/mo",
+        "heroDuoRestoTitle": "Fit Restaurant",
+        "heroDuoRestoSub": "200g Chicken • Weighed Macros",
+        "showcaseBadge": "Olimpo Ecosystem",
+        "showcaseLive": "Open Mon - Sat",
+        "showcaseSub": "Fighter Pro Pack (2 Meals/Day)",
+        "showcasePriceVal": "From 18,801 ₲ / meal",
+        "btnShowcaseOrder": "Order Now",
+        "facilityTag": "EXPANDING PROJECT & ACTIVE FIGHT COMMUNITY",
+        "facilityTitle": "A PROJECT GROWING WITH YOU <span>• THE CLUB IS ALREADY OPEN & ACTIVE!</span>",
+        "facilityPunchline1": "→ Come train to fight!",
+        "facilityPunchline2": "→ And fuel your body right after your session!",
+        "facilityDesc": "At Olimpo, we eliminated the biggest obstacle for athletes: training hard and wasting efforts due to poor nutrition and lack of time. Our complex unites under one roof a fight club and athletic sports kitchen.",
+        "evolutionBadge": "📐 MASTERPLAN BLUEPRINTS • CLUB 100% OPERATIONAL",
+        "facilityProjectNotice": "These visuals showcase the <strong>architectural masterplan and final vision of our complex</strong>. We are actively finishing build-out, but <strong>the club is 100% open and fully operational for all daily fight workouts</strong> (K-1 Kickboxing & Traditional Boxing). Join the Olimpo community from day one and take part in the club’s evolution!",
+        "rotatorSlide1": "🥊 1. Combat Training Gym (Ring & Bags) • Open Now",
+        "rotatorSlide2": "🥗 2. Integrated Fit Restaurant • Finishing Works",
+        "rotatorHint": "Project masterplan • Auto rotation",
+        "facilityCard1Badge": "1. Heart of the Complex",
+        "facilityCard1Title": "🥊 The Combat Gym (Fighting Club)",
+        "facilityCard1Desc": "A space engineered for strict striking discipline. No useless gimmicks: an official boxing ring, heavy bags for conditioning, firm mat surfaces, and dedicated coaches in <strong>K-1 Kickboxing</strong> and <strong>Traditional Boxing</strong>.",
+        "facilityCard1Price": "Membership Rate: 150,000 ₲ / month • Free trial day available",
+        "facilityCard2Badge": "2. Integrated with the Gym",
+        "facilityCard2Title": "🥗 The Club's Athletic Restaurant",
+        "facilityCard2Desc": "The club kitchen begins at 06:00 every morning to cook the day's 50 fresh meals. Every plate follows the Golden Rule (1/3 Pure Protein, 1/3 Clean Carbs, 1/3 Fiber & Fruit). You get the exact metabolic fuel to repair muscle and elevate performance.",
+        "facilityCard2Quote": "« Training is 50% of the work, the other half is proper nutrition. »",
+        "clubPill": "Fight Academy",
+        "clubTitle": "FIGHTING CLUB <span>OLIMPO TEAM</span>",
+        "clubSubtitle": "Develop iron discipline, explosive speed and ring power. Strict specialization in K-1 Rules Kickboxing and Traditional Boxing. No ground combat, no grappling: pure striking and evasions.",
+        "schedHeaderTitle": "Combat Training Schedule",
+        "schedHeaderSub": "Workouts Monday to Saturday at the gym (Bristol of Areguá, near Cacique).",
+        "btnBookTrial": "Book a Free Trial Session",
+        "schedSlot1": "🌅 Morning (07:00 – 08:30)",
+        "schedClass1": "Physical Conditioning & Heavy Bags",
+        "schedMeta1": "Combat cardio, core strengthening, and power combinations on heavy bags.",
+        "schedSlot2": "☀️ Midday (12:30 – 14:00)",
+        "schedClass2": "Traditional English Boxing",
+        "schedMeta2": "Footwork drills, slipping and rolling, and focused mitt precision.",
+        "schedSlot3": "🌙 Evening (18:00 – 19:30)",
+        "schedClass3": "K-1 Rules Group Kickboxing",
+        "schedMeta3": "Flagship class: punches, kicks, sweeps, combinations and high intensity.",
+        "schedSlot4": "🔥 Advanced (19:30 – 21:00)",
+        "schedClass4": "Controlled Sparring & Technique Refinement",
+        "schedMeta4": "Light technical sparring with full protective gear and ring scenarios.",
+        "restoPill": "Sports Nutrition",
+        "restoTitle": "OLIMPO <span>RESTAURANT</span>",
+        "restoSubtitle": "Real athletic nutrition your body needs after hard training. Fresh meals cooked every morning with clean ingredients, zero industrial fry oils and weighed to the gram.",
+        "goldenRuleTitle": "The Golden Rule of the Olimpo Athlete Plate",
+        "goldenRuleSubtitle": "Metabolic balance formulated to shed body fat and repair muscle fibers.",
+        "triadBadge1": "1/3 of Plate",
+        "triadTitle1": "Pure Proteins",
+        "triadDesc1": "Grilled chicken breast (200g), lean beef, or fresh eggs for rapid muscle repair.",
+        "triadBadge2": "1/3 of Plate",
+        "triadTitle2": "Clean Carbs",
+        "triadDesc2": "Steamed white rice, wok noodles, or tender cassava to replenish glycogen stores.",
+        "triadBadge3": "1/3 of Plate",
+        "triadTitle3": "Fibers & Vitamins",
+        "triadDesc3": "Crisp fresh salads, sautéed wok vegetables, and whole seasonal fruit (orange, apple, banana).",
+        "goalsHeaderTitle": "Calibrate Your Plate According to Your Goal",
+        "goalsHeaderSub": "Click your profile to see how our kitchen balances your portions:",
+        "goalTabWeightLoss": "1. Weight Loss",
+        "goalTabCutting": "2. Cutting & Definition",
+        "goalTabMaintenance": "3. Maintenance (Golden Rule)",
+        "goalTabBulking": "4. Muscle & Mass Gain",
+        "macroLabelProt": "Protein",
+        "macroLabelCarbs": "Carbohydrates",
+        "macroLabelVeg": "Fibers & Fruit",
+        "tabAllDishes": "All Dishes",
+        "tabMonday": "Monday",
+        "tabTuesday": "Tuesday",
+        "tabWednesday": "Wednesday",
+        "tabThursday": "Thursday",
+        "tabFriday": "Friday",
+        "tabSaturday": "Saturday",
+        "flyersPill": "Official Printable Asset",
+        "flyersTitle": "OFFICIAL FLYER <span>FRONT & BACK (PDF)</span>",
+        "flyersSubtitle": "Complete weekly menu and subscription packs consolidated on a single 2-sided sheet (2-page A4 PDF ready to print or share).",
+        "btnOpenPdf": "Download Official 2-Page PDF Flyer",
+        "pdfHint": "Official high-resolution document • A4 Front & Back format",
+        "pricingPill": "Rates & Memberships",
+        "pricingTitle": "SUBSCRIPTION <span>PLANS</span>",
+        "pricingSubtitle": "Choose your plan. Activate <strong>Bancard auto-debit</strong> to get an immediate 5% discount and secure your uninterrupted workouts and fresh meals.",
+        "cycleWeekly": "Weekly (6 Days)",
+        "cycleMonthly": "Full Month (Mon to Sat)",
+        "adControlTitle": "💳 Bancard Auto-Debit:",
+        "adControlDisc": "5% Instant Discount Included",
+        "planTypeClub": "Fight Academy",
+        "planTitleClub": "Kickboxing & Boxing Club",
+        "planFeatClub1": "Full access to <strong>K-1 Rules Kickboxing</strong> classes",
+        "planFeatClub2": "<strong>Traditional Boxing</strong> training sessions",
+        "planFeatClub3": "Access to official ring, 60kg heavy bags & pad work",
+        "planFeatClub4": "1st Free trial day included without commitment",
+        "planFeatClub5": "Technical coaching by experienced fighters",
+        "btnSelectClub": "Join the Club (150k)",
+        "planType1Plato": "Daily Nutrition",
+        "planTitle1Plato": "1 Meal / Day Pack",
+        "planFeat1Plato1": "1 complete athlete meal per day: Lunch or Dinner",
+        "planFeat1Plato2": "Rotating fresh menu from Monday to Saturday",
+        "planFeat1Plato3": "200g pure protein + clean carbs + fresh salad",
+        "planFeat1Plato4": "Fresh seasonal fruits included with every meal",
+        "planFeat1Plato5": "Direct club pickup or home delivery (+20%)",
+        "btnSelect1Plato": "Choose 1 Meal/Day",
+        "ribbonPopular": "⭐ Most Popular Plan",
+        "planTypeFighterPro": "Athlete & Fighter",
+        "planTitleFighterPro": "Fighter Pro (2 Meals)",
+        "planFeatFighter1": "<strong>2 complete meals per day:</strong> Lunch + Dinner",
+        "planFeatFighter2": "Zero grocery shopping, zero cooking after tough workouts",
+        "planFeatFighter3": "Prevent nocturnal catabolism: maximum muscle recovery",
+        "planFeatFighter4": "Sealed hot containers ready to eat or take away",
+        "planFeatFighter5": "Ultra-competitive rate: under 19,000 ₲ per clean meal",
+        "btnSelectFighter": "Choose Fighter Pro",
+        "ribbonElite": "🏆 Total Transformation",
+        "planTypeElite": "Ultimate Hybrid Pack",
+        "planTitleElite": "Fighter Elite Combo",
+        "planFeatElite1": "<strong>Full unlimited access</strong> to Kickboxing & Boxing",
+        "planFeatElite2": "<strong>2 athletic meals per day</strong> cooked fresh at the gym",
+        "planFeatElite3": "Monthly body composition and weight tracking",
+        "planFeatElite4": "VIP service priority in kitchen and delivery",
+        "planFeatElite5": "The complete Olimpo experience at the best price",
+        "btnSelectElite": "Choose Elite Pack",
+        "affPill": "Passive Income",
+        "affTitle": "AMBASSADORS & <span>AFFILIATE PROGRAM</span>",
+        "affSubtitle": "Training at the club or loving our meals? Invite your friends, gym partners, and colleagues and <strong>earn up to 15% recurring monthly commission</strong> for as long as they stay subscribed.",
+        "affHowTitle": "How Does the Affiliate Program Work?",
+        "affHowSteps": "1. Generate your custom affiliate referral link below.<br>2. Share it on WhatsApp, Instagram, or directly at the club.<br>3. When someone orders a meal pack or joins the club, your commission is automatically credited.<br>4. Withdraw your earnings anytime via SIPAP bank transfer, Tigo Money, or cash at reception.",
+        "affStat1Label": "Nutrition Packs Commission",
+        "affStat2Label": "Club Membership Commission",
+        "affStat3Num": "Month after Month",
+        "affStat3Label": "Recurring Monthly Income",
+        "affStat4Label": "Direct Payout in Paraguay",
+        "calcTitle": "Monthly Referral Earnings Simulator",
+        "calcLabelMeals": "Friends subscribed to meals (Nutrition packs):",
+        "calcLabelClub": "Friends enrolled in Kickboxing & Boxing classes:",
+        "calcResultLabel": "Estimated Earnings Per Month:",
+        "calcResultNote": "With just a few referrals, your own gym membership and meals become completely FREE plus extra cash in your pocket!",
+        "linkGenTitle": "Ambassador Referral Link Generator",
+        "linkGenSub": "Enter your first name or fighter alias to create your tracked link:",
+        "affAliasPlaceholder": "Ex: WARRIOR_ALEX",
+        "btnGenLink": "Generate My Link",
+        "btnCopyLink": "📋 Copy Link",
+        "btnShareWa": "📲 Share on WhatsApp",
+        "dashTitle": "Affiliate Dashboard Overview",
+        "btnWithdraw": "💸 Request Earnings Payout",
+        "dashClicks": "Clicks on your link",
+        "dashSignups": "Referred signups",
+        "dashTotalEarn": "Total commissions",
+        "dashBalance": "Available balance",
+        "contactPill": "Access & Contact",
+        "contactTitle": "JOIN <span>OLIMPO IN AREGUÁ</span>",
+        "contactSubtitle": "Official address: <strong>Bristol of Areguá, near Cacique</strong> (Av. Mariscal Estigarribia), Areguá, Paraguay. Direct gym pickup or delivery service (+20%).",
+        "contactHoursTitle": "Service & Pickup Hours",
+        "contactLocLabel": "📍 Location:",
+        "contactLocVal": "Bristol of Areguá, near Cacique",
+        "contactLunchLabel": "Lunch Service:",
+        "contactDinnerLabel": "Dinner Service:",
+        "contactDaysLabel": "Opening Days:",
+        "contactDaysVal": "Monday to Saturday",
+        "contactSundayLabel": "Sunday:",
+        "contactSundayVal": "Closed (Warrior's Rest)",
+        "contactDeliveryLabel": "Delivery Service:",
+        "contactDeliveryVal": "+20% of order value",
+        "btnGoogleMaps": "📍 Open in Google Maps",
+        "btnWaze": "🚗 Open in Waze",
+        "btnContactWa": "💬 Message on WhatsApp (+595 995 620416)",
+        "faqTitle": "Frequently Asked Questions",
+        "faqQ1": "Do I need to book in advance to eat or train?",
+        "faqA1": "No. The official policy is <strong>No Advance Booking Required</strong>. Drop by directly at our gym (Bristol of Areguá, near Cacique) for your first free trial workout or to pick up your daily athletic meal.",
+        "faqQ2": "Can I order meal packs without joining the combat club?",
+        "faqA2": "Absolutely! You can subscribe to a standalone nutrition pack (1 or 2 meals/day) or order individual dishes from 7,000 ₲ to 25,000 ₲. For every 5 meals purchased, the 6th is 100% FREE!",
+        "faqQ3": "How much is the Kickboxing & Boxing club membership?",
+        "faqA3": "The monthly membership is <strong>150,000 ₲ / month</strong> (150k PYG) with unlimited access to all sessions. The first trial day is 100% free.",
+        "faqQ4": "How does Bancard auto-debit work?",
+        "faqA4": "It is securely processed by Bancard Paraguay under PCI-DSS encryption. You receive an instant 5% discount and can pause or cancel anytime without fees.",
+        "modalTitle": "Checkout & Secure Payment (Paraguay)",
+        "step1Badge": "Step 1",
+        "step1Title": "Fight Club Training (Bristol of Areguá)",
+        "step1Desc": "K-1 Rules Kickboxing & Traditional Boxing. Official ring and heavy bags.",
+        "quoteMain": "« Training is 50% of the work, the other half is proper nutrition. »",
+        "quoteSub": "« Training hard without eating well is like rowing without oars! » — Olimpo Golden Rule",
+        "step2Badge": "Step 2",
+        "step2Title": "Choose Your Nutrition Plan (Club Kitchen)",
+        "lblSelectDish": "Select your Dish or Street-Food:",
+        "lblPlateQuantity": "Number of Meals (Buy 5 = 6th FREE!):",
+        "adTitle": "🔄 Enable Bancard Auto-Debit (5% instant discount)",
+        "adSub": "Automatic renewal every month. Cancel anytime with 1 click.",
+        "blockServices": "3. Services & Delivery",
+        "lblDelivery": "<strong>Home Delivery Service (+20% of subscription)</strong> — Free pickup at the club otherwise.",
+        "lblDoubleProt": "Double Protein Portion (+2x Meat/Chicken: +10,000 ₲ per meal)",
+        "blockCustomer": "4. Your Contact Details",
+        "lblCustName": "Full Name *",
+        "custNamePlaceholder": "Ex: John Doe",
+        "lblCustPhone": "WhatsApp / Phone *",
+        "lblCustCI": "C.I. or RUC (for official Paraguay invoice) *",
+        "lblCustAddress": "Delivery Address or Club Pickup",
+        "custAddressPlaceholder": "Ex: Club pickup at Areguá or full delivery address",
+        "blockPayment": "5. Payment Gateway in Paraguay",
+        "gwBancard": "Bancard vPOS",
+        "gwSipap": "SIPAP Bank Transfer",
+        "gwTigo": "Tigo Money",
+        "gwQr": "QR Bancard",
+        "txtBancardTitle": "🔒 Official Bancard vPOS Gateway (Credit & Debit Cards Paraguay)",
+        "lblCardNum": "Card Number (Visa, Mastercard, Panal, Cabal)",
+        "lblCardExp": "Expiration Date (MM/YY)",
+        "lblCardCvv": "Security CVV Code",
+        "txtBancardSecurity": "✓ PCI-DSS certified tokenization by Bancard Paraguay. Ready for automatic debit.",
+        "txtSipapTitle": "🏦 SIPAP Bank Details (Interbank Transfer in Guaraníes):",
+        "sipapBankLabel": "Bank:",
+        "sipapHolderLabel": "Account Holder:",
+        "sipapRucLabel": "RUC Tax ID:",
+        "sipapAccountLabel": "Savings Account Gs:",
+        "sipapCityLabel": "Location:",
+        "btnCopySipap": "📋 Copy SIPAP Details for Transfer",
+        "txtTigoTitle": "📱 Instant Mobile Wallet Payment (Tigo Money / Personal):",
+        "lblTigoPhone": "Mobile Wallet Phone Number (Paraguay)",
+        "txtTigoNote": "A push notification will be sent to your phone to confirm with your security PIN.",
+        "txtQrTitle": "📲 Scan from your bank app in Paraguay (Simple QR)",
+        "txtQrCompatible": "Compatible with Itaú, Continental, Ueno, Familiar, Sudameris, Atlas and GNB.",
+        "sumDiscountLabel": "Auto-Debit Discount (-5%):",
+        "sumDeliveryLabel": "Areguá Delivery (+20%):",
+        "sumProtLabel": "Double Protein Portion:",
+        "sumTotalLabel": "TOTAL DUE:",
+        "lblLegalAccept": "I accept the <a href=\"#\" onclick=\"window.openLegalModal(); return false;\" style=\"color: var(--brand-blue-light); text-decoration: underline;\">legal & sanitary terms</a> applicable to sports clubs and dining in Paraguay.",
+        "btnSubmitOrder": "Confirm Order & Send to WhatsApp (+595 995 620416)",
+        "legalModalTitle": "Legal & Regulatory Terms (Paraguay)",
+        "legalArt1Title": "1. Identification & Establishment (Areguá, Paraguay)",
+        "legalArt1Text": "The <strong>« Olimpo Team Kickboxing & Restaurante del Olimpo »</strong> sports complex is located at Bristol of Areguá, near Cacique (Avenida Mariscal Estigarribia), City of Areguá, Central Department, Republic of Paraguay. Official phone & WhatsApp: +595 995 620416.",
+        "legalArt2Title": "2. Health & Food Safety Regulation (INAN / MSPyBS)",
+        "legalArt2Text": "All meal preparations served by Restaurante del Olimpo comply strictly with sanitation standards established by Paraguay's <strong>INAN</strong> and the Ministry of Public Health. Macronutrients are weighed and prepared fresh daily. Cold-chain safety is maintained for all meat and probiotic ingredients.",
+        "legalArt3Title": "3. Physical Fitness & Combat Sports Practice (Law No. 2874/06)",
+        "legalArt3Text": "In accordance with Paraguayan sports laws, all members attending <strong>K-1 Kickboxing</strong> and <strong>Traditional Boxing</strong> certify they are in sound cardiovascular condition. Mandatory protective gear (hand wraps, mouthguard, regulation gloves) is required during controlled sparring.",
+        "legalArt4Title": "4. Bancard Auto-Debit & Cancellation Policy",
+        "legalArt4Text": "Subscriptions with « Auto-Debit » benefit from an immediate 5% discount. Recurring payments are processed via <strong>Bancard vPOS Paraguay</strong> (PCI-DSS certified). You may pause or cancel anytime via WhatsApp (+595 995 620416) at least 48 hours prior to renewal, with zero cancellation fees.",
+        "legalArt5Title": "5. Legal Tax Invoicing (Paraguay Law No. 6380/19)",
+        "legalArt5Text": "All transactions are issued an official Paraguay Tax Invoice (Factura Legal) with VAT included (10% and 5%). Clients provide their RUC or Cédula (C.I.) during order confirmation.",
+        "legalArt6Title": "6. Home Delivery Service",
+        "legalArt6Text": "Delivery service covers Areguá and nearby areas with a 20% order fee. Direct pickups at the gym (Bristol of Areguá) are 100% free during service hours (11:00 to 13:00 and 18:00 to 20:30).",
+        "btnLegalClose": "I Understand and Agree",
+        "btnLightboxPdf": "📄 Open Complete PDF",
+        "btnLightboxPng": "⬇ PNG",
+        "btnLightboxClose": "Close",
+        "mobileStickyHome": "Home",
+        "mobileStickyClub": "Club (150k)",
+        "mobileStickyMenu": "Menu",
+        "mobileStickyGains": "Earnings",
+        "mobileStickyOrder": "Order",
+        "footerDesc": "The first sports complex in Areguá combining K-1 Kickboxing, Traditional Boxing, and clean sports meals calibrated to exact athlete macronutrients.",
+        "footerLoc": "📍 Gym: Bristol of Areguá, near Cacique (Areguá, Paraguay)",
+        "footerWa": "WhatsApp: +595 995 620416 (No Reservation Required!)",
+        "footerCol1Title": "Fighting Club",
+        "footerLnkClub1": "K-1 Rules Kickboxing",
+        "footerLnkClub2": "Traditional English Boxing",
+        "footerLnkClub3": "Heavy Bags & Punch Mitts",
+        "footerLnkClub4": "Workout Schedule",
+        "footerLnkClub5": "Club Membership (150,000 ₲)",
+        "footerCol2Title": "Fit Restaurant",
+        "footerLnkResto1": "The Golden Rule (1/3, 1/3, 1/3)",
+        "footerLnkResto2": "Weekly Menu",
+        "footerLnkResto3": "High-Protein Street-Food",
+        "footerLnkResto4": "Recovery Drinks",
+        "footerLnkResto5": "Download Official Flyers",
+        "footerCol3Title": "Affiliates & Legal",
+        "footerLnkAff1": "Ambassador Program (15%)",
+        "footerLnkAff2": "Earnings Calculator",
+        "footerLnkAff3": "Generate Tracked Link",
+        "footerLnkAff4": "Legal Terms (Paraguay)",
+        "footerLnkAff5": "Customer Support & WhatsApp",
+        "footerCopyright": "© 2026 Olimpo Team Kickboxing & Olimpo Restaurant. Bristol of Areguá, near Cacique, Paraguay.",
+        "footerCroTag": "High-performance athletic discipline and real calibrated nutrition.",
+        "affBannerGuest": "🤝 Official guest of:",
+        "affBannerBenefit": "• Your loyalty discount and benefit are active on your order."
     }
-  };
+};
 
   const checkoutTranslations = {
     es: {
@@ -1335,6 +2062,18 @@ document.addEventListener('DOMContentLoaded', () => {
         combo_elite_semanal: '🏆 Combo Fighter Elite Semanal (Pase Club + 2 Platos/Día) — 300.000 ₲ / sem',
         plato_unico: '🍽️ Plato Único del Día / Street-Food (Desde 7.000 ₲ a 25.000 ₲)',
         none: '— Ningún pack de comida (Únicamente membresía al Club)'
+      },
+      singleDishes: {
+        lunes_explosivo: 'El Explosivo (Lunes - Pollo Grillado + Arroz + Ensalada) - 25.000 ₲',
+        martes_sparring: 'El Sparring (Martes - Wok Fideos + Tiras de Carne) - 25.000 ₲',
+        miercoles_stroganoff: 'El Clásico Potencia (Miércoles - Stroganoff de Carne/Pollo) - 25.000 ₲',
+        jueves_dubai: 'Especial Dubaï (Jueves - Tataki de Lomo Sellado) - 25.000 ₲',
+        viernes_guiso: 'Guiso del Peleador (Viernes - Guiso Pollo + Fideos) - 25.000 ₲',
+        sabado_milanesa: 'El Placer Atlético (Sábado - Milanesa Pollo + Puré Casero) - 25.000 ₲',
+        hamburguesa_olimpo: 'Hamburguesa Olimpo (Carne + Huevo + Queso) - 14.000 ₲',
+        club_milanesa: 'Club Pollo Milanesa (Triple Piso Proteico) - 15.000 ₲',
+        sandwich_pollo_repollo: 'Sándwich Pollo-Repollo (Pollo Desmenuzado) - 10.000 ₲',
+        tostados_paraguayos: 'Tostados Paraguayos-Italianos (Mozzarella + Jamón) - 7.000 ₲'
       }
     },
     fr: {
@@ -1359,6 +2098,18 @@ document.addEventListener('DOMContentLoaded', () => {
         combo_elite_semanal: '🏆 Combo Fighter Elite Hebdo (Passe Club + 2 Plats/Jour) — 300.000 ₲ / sem',
         plato_unico: '🍽️ Plat Unique du Jour / Street-Food (Dès 7.000 ₲ à 25.000 ₲)',
         none: '— Aucun repas (Uniquement abonnement au Club)'
+      },
+      singleDishes: {
+        lunes_explosivo: 'El Explosivo (Lundi - Poulet Grillé 200g + Riz + Salade) - 25.000 ₲',
+        martes_sparring: 'El Sparring (Mardi - Wok Pâtes + Bœuf Sauté 180g) - 25.000 ₲',
+        miercoles_stroganoff: 'El Clásico Potencia (Mercredi - Stroganoff Bœuf/Poulet) - 25.000 ₲',
+        jueves_dubai: 'Spécial Dubaï (Jeudi - Tataki de Bœuf Saisi) - 25.000 ₲',
+        viernes_guiso: 'Guiso del Peleador (Vendredi - Ragoût Poulet 200g + Pâtes) - 25.000 ₲',
+        sabado_milanesa: 'El Placer Atlético (Samedi - Milanaise Poulet + Purée Maison) - 25.000 ₲',
+        hamburguesa_olimpo: 'Burger Olimpo (Bœuf + Œuf + Cheddar) - 14.000 ₲',
+        club_milanesa: 'Club Poulet Milanaise (Triple Étage Protéiné) - 15.000 ₲',
+        sandwich_pollo_repollo: 'Sandwich Poulet-Chou (Poulet Effiloché) - 10.000 ₲',
+        tostados_paraguayos: 'Toastés Paraguayens-Italiens (Mozzarella + Jamón) - 7.000 ₲'
       }
     },
     en: {
@@ -1383,6 +2134,18 @@ document.addEventListener('DOMContentLoaded', () => {
         combo_elite_semanal: '🏆 Weekly Elite Fighter Combo (Club Pass + 2 Meals/Day) — 300,000 ₲ / wk',
         plato_unico: '🍽️ Daily Single Meal / Street-Food (From 7,000 ₲ to 25,000 ₲)',
         none: '— No meals (Gym training membership only)'
+      },
+      singleDishes: {
+        lunes_explosivo: 'The Explosive (Monday - Grilled Chicken 200g + Rice + Salad) - 25,000 ₲',
+        martes_sparring: 'The Sparring (Tuesday - Wok Noodles + Sliced Beef 180g) - 25,000 ₲',
+        miercoles_stroganoff: 'Classic Power (Wednesday - Beef/Chicken Stroganoff) - 25,000 ₲',
+        jueves_dubai: 'Dubai Special (Thursday - Seared Beef Tataki) - 25,000 ₲',
+        viernes_guiso: 'Fighter Stew (Friday - Chicken Stew 200g + Pasta) - 25,000 ₲',
+        sabado_milanesa: 'Athletic Pleasure (Saturday - Crispy Chicken Milanesa + Puree) - 25,000 ₲',
+        hamburguesa_olimpo: 'Olimpo Burger (Lean Beef + Egg + Cheese) - 14,000 ₲',
+        club_milanesa: 'Club Chicken Milanesa (Triple-Decker Protein Sandwich) - 15,000 ₲',
+        sandwich_pollo_repollo: 'Chicken-Cabbage Fit Sandwich (Shredded Chicken Breast) - 10,000 ₲',
+        tostados_paraguayos: 'Paraguayan-Italian Fit Toasts (Mozzarella + Ham) - 7,000 ₲'
       }
     }
   };
@@ -1413,6 +2176,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+
+    const dishSelect = document.getElementById('dishSelect');
+    if (dishSelect && data.singleDishes) {
+      for (const opt of dishSelect.options) {
+        if (data.singleDishes[opt.value]) {
+          opt.textContent = data.singleDishes[opt.value];
+        }
+      }
+    }
   }
 
   function applyLanguage(lang) {
@@ -1423,8 +2195,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = translations[lang] || translations.es;
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
-      if (t[key]) {
+      if (t[key] !== undefined) {
         el.innerHTML = t[key];
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) {
+        el.placeholder = t[key];
       }
     });
 
@@ -1433,7 +2212,11 @@ document.addEventListener('DOMContentLoaded', () => {
       langSelect.value = lang;
     }
 
+    renderWeeklyDishes(lang);
+    renderFlyers(lang);
+    updateGoalDisplay(lang);
     updateCheckoutSelectorTranslations(lang);
+    calculateAffiliateEarnings();
     updatePricingDisplay();
     recalculateCheckoutSummary();
   }
