@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Story 1 - Planes de Suscripción Oficial</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .story-page-box {
+      margin-top: 10px;
+      margin-bottom: 16px;
+      padding: 24px 26px;
+      background: rgba(12, 17, 24, 0.94);
+      border: 3.5px solid #00f0ff;
+      border-radius: 28px;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.35), inset 0 0 25px rgba(0, 240, 255, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .box-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed rgba(0, 240, 255, 0.3);
+      padding-bottom: 12px;
+    }
+
+    .box-header-text {
+      text-align: left;
+    }
+
+    .tag-highlight {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffd32a;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .box-main-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 38px;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .box-main-title span {
+      color: #00f0ff;
+    }
+
+    /* Section Subheaders */
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .step-pill {
+      background: #00f0ff;
+      color: #000;
+      font-family: 'Anton', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-title span {
+      color: #ffd32a;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: none;
+    }
+
+    /* Visual Golden Plate Banner */
+    .plate-hero-banner {
+      background: linear-gradient(90deg, #101720 0%, #172330 100%);
+      border: 1.5px solid rgba(255, 211, 42, 0.5);
+      border-radius: 16px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .plate-thumb {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2.5px solid #ffd32a;
+      object-fit: cover;
+      box-shadow: 0 0 15px rgba(255, 211, 42, 0.4);
+    }
+
+    .plate-hero-text {
+      flex: 1;
+    }
+
+    .plate-hero-tag {
+      font-size: 12px;
+      font-weight: 800;
+      color: #ffd32a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .plate-hero-headline {
+      font-family: 'Anton', sans-serif;
+      font-size: 20px;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      margin: 2px 0;
+    }
+
+    .plate-hero-macros {
+      font-size: 12.5px;
+      color: #00f0ff;
+      font-weight: 700;
+      display: flex;
+      gap: 12px;
+    }
+
+    /* 4 Physical Goals Grid */
+    .goals-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .goal-card {
+      background: #141b22;
+      border: 1.5px solid rgba(0, 240, 255, 0.35);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .goal-card.gold-border {
+      border-color: #ffd32a;
+      background: rgba(255, 211, 42, 0.05);
+    }
+
+    .goal-icon {
+      font-size: 24px;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .goal-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .goal-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .goal-desc {
+      font-size: 12px;
+      color: #a4b0be;
+      line-height: 1.25;
+    }
+
+    .goal-desc b {
+      color: #ffd32a;
+    }
+
+    /* Subscription Plans Matrix */
+    .plans-matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .plan-card {
+      background: #0f161e;
+      border: 2px solid #00f0ff;
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    .plan-card.fighter-pro {
+      border-color: #ffd32a;
+      box-shadow: 0 0 25px rgba(255, 211, 42, 0.25);
+    }
+
+    .plan-tag {
+      position: absolute;
+      top: -12px;
+      left: 16px;
+      background: #00f0ff;
+      color: #000;
+      font-family: 'Anton', sans-serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 2px 10px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    .plan-tag.gold {
+      background: #ffd32a;
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -12px;
+      right: 14px;
+      background: #ff4757;
+      color: #ffffff;
+      font-family: 'Anton', sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      text-transform: uppercase;
+    }
+
+    .plan-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 26px;
+      color: #ffffff;
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-subtitle {
+      font-size: 13px;
+      color: #00f0ff;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .plan-pricing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+
+    .pricing-period {
+      font-size: 14px;
+      font-weight: 700;
+      color: #d1d8e0;
+    }
+
+    .pricing-period span {
+      font-size: 11.5px;
+      display: block;
+      color: #747d8c;
+      font-weight: 600;
+    }
+
+    .pricing-amount {
+      font-family: 'Anton', sans-serif;
+      font-size: 24px;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    .pricing-amount.gold {
+      color: #ffd32a;
+    }
+
+    /* Special Callouts (Plato Suelto + Doble Proteina) */
+    .special-callouts {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 12px;
+    }
+
+    .single-plate-card {
+      background: #141b22;
+      border: 1.5px solid rgba(0, 240, 255, 0.4);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .single-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: #00f0ff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .single-price {
+      font-family: 'Anton', sans-serif;
+      font-size: 30px;
+      color: #ffd32a;
+      line-height: 1;
+      margin: 4px 0;
+    }
+
+    .single-bonus {
+      font-size: 11px;
+      color: #2ed573;
+      font-weight: 800;
+    }
+
+    .double-protein-card {
+      background: linear-gradient(135deg, rgba(255, 211, 42, 0.12) 0%, rgba(20, 27, 34, 0.95) 100%);
+      border: 1.5px solid #ffd32a;
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .double-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .double-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .double-title {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: #ffd32a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .double-desc {
+      font-size: 12px;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-overlay"></div>
+
+  <!-- Decorative Greek Meander Bars -->
+  <img src="assets/greek_meander_bar.svg" style="position:absolute; top:0; left:0; width:100%; opacity:0.35; z-index:2;">
+  <img src="assets/greek_meander_bar.svg" style="position:absolute; bottom:110px; left:0; width:100%; opacity:0.35; z-index:2;">
+
+  <div class="story-content">
+    <!-- Header -->
+    <header class="story-header">
+      <div class="header-top-row">
+        <img class="brand-logo" src="assets/logo_olimpo.png" alt="Olimpo Team Logo">
+        <div class="brand-titles">
+          <div class="brand-pretitle">Sistema de Suscripción Oficial</div>
+          <div class="brand-name">RESTAURANTE DEL OLIMPO</div>
+        </div>
+      </div>
+      <h1 class="main-headline">PLANES SEMANALES & MENSUALES</h1>
+      <p class="sub-headline">Tu nutrición deportiva resuelta día a día. Sin cocinar, sin perder tiempo y calibrada para tus metas.</p>
+    </header>
+
+    <!-- Main Content Box -->
+    <div class="story-page-box">
+      <!-- Box Header -->
+      <div class="box-header-row">
+        <div class="box-header-text">
+          <div class="tag-highlight">★ Page 1 : Grille Tarifaire ★</div>
+          <div class="box-main-title">ELEGÍ TU <span>FÓRMULA & OBJETIVO</span></div>
+        </div>
+        
+        <!-- Scalloped Rosette Badge -->
+        <div class="rosette-badge">
+          <svg width="125" height="125" viewBox="0 0 160 160">
+            <path d="M 80 5 L 89 20 L 105 10 L 110 27 L 128 22 L 129 40 L 147 40 L 142 58 L 158 63 L 148 79 L 160 89 L 146 101 L 153 118 L 137 124 L 139 142 L 122 142 L 118 159 L 102 153 L 93 168 L 80 156 L 67 168 L 58 153 L 42 159 L 38 142 L 21 142 L 23 124 L 7 118 L 14 101 L 0 89 L 12 79 L 2 63 L 18 58 L 13 40 L 31 40 L 32 22 L 50 27 L 55 10 L 71 20 Z" fill="#00f0ff" />
+            <circle cx="80" cy="80" r="64" fill="#080c10" />
+            <circle cx="80" cy="80" r="60" fill="#00f0ff" stroke="#000" stroke-width="2" />
+            <text x="80" y="66" text-anchor="middle" font-size="16" font-weight="900" fill="#000" font-family="'Anton', sans-serif">PACK DESDE</text>
+            <text x="80" y="96" text-anchor="middle" font-size="24" font-weight="900" fill="#000" font-family="'Anton', sans-serif">140.000 ₲</text>
+            <text x="80" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#000" font-family="'Montserrat', sans-serif">6 DÍAS / SEM</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Step 1 Header -->
+      <div class="step-header">
+        <div class="step-pill">PASO 1</div>
+        <div class="step-title">ELEGÍ TU OBJETIVO FÍSICO <span>(Adaptamos las porciones a tu meta)</span></div>
+      </div>
+
+      <!-- Golden Plate Hero Banner -->
+      <div class="plate-hero-banner">
+        <img class="plate-thumb" src="assets/new_menu/lunes_explosivo.jpg" alt="Regla de Oro del Plato">
+        <div class="plate-hero-text">
+          <div class="plate-hero-tag">★ Nutrición Deportiva Calibrada ★</div>
+          <div class="plate-hero-headline">LA REGLA DE ORO DEL PLATO ATLÉTICO</div>
+          <div class="plate-hero-macros">
+            <span>🥩 1/3 Proteína Magra</span>
+            <span>🍚 1/3 Carbohidratos</span>
+            <span>🥗 1/3 Fibras & Fruta</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Physical Goals Grid -->
+      <div class="goals-grid">
+        <div class="goal-card">
+          <div class="goal-icon">🔥</div>
+          <div class="goal-info">
+            <div class="goal-name">Pérdida de Peso</div>
+            <div class="goal-desc">Déficit controlado, doble vegetales frescos y proteína magra.</div>
+          </div>
+        </div>
+
+        <div class="goal-card">
+          <div class="goal-icon">🥊</div>
+          <div class="goal-info">
+            <div class="goal-name">Definición / Secado</div>
+            <div class="goal-desc">Alto en proteínas (200-220g) y macros medidos sin perder músculo.</div>
+          </div>
+        </div>
+
+        <div class="goal-card">
+          <div class="goal-icon">🥗</div>
+          <div class="goal-info">
+            <div class="goal-name">Mantenimiento</div>
+            <div class="goal-desc">Equilibrio atlético: 200g carne + 250g arroz/pasta + verduras.</div>
+          </div>
+        </div>
+
+        <div class="goal-card gold-border">
+          <div class="goal-icon">💪</div>
+          <div class="goal-info">
+            <div class="goal-name">Ganancia de Masa</div>
+            <div class="goal-desc">Sobrecarga limpia: 375g carbohidratos + 220g proteínas <b>(+2x Carne)</b>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 Header -->
+      <div class="step-header">
+        <div class="step-pill">PASO 2</div>
+        <div class="step-title">ELEGÍ TU FÓRMULA & PACK <span>(Almuerzo y/o Cena Post-Entreno)</span></div>
+      </div>
+
+      <!-- Plans Matrix (1 Plato vs 2 Platos) -->
+      <div class="plans-matrix">
+        <!-- Formula 1 Plato/Dia -->
+        <div class="plan-card">
+          <div class="plan-tag">1 Plato / Día</div>
+          <div class="plan-title">ALMUERZO DIARIO</div>
+          <div class="plan-subtitle">Lunes a Sábado al mediodía (11h-13h)</div>
+          
+          <div class="plan-pricing-row">
+            <div class="pricing-period">Semanal <span>6 almuerzos</span></div>
+            <div class="pricing-amount">140.000 ₲</div>
+          </div>
+          <div class="plan-pricing-row">
+            <div class="pricing-period">Mensual <span>24 almuerzos</span></div>
+            <div class="pricing-amount">550.000 ₲</div>
+          </div>
+        </div>
+
+        <!-- Formula 2 Platos/Dia -->
+        <div class="plan-card fighter-pro">
+          <div class="popular-badge">MÁS POPULAR</div>
+          <div class="plan-tag gold">2 Platos / Día</div>
+          <div class="plan-title">« FIGHTER PRO »</div>
+          <div class="plan-subtitle">Almuerzo + Cena de Recuperación</div>
+          
+          <div class="plan-pricing-row">
+            <div class="pricing-period">Semanal <span>12 comidas (6d)</span></div>
+            <div class="pricing-amount gold">260.000 ₲</div>
+          </div>
+          <div class="plan-pricing-row">
+            <div class="pricing-period">Mensual <span>48 comidas (24d)</span></div>
+            <div class="pricing-amount gold">1.000.000 ₲</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Plate & Double Protein Callouts -->
+      <div class="special-callouts">
+        <div class="single-plate-card">
+          <div class="single-label">Plato Individual Suelto</div>
+          <div class="single-price">25.000 ₲</div>
+          <div class="single-bonus">★ ¡1 plato GRATIS cada 5 pedidos! ★</div>
+        </div>
+
+        <div class="double-protein-card">
+          <div class="double-icon">🥩</div>
+          <div class="double-text">
+            <div class="double-title">Opción Doble Ración (2x Proteína)</div>
+            <div class="double-desc">¿Buscás máxima hipertrofia? Pedí tu pack con doble ración de carne o pollo (ej. 2 bifes / 400g) adaptado a tus macros.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom WhatsApp Bar strictly with +595 995 620416 -->
+    <div class="footer-cta">
+      <div class="cta-bar">
+        <div class="cta-left">
+          <img class="cta-logo" src="assets/logo_olimpo.png" alt="Olimpo Logo">
+          <div class="cta-info">
+            <div class="cta-label">Suscripciones & Pedidos WhatsApp</div>
+            <div class="cta-phone">+595 995 620416</div>
+          </div>
+        </div>
+        <div class="cta-right">
+          <div class="cta-tag">¡Sin Reserva!</div>
+          <div class="whatsapp-icon-wrap">
+            <svg class="whatsapp-icon" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.392-12.416c-5.514 0-10 4.486-10 10 0 1.761.458 3.418 1.258 4.864l-1.336 4.88 5.006-1.314c1.397.764 2.99 1.206 4.685 1.206 5.514 0 10-4.486 10-10 0-5.514-4.486-10-10-10z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="footer-sub">
+        Preparaciones deportivas sanas • <span>Al alcance de todos</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

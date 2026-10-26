@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Story 2 - Carta Semanal Lunes a Miércoles</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .story-page-box {
+      margin-top: 10px;
+      margin-bottom: 16px;
+      padding: 22px 24px;
+      background: rgba(12, 17, 24, 0.94);
+      border: 3.5px solid #00f0ff;
+      border-radius: 28px;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.35), inset 0 0 25px rgba(0, 240, 255, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .box-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed rgba(0, 240, 255, 0.3);
+      padding-bottom: 12px;
+    }
+
+    .box-header-text {
+      text-align: left;
+    }
+
+    .tag-highlight {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffd32a;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .box-main-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 40px;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .box-main-title span {
+      color: #00f0ff;
+    }
+
+    .day-card {
+      background: #141b22;
+      border: 2px solid #e1b12c;
+      border-radius: 22px;
+      overflow: hidden;
+      display: flex;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      height: 335px;
+    }
+
+    .day-img-wrap {
+      width: 400px;
+      min-width: 400px;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .day-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .day-pill {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: #00f0ff;
+      color: #000;
+      font-family: 'Anton', sans-serif;
+      font-size: 20px;
+      letter-spacing: 1px;
+      padding: 4px 14px;
+      border-radius: 12px;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    }
+
+    .day-price-badge {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(8, 12, 16, 0.9);
+      border: 1.5px solid #ffd32a;
+      color: #ffd32a;
+      font-family: 'Anton', sans-serif;
+      font-size: 15px;
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+
+    .day-info {
+      padding: 18px 22px;
+      background: #0e151c;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
+    }
+
+    .day-dish-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 23px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .formula-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .formula-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14.5px;
+      line-height: 1.35;
+    }
+
+    .formula-tag {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .tag-mediodia {
+      background: rgba(0, 240, 255, 0.2);
+      color: #00f0ff;
+      border: 1px solid #00f0ff;
+    }
+
+    .tag-noche {
+      background: rgba(255, 211, 42, 0.2);
+      color: #ffd32a;
+      border: 1px solid #ffd32a;
+    }
+
+    .formula-text {
+      color: #d1d8e0;
+      font-weight: 500;
+    }
+
+    .day-badge-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+    }
+
+    .macro-note {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffd32a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Macro Customization Banner */
+    .macro-banner {
+      background: linear-gradient(90deg, #101822 0%, #162432 100%);
+      border: 1.5px solid #00f0ff;
+      border-radius: 16px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .macro-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .macro-banner-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #00f0ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .macro-banner-sub {
+      font-size: 12.5px;
+      color: #d1d8e0;
+      line-height: 1.25;
+    }
+
+    .macro-banner-badge {
+      background: #00f0ff;
+      color: #000;
+      font-family: 'Anton', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-overlay"></div>
+
+  <!-- Decorative Greek Meander Bars -->
+  <img src="assets/greek_meander_bar.svg" style="position:absolute; top:0; left:0; width:100%; opacity:0.35; z-index:2;">
+  <img src="assets/greek_meander_bar.svg" style="position:absolute; bottom:110px; left:0; width:100%; opacity:0.35; z-index:2;">
+
+  <div class="story-content">
+    <!-- Header -->
+    <header class="story-header">
+      <div class="header-top-row">
+        <img class="brand-logo" src="assets/logo_olimpo.png" alt="Olimpo Team Logo">
+        <div class="brand-titles">
+          <div class="brand-pretitle">Carta Semanal Oficial (1/2)</div>
+          <div class="brand-name">RESTAURANTE DEL OLIMPO</div>
+        </div>
+      </div>
+      <h1 class="main-headline">LUNES • MARTES • MIÉRCOLES</h1>
+      <p class="sub-headline">Fórmulas 1 Plato (Almuerzo) y 2 Platos (+ Cena de Recuperación post-sparring).</p>
+    </header>
+
+    <!-- Main Content Box -->
+    <div class="story-page-box">
+      <div class="box-header-row">
+        <div class="box-header-text">
+          <div class="tag-highlight">★ Page 2 : Inicio de Semana ★</div>
+          <div class="box-main-title">MENÚ <span>DE LOS GUERREROS</span></div>
+        </div>
+        
+        <!-- Scalloped Rosette Badge -->
+        <div class="rosette-badge">
+          <svg width="125" height="125" viewBox="0 0 160 160">
+            <path d="M 80 5 L 89 20 L 105 10 L 110 27 L 128 22 L 129 40 L 147 40 L 142 58 L 158 63 L 148 79 L 160 89 L 146 101 L 153 118 L 137 124 L 139 142 L 122 142 L 118 159 L 102 153 L 93 168 L 80 156 L 67 168 L 58 153 L 42 159 L 38 142 L 21 142 L 23 124 L 7 118 L 14 101 L 0 89 L 12 79 L 2 63 L 18 58 L 13 40 L 31 40 L 32 22 L 50 27 L 55 10 L 71 20 Z" fill="#00f0ff" />
+            <circle cx="80" cy="80" r="64" fill="#080c10" />
+            <circle cx="80" cy="80" r="60" fill="#00f0ff" stroke="#000" stroke-width="2" />
+            <text x="80" y="66" text-anchor="middle" font-size="16" font-weight="900" fill="#000" font-family="'Anton', sans-serif">FÓRMULA</text>
+            <text x="80" y="96" text-anchor="middle" font-size="22" font-weight="900" fill="#000" font-family="'Anton', sans-serif">1 Ó 2 PLATOS</text>
+            <text x="80" y="118" text-anchor="middle" font-size="12" font-weight="800" fill="#000" font-family="'Montserrat', sans-serif">AL DÍA</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- LUNES -->
+      <div class="day-card">
+        <div class="day-img-wrap">
+          <img src="assets/new_menu/lunes_explosivo.jpg" alt="Lunes El Explosivo">
+          <div class="day-pill">LUNES</div>
+          <div class="day-price-badge">25G • O EN PACK</div>
+        </div>
+        <div class="day-info">
+          <div class="day-dish-name">El Explosivo (Pollo a la Plancha)</div>
+          <div class="formula-section">
+            <div class="formula-row">
+              <span class="formula-tag tag-mediodia">1 Plato / Día</span>
+              <span class="formula-text">Arroz blanco + Pollo grillado (200g) + Ensalada fresca de tomates y lechuga + 1 Fruta.</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-tag tag-noche">2 Platos / Día</span>
+              <span class="formula-text">Noche: 2ª porción completa (Pollo a la plancha + Arroz o Mandioca + Ensalada + Fruta) post-sparring.</span>
+            </div>
+          </div>
+          <div class="day-badge-footer">
+            <span class="macro-note">🍗 200g Pollo Magro • Asimilación Rápida</span>
+            <span style="font-size:12px; color:#a4b0be; font-weight:700;">Cero pesadez</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARTES -->
+      <div class="day-card">
+        <div class="day-img-wrap">
+          <img src="assets/new_menu/martes_sparring.jpg" alt="Martes El Sparring">
+          <div class="day-pill">MARTES</div>
+          <div class="day-price-badge">25G • O EN PACK</div>
+        </div>
+        <div class="day-info">
+          <div class="day-dish-name">El Sparring (Wok Carne & Fideos)</div>
+          <div class="formula-section">
+            <div class="formula-row">
+              <span class="formula-tag tag-mediodia">1 Plato / Día</span>
+              <span class="formula-text">Fideos con carne vacuna magra (180g) + Verduras crujientes salteadas al wok + 1 Fruta.</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-tag tag-noche">2 Platos / Día</span>
+              <span class="formula-text">Noche: 2ª porción completa (Fideos salteados + Carne magra + Verduras + Fruta).</span>
+            </div>
+          </div>
+          <div class="day-badge-footer">
+            <span class="macro-note">🥩 180g Carne Vacuna • Combustible Explosivo</span>
+            <span style="font-size:12px; color:#a4b0be; font-weight:700;">Resistencia sparring</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIÉRCOLES -->
+      <div class="day-card">
+        <div class="day-img-wrap">
+          <img src="assets/new_menu/miercoles_stroganoff.jpg" alt="Miércoles Stroganoff">
+          <div class="day-pill">MIÉRCOLES</div>
+          <div class="day-price-badge">25G • O EN PACK</div>
+        </div>
+        <div class="day-info">
+          <div class="day-dish-name">El Clásico Potencia (Stroganoff)</div>
+          <div class="formula-section">
+            <div class="formula-row">
+              <span class="formula-tag tag-mediodia">1 Plato / Día</span>
+              <span class="formula-text">Tiras de carne doradas a fuego lento en salsa ligera con cebollas + Arroz blanco + Ensalada.</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-tag tag-noche">2 Platos / Día</span>
+              <span class="formula-text">Noche: 2ª porción completa de Stroganoff + Arroz blanco + Ensalada verde de recarga.</span>
+            </div>
+          </div>
+          <div class="day-badge-footer">
+            <span class="macro-note">⚡ Impulso Anabólico • Mitad de Semana</span>
+            <span style="font-size:12px; color:#a4b0be; font-weight:700;">Fuerza pura</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MACRO CUSTOMIZATION BANNER -->
+      <div class="macro-banner">
+        <div class="macro-banner-left">
+          <div style="font-size:26px;">⚖️</div>
+          <div>
+            <div class="macro-banner-title">CALIBRACIÓN DE MACROS A TU MEDIDA</div>
+            <div class="macro-banner-sub">Adaptable a Pérdida de Peso • Secado • Mantenimiento • Ganancia de Masa (+2x Proteína)</div>
+          </div>
+        </div>
+        <div class="macro-banner-badge">100% PERSONALIZABLE</div>
+      </div>
+    </div>
+
+    <!-- Bottom WhatsApp Bar strictly with +595 995 620416 -->
+    <div class="footer-cta">
+      <div class="cta-bar">
+        <div class="cta-left">
+          <img class="cta-logo" src="assets/logo_olimpo.png" alt="Olimpo Logo">
+          <div class="cta-info">
+            <div class="cta-label">Suscripciones & Pedidos WhatsApp</div>
+            <div class="cta-phone">+595 995 620416</div>
+          </div>
+        </div>
+        <div class="cta-right">
+          <div class="cta-tag">¡Sin Reserva!</div>
+          <div class="whatsapp-icon-wrap">
+            <svg class="whatsapp-icon" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.392-12.416c-5.514 0-10 4.486-10 10 0 1.761.458 3.418 1.258 4.864l-1.336 4.88 5.006-1.314c1.397.764 2.99 1.206 4.685 1.206 5.514 0 10-4.486 10-10 0-5.514-4.486-10-10-10z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="footer-sub">
+        Preparaciones deportivas sanas • <span>Al alcance de todos</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="24" viewBox="0 0 1080 24">
+  <defs>
+    <pattern id="greek-meander-blue" width="36" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 0 21 L 30 21 L 30 3 L 6 3 L 6 15 L 22 15 L 22 8 L 13 8 L 13 11" fill="none" stroke="#0088ff" stroke-width="2.2" stroke-linecap="square"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="24" fill="url(#greek-meander-blue)" opacity="0.9" />
+</svg>

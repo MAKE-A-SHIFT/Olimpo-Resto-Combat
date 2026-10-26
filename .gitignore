@@ -1,0 +1,29 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencies
+node_modules/
+
+# Temp test screenshots and intermediate extraction files
+*.txt
+cmap.json
+localhost_*.png
+preview_*.png
+preview_*.html
+redesign_*.png
+site_render_*.png
+gallery_overview.png
+gallery.html
+modal_preview.html
+scrolled_preview.html
+extracted_assets/
+output_stories/
+tools/temp_*
+tools/preview_*
+
+# Local environment
+.env
+.env.local
+.vercel

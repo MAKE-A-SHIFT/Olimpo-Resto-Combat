@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurante & Fighting Club de l'Olympe | Olimpo Team Kickboxing & Boxe Areguá</title>
+  <meta name="description" content="Complexe sportif et nutritionnel d'élite à Areguá, Paraguay. Kickboxing K-1, Boxe Traditionnelle Anglaise, restaurant athlétique sur place, packs avec débit automatique et affiliation.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="logo_olimpo.png">
+</head>
+<body>
+
+  <!-- AFFILIATE ACTIVE BANNER (Triggered when ?ref= is present) -->
+  <div class="affiliate-referral-banner" id="affiliateBanner" style="display: none;">
+    <span>🤝 Invitado oficial de:</span>
+    <span class="ref-code" id="bannerRefCode">WARRIOR</span>
+    <span>• Tu beneficio de descuento y fidelidad está activo en tu pedido.</span>
+  </div>
+
+  <!-- TOP ANNOUNCEMENT BAR -->
+  <div class="top-bar-alert" data-i18n="alertBar">
+    Cuota del día : 50 plats frais cuisinés chaque matin • Lundi au Samedi à Areguá • Sans Réservation requise
+  </div>
+
+  <!-- SLIM GREEK MEANDER ACCENT (BLEU DE LA MARQUE) -->
+  <div class="lisere-bar slim" style="margin: 0; opacity: 0.65;"></div>
+
+  <!-- MAIN STICKY NAVBAR (ÉPURÉE, AÉRÉE, NON-WRAPPING) -->
+  <header class="main-navbar">
+    <div class="nav-container">
+      <a href="#inicio" class="brand-wrapper">
+        <img src="logo_olimpo.png" alt="Olimpo Team Logo" class="brand-logo-img">
+        <div class="brand-titles">
+          <span class="brand-name">OLIMPO <span style="color: var(--brand-blue);">TEAM</span></span>
+          <span class="brand-subtitle">Club & Resto Fit</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#inicio" class="nav-link-btn active" data-i18n="navHome">Accueil</a></li>
+          <li><a href="#complejo" class="nav-link-btn" data-i18n="navFacility">Le Complexe</a></li>
+          <li><a href="#club" class="nav-link-btn" data-i18n="navFightClub">Fight Club</a></li>
+          <li><a href="#restaurante" class="nav-link-btn" data-i18n="navRestoFit">Restaurant</a></li>
+          <li><a href="#flyers" class="nav-link-btn" data-i18n="navFlyers">Flyers</a></li>
+          <li><a href="#tarifas" class="nav-link-btn" data-i18n="navPricing">Tarifs</a></li>
+          <li><a href="#afiliados" class="nav-link-btn" data-i18n="navAffiliates">Afiliados</a></li>
+          <li><a href="#contacto" class="nav-link-btn" data-i18n="navContact">Accès</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- SÉLECTEUR DE LANGUE DÉROULANT : INITIALES UNIQUEMENT (ES / FR / EN) -->
+        <div class="lang-dropdown-wrapper">
+          <select id="langSelect" class="lang-select-dropdown" aria-label="Idioma / Langue / Language">
+            <option value="es">ES</option>
+            <option value="fr">FR</option>
+            <option value="en">EN</option>
+          </select>
+        </div>
+
+        <button class="btn-cta-nav" onclick="window.openCheckout('pack_fighter_pro')">
+          <span data-i18n="navJoin">Rejoindre</span>
+        </button>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Ouvrir le menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+         HERO SECTION (DARK #090d10 AVEC VIDÉO CINÉMA & OVERLAY 33%)
+         ========================================================================== -->
+    <section id="inicio" class="hero-section section-dark">
+      <!-- HERO CINEMA VIDEO WRAPPER WITH 33% OVERLAY -->
+      <div class="hero-video-wrapper">
+        <div class="hero-cinema-reel" aria-hidden="true">
+          <div class="cinema-frame frame-1" style="background-image: url('stories/assets/hero_cinema_shot1.jpg');"></div>
+          <div class="cinema-frame frame-2" style="background-image: url('stories/assets/hero_cinema_shot2.jpg');"></div>
+          <div class="cinema-frame frame-3" style="background-image: url('stories/assets/hero_cinema_shot1.jpg');"></div>
+          <div class="cinema-frame frame-4" style="background-image: url('stories/assets/hero_cinema_shot3.jpg');"></div>
+        </div>
+        <video class="hero-bg-video" autoplay muted loop playsinline poster="stories/assets/hero_cinema_shot3.jpg">
+          <source src="stories/assets/hero_olympus_kickboxing.webm" type="video/webm">
+          <source src="stories/assets/hero_olympus_kickboxing.mp4" type="video/mp4">
+        </video>
+        <!-- EXACT 33% DARK OVERLAY AS SPECIFIED -->
+        <div class="hero-video-overlay"></div>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-tag-bar">
+            <span style="color: var(--brand-blue-light); font-size: 13px;">🏛️</span>
+            <span class="hero-tag-text" data-i18n="heroTag">Club Officiel de Combat & Nutrition Athlétique • Bristol d'Areguá</span>
+          </div>
+
+          <h1 class="hero-title">
+            <span data-i18n="heroTitle1">FORGE TON CORPS DE</span> <span class="highlight-blue" data-i18n="heroTitleWarrior">GUERRIER</span>.<br>
+            <span data-i18n="heroTitle2">NOURRIS TA PUISSANCE À</span> <span class="highlight-blue" data-i18n="heroTitleOlimpo">L'OLYMPE</span>.
+          </h1>
+
+          <p class="hero-lead" data-i18n="heroLead">
+            Le premier complexe d'Areguá fusionnant la rigueur du <strong>Kickboxing K-1</strong> et de la <strong>Boxe Traditionnelle Anglaise</strong> avec une <strong>nutrition sportive calibrée aux macronutriments</strong> (1/3 Protéine, 1/3 Glucides propres, 1/3 Fibres). Cuisiné frais sur place chaque matin.
+          </p>
+
+          <!-- LES 2 BOUTONS DU HERO : 1 VERS LES PACKS, 1 "SE RENDRE AU CLUB" VERS LE GPS GOOGLE MAPS -->
+          <div class="hero-ctas">
+            <a href="#tarifas" class="btn-hero-primary">
+              <span data-i18n="btnViewPacks">Elegir Plan</span>
+            </a>
+            <a href="https://maps.google.com/?q=Bristol+Aregua+Paraguay" target="_blank" rel="noopener noreferrer" class="btn-hero-secondary">
+              <span data-i18n="btnGoToClub">📍 Se rendre au club</span>
+            </a>
+          </div>
+
+          <div class="hero-social-proof">
+            <div class="proof-item">
+              <div class="proof-icon">🛡️</div>
+              <div class="proof-details">
+                <span class="proof-val" data-i18n="heroProofAthletes">+50 Atletas</span>
+                <span class="proof-lbl" data-i18n="heroProofCommunity">Comunidad Olimpo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DUAL HERO CARD SHOWCASE -->
+        <div class="hero-card-showcase">
+          <div class="card-lisere-top"></div>
+          <div class="showcase-header">
+            <span class="showcase-badge" data-i18n="showcaseBadge">Ecosistema Olimpo</span>
+            <span class="showcase-live" data-i18n="showcaseLive">Abierto Lun - Sáb</span>
+          </div>
+
+          <div class="showcase-images-duo">
+            <div class="duo-box">
+              <img src="stories/assets/gym_equipo_olimpo.jpg" alt="Olimpo Team Kickboxing & Boxe">
+              <div class="duo-label">
+                <div class="duo-title">Fighting Club</div>
+                <div class="duo-sub">Kickboxing • Boxe Anglaise • 150k/mois</div>
+              </div>
+            </div>
+            <div class="duo-box">
+              <img src="stories/assets/new_menu/lunes_explosivo.jpg" alt="Plato Deportivo Olimpo">
+              <div class="duo-label">
+                <div class="duo-title">Restaurant Fit</div>
+                <div class="duo-sub">200g Poulet • Macros Pesés</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="showcase-footer">
+            <div class="showcase-price-box">
+              <span class="price-sub" data-i18n="showcaseSub">Pack Fighter Pro (2 Platos/Día)</span>
+              <span class="price-val" id="showcasePriceVal">Dès 18.801 ₲ / plato</span>
+            </div>
+            <button class="btn-showcase-order" onclick="window.openCheckout('pack_fighter_pro')" data-i18n="btnShowcaseOrder">Pedir Ahora</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR (BLEU DE MARQUE) -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 1: PRÉSENTATION DE LA SALLE & SON RESTAURANT INTÉGRÉ (PURE WHITE #FFFFFF - 100% PLEINE LARGEUR)
+         ========================================================================== -->
+    <section id="complejo" class="section-wrap section-light">
+      <div class="facility-section">
+        <div class="facility-intro-grid">
+          <div>
+            <span class="facility-tag" data-i18n="facilityTag">PROYECTO EN EXPANSIÓN & COMUNIDAD DE PELEA</span>
+            <h2 class="facility-main-title" data-i18n="facilityTitle">
+              UN PROYECTO QUE CRECE CON VOS <span>• ¡EL CLUB YA ESTÁ ABIERTO Y OPERATIVO!</span>
+            </h2>
+            <div class="facility-punchlines">
+              <p class="punchline-item" data-i18n="facilityPunchline1">→ ¡Vení a entrenar a combatir!</p>
+              <p class="punchline-item" data-i18n="facilityPunchline2">→ ¡Y alimentá tu cuerpo directamente después de tu sesión!</p>
+            </div>
+            <p class="facility-text" data-i18n="facilityDesc">
+              En el Olimpo eliminamos la gran traba de los atletas: entrenar duro y arruinar el esfuerzo comiendo mal por falta de tiempo o comidas adaptadas. Nuestro complejo reúne bajo el mismo techo una sala de combate y una cocina deportiva.
+            </p>
+            <div class="project-evolution-card">
+              <div class="evolution-badge">
+                <span class="badge-pulse"></span>
+                <span data-i18n="evolutionBadge">📐 PLANOS DEL PROYECTO • CLUB 100% OPERATIVO</span>
+              </div>
+              <p class="evolution-text" data-i18n="facilityProjectNotice">
+                Estas imágenes corresponden a los <strong>planos arquitectónicos y la visión final de nuestro complejo</strong>. Estamos aún en fase de construcción y ampliación, pero <strong>el club está totalmente abierto y operativo para todos los entrenamientos diarios</strong> (Kickboxing K-1 y Boxeo Tradicional Inglés). ¡Vení a formar parte de los cimientos y de la evolución de nuestra comunidad!
+              </p>
+            </div>
+          </div>
+
+          <!-- AUTO-ROTATING SHOWCASE : LES 2 PHOTOS DU PROJET EN ROTATION AUTOMATIQUE -->
+          <div class="facility-rotator-container" id="facilityRotator">
+            <div class="rotator-slide active" data-slide="0">
+              <img src="stories/assets/gym_club_de_boxeo.jpg" alt="Club de Boxeo del Olimpo - Ring & Sacs">
+              <div class="rotator-overlay-badge">
+                <span class="badge-dot"></span>
+                <span class="rotator-badge-text" data-i18n="rotatorSlide1">🥊 1. La Salle de Combat (Ring & Sacs) • Club Déjà Ouvert</span>
+              </div>
+            </div>
+            <div class="rotator-slide" data-slide="1">
+              <img src="stories/assets/gym_restaurant_del_olimpo.jpg" alt="Restaurant del Olimpo - Nutrition Intégrée">
+              <div class="rotator-overlay-badge">
+                <span class="badge-dot"></span>
+                <span class="rotator-badge-text" data-i18n="rotatorSlide2">🥗 2. Le Restaurant Athlétique • En Cours de Finition</span>
+              </div>
+            </div>
+            
+            <div class="rotator-nav-bar">
+              <div class="rotator-dots">
+                <button type="button" class="rotator-dot active" data-index="0" onclick="window.setRotatorSlide(0)" aria-label="Photo 1 - Salle de combat"></button>
+                <button type="button" class="rotator-dot" data-index="1" onclick="window.setRotatorSlide(1)" aria-label="Photo 2 - Restaurant du club"></button>
+              </div>
+              <span class="rotator-timer-hint" data-i18n="rotatorHint">Plans du projet • Rotation auto</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DUO CARDS: CLUB FIRST, RESTAURANT SECOND -->
+        <div class="facility-cards-duo">
+          <!-- CARD 1: LA SALLE (EN PREMIER) -->
+          <div class="facility-card primary-card">
+            <div class="card-lisere-top"></div>
+            <div style="font-size: 11.5px; font-weight: 700; color: var(--brand-blue-dark); text-transform: uppercase; margin-bottom: 8px;">1. Cœur du Complexe</div>
+            <h3 class="facility-title">🥊 La Salle de Combat (Fighting Club)</h3>
+            <p class="facility-desc">
+              Un espace pensé pour la rigueur pugilistique. Pas de gadgets inutiles : un ring de combat, des sacs de frappe lourds pour le conditionnement, des surfaces d'appuis fermes et des entraîneurs chevronnés dédiés au <strong>Kickboxing K-1</strong> et à la <strong>Boxe Traditionnelle Anglaise</strong>.
+            </p>
+            <div style="margin-top: 15px; font-size: 13.5px; font-weight: 700; color: var(--brand-blue-dark);">
+              Tarif Adhésion : 150.000 ₲ / mois • Jour d'essai gratuit disponible
+            </div>
+          </div>
+
+          <!-- CARD 2: LE RESTAURANT DE LA SALLE (EN SECOND) -->
+          <div class="facility-card secondary-card">
+            <div class="card-lisere-top"></div>
+            <div style="font-size: 11.5px; font-weight: 700; color: var(--brand-blue-dark); text-transform: uppercase; margin-bottom: 8px;">2. Intégré à la Salle</div>
+            <h3 class="facility-title">🥗 Le Restaurant Athlétique du Club</h3>
+            <p class="facility-desc">
+              La cuisine du club opère chaque matin dès 06h00 pour concocter les 50 repas du jour. Chaque assiette respecte la Règle d'Or (1/3 Protéines, 1/3 Glucides propres, 1/3 Fibres et fruit). Tu manges exactement ce que ton métabolisme réclame pour réparer les tissus et exploser tes performances.
+            </p>
+            <div style="margin-top: 15px; font-size: 13.5px; font-weight: 700; color: #16a34a;">
+              « S'entraîner c'est 50% du travail, l'autre moitié c'est de bien se nourrir. »
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 2: FIGHTING CLUB (DARK #090d10) — STRICTEMENT KICKBOXING & BOXE TRADITIONNELLE ANGLAISE
+         ========================================================================== -->
+    <section id="club" class="section-wrap section-dark">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-pill" data-i18n="clubPill">Académie de Combat</span>
+          <h2 class="section-title" data-i18n="clubTitle">FIGHTING CLUB <span>OLIMPO TEAM</span></h2>
+          <p class="section-desc" data-i18n="clubSubtitle">
+            Développe une discipline d'acier, une vitesse explosive et une puissance musculaire sur le ring. Spécialisation rigoureuse en Kickboxing K-1 Rules et Boxe Traditionnelle Anglaise. Aucun combat au sol ni grappling : frappe pure, esquives et puissance.
+          </p>
+        </div>
+
+
+
+        <!-- SCHEDULE BOX (STRICTEMENT BOXE ET KICKBOXING) -->
+        <div class="schedule-box">
+          <div class="card-lisere-top"></div>
+          <div class="schedule-header">
+            <div>
+              <h3 class="schedule-title">Planning des Séances de Combat</h3>
+              <p style="color: var(--text-dim); font-size: 13.5px; margin-top: 4px;">Entraînements du Lundi au Samedi au club (Bristol d'Areguá, près du Cacique).</p>
+            </div>
+            <button class="btn-hero-primary" onclick="window.openCheckout('club_kickboxing')">Réserver un Essai Gratuit</button>
+          </div>
+
+          <div class="schedule-grid">
+            <div class="schedule-card">
+              <div class="sched-slot">🌅 Matin (07:00 – 08:30)</div>
+              <div class="sched-class">Condition Physique & Sacs de Frappe</div>
+              <div class="sched-meta">Cardio combat, renforcement du tronc et combinaisons aux sacs lourds.</div>
+            </div>
+            <div class="schedule-card">
+              <div class="sched-slot">☀️ Midi (12:30 – 14:00)</div>
+              <div class="sched-class">Boxe Traditionnelle Anglaise</div>
+              <div class="sched-meta">Jeu de jambes, esquives rotatives et travail technique aux pattes d'ours.</div>
+            </div>
+            <div class="schedule-card">
+              <div class="sched-slot">🌙 Soir (18:00 – 19:30)</div>
+              <div class="sched-class">Kickboxing K-1 Rules Collectif</div>
+              <div class="sched-meta">Cours phare : poings-pieds, balayages, enchaînements et haute intensité.</div>
+            </div>
+            <div class="schedule-card">
+              <div class="sched-slot">🔥 Avancé (19:30 – 21:00)</div>
+              <div class="sched-class">Sparring Contrôlé & Perfectionnement</div>
+              <div class="sched-meta">Assauts souples avec protections intégrales et mise en situation de ring.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 3: RESTAURANTE DEL OLIMPO (PURE WHITE #FFFFFF - 100% PLEINE LARGEUR)
+         ========================================================================== -->
+    <section id="restaurante" class="section-wrap section-light">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-pill" data-i18n="restoPill">Nutrition Sportive</span>
+          <h2 class="section-title" data-i18n="restoTitle">RESTAURANT DE L'<span>OLYMPE</span></h2>
+          <p class="section-desc" data-i18n="restoSubtitle">
+            La vraie alimentation dont ton corps a besoin après l'effort. Des repas frais cuisinés chaque matin avec des ingrédients sains, sans huiles industrielles et pesés au gramme près.
+          </p>
+        </div>
+
+        <!-- GOLDEN RULE BANNER -->
+        <div class="golden-rule-banner">
+          <div class="card-lisere-top"></div>
+          <div class="rule-header">
+            <h3 data-i18n="goldenRuleTitle">La Règle d'Or de l'Assiette Athlétique Olympe</h3>
+            <p>Équilibre métabolique pensé pour sécher le tissu adipeux et réparer les fibres musculaires.</p>
+          </div>
+
+          <div class="rule-triad">
+            <div class="triad-col">
+              <div class="triad-badge">1/3 de l'Assiette</div>
+              <div class="triad-title">Protéines Pures</div>
+              <p class="triad-desc">Blanc de poulet grillé (200g), bœuf maigre ou œufs frais pour la reconstruction musculaire.</p>
+            </div>
+            <div class="triad-col">
+              <div class="triad-badge">1/3 de l'Assiette</div>
+              <div class="triad-title">Glucides Propres</div>
+              <p class="triad-desc">Riz blanc vapeur, pâtes au wok ou manioc fondant pour recharger les réserves de glycogène.</p>
+            </div>
+            <div class="triad-col">
+              <div class="triad-badge">1/3 de l'Assiette</div>
+              <div class="triad-title">Fibres & Vitamines</div>
+              <p class="triad-desc">Salades croquantes fraîches, légumes sautés au wok et fruits de saison entiers (orange, pomme, banane).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE 4 PHYSICAL GOALS SELECTOR -->
+        <div class="goals-selector-wrap">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h4 style="font-family: var(--font-greek); font-size: 18px; font-weight: 700; color: var(--brand-blue-dark); letter-spacing: 0.05em;">
+              Calibre Ton Assiette Selon Ton Objectif Actuel
+            </h4>
+            <p style="font-size: 13.5px; color: var(--text-light-body); margin-top: 4px;">
+              Clique sur ton profil pour voir comment nous équilibrons tes portions en cuisine :
+            </p>
+          </div>
+
+          <div class="goals-nav-tabs">
+            <button class="btn-goal-tab" data-goal="perdida_peso">1. Perte de Poids</button>
+            <button class="btn-goal-tab" data-goal="definicion">2. Sèche & Définition</button>
+            <button class="btn-goal-tab active" data-goal="mantenimiento">3. Maintien (Règle d'Or)</button>
+            <button class="btn-goal-tab" data-goal="ganancia_masa">4. Prise de Masse</button>
+          </div>
+
+          <div class="goal-detail-card" id="goalDetailBox">
+            <div>
+              <h5 class="goal-headline" id="goalTitle">3. Maintien Athlétique (Règle d'Or Officielle)</h5>
+              <p class="goal-strategy-text" id="goalStrategy">
+                Équilibre métabolique parfait : 1/3 Protéines, 1/3 Glucides propres et 1/3 Fibres & Fruits pour une performance constante sur le ring.
+              </p>
+            </div>
+
+            <div class="goal-macros-box">
+              <div class="goal-macro-pill">
+                <div class="goal-macro-label">Protéine</div>
+                <div class="goal-macro-val" id="macroProt">200g (1/3 assiette)</div>
+              </div>
+              <div class="goal-macro-pill">
+                <div class="goal-macro-label">Glucides</div>
+                <div class="goal-macro-val" id="macroCarbs">100g sec (250g cuit)</div>
+              </div>
+              <div class="goal-macro-pill">
+                <div class="goal-macro-label">Fibres & Fruit</div>
+                <div class="goal-macro-val" id="macroVeg">200-250g + 1 Fruit</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MENU FILTER TABS -->
+        <div class="menu-tab-nav">
+          <button class="btn-menu-tab active" data-filter="all">Tous les Plats</button>
+          <button class="btn-menu-tab" data-filter="Lunes">Lundi</button>
+          <button class="btn-menu-tab" data-filter="Martes">Mardi</button>
+          <button class="btn-menu-tab" data-filter="Miércoles">Mercredi</button>
+          <button class="btn-menu-tab" data-filter="Jueves">Jeudi</button>
+          <button class="btn-menu-tab" data-filter="Viernes">Vendredi</button>
+          <button class="btn-menu-tab" data-filter="Sábado">Samedi</button>
+        </div>
+
+        <!-- DISHES GRID (RENDERED BY APP.JS) -->
+        <div class="weekly-dishes-grid" id="dishesGrid"></div>
+
+
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 4: FLYERS & MENUS HUB (DARK #090d10)
+         ========================================================================== -->
+    <section id="flyers" class="section-wrap section-dark">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-pill" data-i18n="flyersPill">Soporte Oficial para Imprimir</span>
+          <h2 class="section-title" data-i18n="flyersTitle">FLYER OFICIAL <span>RECTO & VERSO (PDF)</span></h2>
+          <p class="section-desc" data-i18n="flyersSubtitle">
+            Menú completo y planes de suscripción condensados en 1 sola hoja de doble cara (2 páginas A4 en PDF listo para imprimir o compartir).
+          </p>
+        </div>
+
+        <!-- BARRE D'ACTION PDF IMMÉDIATE -->
+        <div class="flyers-cta-bar">
+          <a href="stories/assets/Menu_Oficial_Restaurante_del_Olimpo.pdf" target="_blank" rel="noopener noreferrer" class="btn-open-pdf-main">
+            📄 <span data-i18n="btnOpenPdf">Descargar Flyer Oficial de 2 Páginas en PDF</span>
+          </a>
+          <span class="flyers-cta-hint" data-i18n="pdfHint">Documento oficial en alta resolución • Formato A4 Recto/Verso</span>
+        </div>
+
+        <div class="flyers-grid" id="flyersGrid"></div>
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 5: PRICING MATRIX & DÉBITO AUTOMÁTICO (PURE WHITE #FFFFFF - 100% PLEINE LARGEUR)
+         ========================================================================== -->
+    <section id="tarifas" class="section-wrap section-light">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-pill" data-i18n="pricingPill">Tarifs & Abonnements</span>
+          <h2 class="section-title" data-i18n="pricingTitle">FORMULES D'<span>ABONNEMENT</span></h2>
+          <p class="section-desc" data-i18n="pricingSubtitle">
+            Choisis ta formule. Active le <strong>débit automatique Bancard</strong> pour bénéficier d'une remise fidélité de 5% et sécuriser tes entraînements et repas frais sans coupure.
+          </p>
+        </div>
+
+        <!-- PRICING CONTROLS -->
+        <div class="pricing-controls">
+          <div class="pricing-toggle-box">
+            <button class="btn-cycle-toggle" data-cycle="semanal" data-i18n="cycleWeekly">Semaine (6 Jours)</button>
+            <button class="btn-cycle-toggle active" data-cycle="mensual" data-i18n="cycleMonthly">Mois Complet (Lun au Sam)</button>
+          </div>
+
+          <div class="auto-debit-badge-switch">
+            <span data-i18n="adControlTitle">💳 Débito Automático Tokenizado Bancard :</span>
+            <strong data-i18n="adControlDisc">5% de Descuento Inmediato Incluido</strong>
+          </div>
+        </div>
+
+        <!-- PRICING CARDS GRID -->
+        <div class="pricing-cards-grid">
+          <!-- PLAN 1: CLUB KICKBOXING & BOXE (150K PYG / MOIS) -->
+          <div class="pricing-card">
+            <span class="plan-type" data-i18n="planTypeClub">Academia de Combat</span>
+            <h3 class="plan-title" data-i18n="planTitleClub">Club Kickboxing & Boxeo</h3>
+            <div class="plan-price-block">
+              <div class="price-strikethrough-wrap" id="strikeWrap_club_kickboxing" style="display: flex;">
+                <span class="old-price-line">150.000 ₲</span>
+                <span class="discount-save-pill">Ahorrás 7.500 ₲</span>
+              </div>
+              <div class="price-main" id="price_club_kickboxing">142.500 ₲ <span>/mes</span></div>
+              <div class="price-per-meal" id="perMeal_club_kickboxing">Acceso Libre Ilimitado</div>
+            </div>
+            <ul class="plan-features-list">
+              <li data-i18n="planFeatClub1">Acceso libre a las clases de <strong>Kickboxing K-1 Rules</strong></li>
+              <li data-i18n="planFeatClub2">Clases de <strong>Boxeo Tradicional Inglés</strong></li>
+              <li data-i18n="planFeatClub3">Acceso al ring, bolsas pesadas de 60kg y guanteo</li>
+              <li data-i18n="planFeatClub4">1er Día de prueba gratis sin compromiso</li>
+              <li data-i18n="planFeatClub5">Acompañamiento técnico por peleadores experimentados</li>
+            </ul>
+            <button class="btn-select-plan" onclick="window.openCheckout('club_kickboxing')" data-i18n="btnSelectClub">Inscribirse al Club (150k)</button>
+          </div>
+
+          <!-- PLAN 2: NUTRITION 1 PLAT / JOUR -->
+          <div class="pricing-card">
+            <span class="plan-type" data-i18n="planType1Plato">Nutrición Diaria</span>
+            <h3 class="plan-title" data-i18n="planTitle1Plato">Pack 1 Plato / Día</h3>
+            <div class="plan-price-block">
+              <div class="price-strikethrough-wrap" id="strikeWrap_pack_1_plato" style="display: flex;">
+                <span class="old-price-line">500.000 ₲</span>
+                <span class="discount-save-pill">Ahorrás 25.000 ₲</span>
+              </div>
+              <div class="price-main" id="price_pack_1_plato">475.000 ₲ <span>/mes</span></div>
+              <div class="price-per-meal" id="perMeal_pack_1_plato">19.791 ₲ / plato</div>
+            </div>
+            <ul class="plan-features-list">
+              <li data-i18n="planFeat1Plato1">1 comida completa por día: Almuerzo o Cena</li>
+              <li data-i18n="planFeat1Plato2">Recetas frescas rotativas de Lunes a Sábado</li>
+              <li data-i18n="planFeat1Plato3">200g de proteína pura + carbohidratos limpios + ensalada</li>
+              <li data-i18n="planFeat1Plato4">Frutas frescas de estación incluidas en cada comida</li>
+              <li data-i18n="planFeat1Plato5">Retiro directo en el club o delivery (+20%)</li>
+            </ul>
+            <button class="btn-select-plan" onclick="window.openCheckout('pack_1_plato')" data-i18n="btnSelect1Plato">Elegir 1 Plato/Día</button>
+          </div>
+
+          <!-- PLAN 3: FIGHTER PRO (2 PLATS / JOUR) — FEATURED -->
+          <div class="pricing-card featured">
+            <div class="card-lisere-top"></div>
+            <div class="popular-ribbon" data-i18n="ribbonPopular">⭐ Plan Más Popular</div>
+            <span class="plan-type" data-i18n="planTypeFighterPro">Atleta & Peleador</span>
+            <h3 class="plan-title" data-i18n="planTitleFighterPro">Fighter Pro (2 Platos)</h3>
+            <div class="plan-price-block">
+              <div class="price-strikethrough-wrap" id="strikeWrap_pack_fighter_pro" style="display: flex;">
+                <span class="old-price-line">950.000 ₲</span>
+                <span class="discount-save-pill">Ahorrás 47.500 ₲</span>
+              </div>
+              <div class="price-main" id="price_pack_fighter_pro">902.500 ₲ <span>/mes</span></div>
+              <div class="price-per-meal" id="perMeal_pack_fighter_pro">18.801 ₲ / plato</div>
+            </div>
+            <ul class="plan-features-list">
+              <li data-i18n="planFeatFighter1"><strong>2 comidas completas por día:</strong> Almuerzo + Cena</li>
+              <li data-i18n="planFeatFighter2">Cero compras, cero cocina después de entrenar duro</li>
+              <li data-i18n="planFeatFighter3">Freno al catabolismo nocturno: recuperación máxima</li>
+              <li data-i18n="planFeatFighter4">Platos calientes herméticos listos para llevar</li>
+              <li data-i18n="planFeatFighter5">Precio ultra competitivo: menos de 19.000 ₲ por comida limpia</li>
+            </ul>
+            <button class="btn-select-plan" onclick="window.openCheckout('pack_fighter_pro')" data-i18n="btnSelectFighter">Elegir Fighter Pro</button>
+          </div>
+
+          <!-- PLAN 4: COMBO FIGHTER ELITE (CLUB + 2 PLATS/JOUR) -->
+          <div class="pricing-card elite">
+            <div class="card-lisere-top"></div>
+            <div class="elite-ribbon" data-i18n="ribbonElite">🏆 Transformación Total</div>
+            <span class="plan-type" style="color: var(--brand-blue-dark);" data-i18n="planTypeElite">Pack Híbrido Definitivo</span>
+            <h3 class="plan-title" data-i18n="planTitleElite">Combo Fighter Elite</h3>
+            <div class="plan-price-block">
+              <div class="price-strikethrough-wrap" id="strikeWrap_combo_elite" style="display: flex;">
+                <span class="old-price-line">1.100.000 ₲</span>
+                <span class="discount-save-pill">Ahorrás 55.000 ₲</span>
+              </div>
+              <div class="price-main" id="price_combo_elite">1.045.000 ₲ <span>/mes</span></div>
+              <div class="price-per-meal" id="perMeal_combo_elite">Club Ilimitado + 2 Platos/Día</div>
+            </div>
+            <ul class="plan-features-list">
+              <li data-i18n="planFeatElite1"><strong>Acceso completo ilimitado</strong> a Kickboxing & Boxeo</li>
+              <li data-i18n="planFeatElite2"><strong>2 comidas atléticas por día</strong> preparadas en el club</li>
+              <li data-i18n="planFeatElite3">Seguimiento mensual de composición corporal y peso</li>
+              <li data-i18n="planFeatElite4">Prioridad de atención en cocina y delivery</li>
+              <li data-i18n="planFeatElite5">La experiencia total del Olimpo al mejor precio</li>
+            </ul>
+            <button class="btn-select-plan" onclick="window.openCheckout('combo_elite')" data-i18n="btnSelectElite">Elegir Pack Elite</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 6: AFFILIATE SYSTEM (DARK #090d10)
+         ========================================================================== -->
+    <section id="afiliados" class="section-wrap section-dark">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-pill" data-i18n="affPill">Revenus Passifs</span>
+          <h2 class="section-title" data-i18n="affTitle">PROGRAMME D'<span>AMBASSADEURS & AFFILIATION</span></h2>
+          <p class="section-desc">
+            Tu t'entraînes au club ou tu adores nos plats ? Invite tes amis, tes partenaires de combat et tes collègues et <strong>touche jusqu'à 15% de commission récurrente</strong> chaque mois tant qu'ils restent abonnés.
+          </p>
+        </div>
+
+        <!-- AFFILIATE HERO BOX -->
+        <div class="affiliate-hero-box">
+          <div class="card-lisere-top"></div>
+          <h3 style="font-family: var(--font-greek); font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: 0.04em;">
+            Comment Fonctionne le Système d'Affiliation ?
+          </h3>
+          <p style="color: var(--text-body); font-size: 14.5px; max-width: 820px; line-height: 1.7;">
+            1. Génère ton lien de parrainage exclusif ci-dessous.<br>
+            2. Partage-le sur WhatsApp, Instagram ou directement au club.<br>
+            3. Dès qu'un filleul commande son pack de repas ou s'inscrit au club, ta commission est créditée automatiquement.<br>
+            4. Retire tes gains quand tu veux par virement bancaire SIPAP, portefeuille Tigo Money ou en espèces à la réception du club.
+          </p>
+
+          <div class="affiliate-stats-row">
+            <div class="aff-stat-card">
+              <div class="aff-stat-number">10%</div>
+              <div class="aff-stat-label">Commissions Packs Nutrition</div>
+            </div>
+            <div class="aff-stat-card">
+              <div class="aff-stat-number">15%</div>
+              <div class="aff-stat-label">Commissions Abonnements Club</div>
+            </div>
+            <div class="aff-stat-card">
+              <div class="aff-stat-number">Mois après Mois</div>
+              <div class="aff-stat-label">Rémunération Récurrente</div>
+            </div>
+            <div class="aff-stat-card">
+              <div class="aff-stat-number">SIPAP / Tigo</div>
+              <div class="aff-stat-label">Paiement Direct au Paraguay</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE COMMISSION CALCULATOR -->
+        <div class="calc-wrapper">
+          <h3 style="font-family: var(--font-greek); font-size: 18px; font-weight: 700; color: var(--brand-blue-light); margin-bottom: 22px; letter-spacing: 0.04em;">
+            Simulateur de Gains Mensuels par Filleuls
+          </h3>
+
+          <div class="calc-grid">
+            <div class="calc-controls">
+              <div class="calc-group">
+                <div class="calc-label-bar">
+                  <span>Amis abonnés aux repas (Packs de nutrition) :</span>
+                  <span id="valMeals" style="color: var(--brand-blue-light);">5 personnes</span>
+                </div>
+                <input type="range" min="0" max="30" value="5" class="calc-slider" id="sliderMeals">
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label-bar">
+                  <span>Amis inscrits aux cours de Kickboxing & Boxe :</span>
+                  <span id="valClub" style="color: var(--brand-blue-light);">5 personnes</span>
+                </div>
+                <input type="range" min="0" max="30" value="5" class="calc-slider" id="sliderClub">
+              </div>
+            </div>
+
+            <div class="calc-result-box">
+              <div class="calc-result-label">Revenus Estimés Par Mois :</div>
+              <div class="calc-result-val" id="calcTotalEarnings">362.500 ₲</div>
+              <div class="calc-result-note">Avec quelques personnes parrainées, ton propre abonnement et tes repas te reviennent totalement GRATUITS avec de l'argent en plus !</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINK GENERATOR -->
+        <div class="link-gen-card">
+          <h3 style="font-family: var(--font-greek); font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.04em;">
+            Générateur de Ton Lien Ambassadeur
+          </h3>
+          <p style="color: var(--text-dim); font-size: 13.5px; margin-top: 4px;">
+            Renseigne ton prénom ou ton pseudo sportif pour créer ton lien tracké :
+          </p>
+
+          <div class="link-gen-inputs">
+            <input type="text" id="affAliasInput" class="aff-alias-input" placeholder="Ex: GUERRIER_ALEX" maxlength="20">
+            <button id="btnGenLink" class="btn-gen-link">Générer Mon Lien</button>
+          </div>
+
+          <div class="generated-link-display" id="linkDisplayBox" style="display: none;">
+            <span class="link-text" id="genLinkText">http://localhost:3000/?ref=CHAMPION</span>
+            <div class="link-buttons">
+              <button id="btnCopyLink" class="btn-copy-link">📋 Copier le Lien</button>
+              <button id="btnShareWa" class="btn-share-wa">📲 Partager sur WhatsApp</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULATED AFFILIATE DASHBOARD -->
+        <div style="margin-top: 30px; background: #0b0f12; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 25px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+            <h4 style="font-family: var(--font-greek); font-size: 15px; font-weight: 700; color: var(--brand-blue-light); letter-spacing: 0.04em;">
+              Aperçu de Ton Tableau de Bord Affilié
+            </h4>
+            <button class="btn-hero-primary" style="padding: 9px 18px; font-size: 13px;" onclick="window.openWithdrawModal()">
+              💸 Demander un Virement de Gains
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+            <div style="background: #11171c; padding: 16px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-dim);">Clics sur ton lien</div>
+              <div style="font-size: 24px; font-weight: 700; color: #fff; margin-top: 2px;">142</div>
+            </div>
+            <div style="background: #11171c; padding: 16px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-dim);">Filleuls inscrits</div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--brand-blue-light); margin-top: 2px;">8</div>
+            </div>
+            <div style="background: #11171c; padding: 16px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-dim);">Commissions totales</div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--brand-blue-light); margin-top: 2px;">450.000 ₲</div>
+            </div>
+            <div style="background: #11171c; padding: 16px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-dim);">Solde disponible</div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--green-gain); margin-top: 2px;">450.000 ₲</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GREEK MEANDER SEPARATOR -->
+    <div class="lisere-bar"></div>
+
+    <!-- ==========================================================================
+         SECTION 7: ACCÈS AREGUÁ & CONTACT & FAQ (PURE WHITE #FFFFFF - 100% PLEINE LARGEUR)
+         ========================================================================== -->
+    <section id="contacto" class="section-wrap section-light">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-pill" data-i18n="contactPill">Accès & Contact</span>
+          <h2 class="section-title" data-i18n="contactTitle">REJOINS L'<span>OLYMPE À AREGUÁ</span></h2>
+          <p class="section-desc">
+            Adresse officielle : <strong>Bristol d'Areguá, près du Cacique</strong> (Av. Mariscal Estigarribia), Areguá, Paraguay. Retrait sur place au club ou service de livraison à domicile (+20%).
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
+          <!-- INFO BOX -->
+          <div class="contact-card">
+            <div class="card-lisere-top"></div>
+            <h3 style="font-family: var(--font-greek); font-size: 18px; font-weight: 700; color: var(--text-light-title); margin-bottom: 20px; letter-spacing: 0.04em;">
+              Horaires de Service & Retrait
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
+              <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: var(--text-light-body);">📍 Emplacement :</span>
+                <strong style="color: var(--brand-blue-dark); text-align: right;">Bristol d'Areguá, près du Cacique</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: var(--text-light-body);">Service Midi (Déjeuner) :</span>
+                <strong style="color: var(--text-light-title);">11:00 à 13:00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: var(--text-light-body);">Service Soir (Dîner) :</span>
+                <strong style="color: var(--text-light-title);">18:00 à 20:30</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: var(--text-light-body);">Jours d'Ouverture :</span>
+                <strong style="color: var(--text-light-title);">Lundi au Samedi</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: var(--text-light-body);">Dimanche :</span>
+                <strong style="color: var(--red-punch);">Fermé (Repos du Guerrier)</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: var(--text-light-body);">Service Livraison :</span>
+                <strong style="color: var(--brand-blue-dark);">+20% du montant de commande</strong>
+              </div>
+            </div>
+
+            <!-- GPS ACTION BUTTONS -->
+            <div class="map-buttons-row">
+              <a href="https://maps.google.com/?q=Bristol+Aregua+Paraguay" target="_blank" rel="noopener noreferrer" class="btn-map-action btn-map-google">
+                <span>📍 Ouvrir dans Google Maps</span>
+              </a>
+              <a href="https://waze.com/ul?q=Bristol+Aregua" target="_blank" rel="noopener noreferrer" class="btn-map-action btn-map-waze">
+                <span>🚗 Ouvrir dans Waze</span>
+              </a>
+            </div>
+
+            <a href="https://wa.me/595995620416?text=Bonjour%20Olimpo%2C%20je%20souhaite%20m%27inscrire%20au%20club%20ou%20commander%20un%20pack" target="_blank" class="btn-hero-primary" style="width: 100%; justify-content: center; margin-top: 18px;">
+              <span>💬 Écrire sur WhatsApp (+595 995 620416)</span>
+            </a>
+          </div>
+
+          <!-- FAQ BOX -->
+          <div class="contact-card">
+            <div class="card-lisere-top"></div>
+            <h3 style="font-family: var(--font-greek); font-size: 18px; font-weight: 700; color: var(--text-light-title); margin-bottom: 20px; letter-spacing: 0.04em;">
+              Questions Fréquentes
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div>
+                <h4 style="font-size: 14.5px; font-weight: 700; color: var(--brand-blue-dark); margin-bottom: 3px;">Faut-il réserver à l'avance pour manger ou s'entraîner ?</h4>
+                <p style="font-size: 13.5px; color: var(--text-light-body); line-height: 1.6;">Non. La règle officielle du complexe est <strong>Sans Réservation</strong>. Viens directement sur place (Bristol d'Areguá, près du Cacique) pour ton premier cours d'essai ou pour manger ton plat du jour.</p>
+              </div>
+              <div>
+                <h4 style="font-size: 14.5px; font-weight: 700; color: var(--brand-blue-dark); margin-bottom: 3px;">Puis-je commander des repas sans m'inscrire au club ?</h4>
+                <p style="font-size: 13.5px; color: var(--text-light-body); line-height: 1.6;">Tout à fait ! Tu peux souscrire à un pack de nutrition seul (1 ou 2 plats/jour) ou commander des plats à l'unité dès 7.000 ₲ à 25.000 ₲. Tous les 5 plats achetés, le 6ème est 100% OFFERT !</p>
+              </div>
+              <div>
+                <h4 style="font-size: 14.5px; font-weight: 700; color: var(--brand-blue-dark); margin-bottom: 3px;">Combien coûte l'adhésion au club de Kickboxing & Boxe ?</h4>
+                <p style="font-size: 13.5px; color: var(--text-light-body); line-height: 1.6;">L'adhésion mensuelle est de <strong>150.000 ₲ / mois</strong> (150k PYG) en accès libre à tous les cours. Le premier jour d'essai est 100% gratuit.</p>
+              </div>
+              <div>
+                <h4 style="font-size: 14.5px; font-weight: 700; color: var(--brand-blue-dark); margin-bottom: 3px;">Comment fonctionne le débit automatique Bancard ?</h4>
+                <p style="font-size: 13.5px; color: var(--text-light-body); line-height: 1.6;">Il est sécurisé par Bancard Paraguay avec cryptage PCI-DSS. Tu profites d'une remise immédiate de 5% sur ton abonnement et tu peux annuler ou suspendre à tout moment sans frais.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       NOUVELLE POP-UP DE CHECKOUT EN 2 ÉTAPES (CLUB 150K -> CITATION -> NUTRITION -> LIVRAISON 20%)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="checkoutModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" data-i18n="modalTitle">Formule & Paiement Sécurisé (Paraguay)</h3>
+        <button class="btn-modal-close" id="btnCloseModal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="checkoutForm">
+          
+          <!-- ÉTAPE 1 : CHOIX DU CLUB (150K / JOUR ESSAI / DÉJÀ MEMBRE / AUCUN) -->
+          <div class="checkout-step-block">
+            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+              <span class="step-num-badge" data-i18n="step1Badge">Étape 1</span>
+              <h4 class="step-title" style="margin: 0;" data-i18n="step1Title">Entraînement au Club de Combat (Bristol d'Areguá)</h4>
+            </div>
+            <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5;" data-i18n="step1Desc">
+              Kickboxing K-1 Rules & Boxe Traditionnelle Anglaise. Ring de frappe et sacs lourds.
+            </p>
+            <div class="form-group" style="margin-bottom: 0;">
+              <select id="checkoutClubChoice" class="form-input">
+                <option value="club_monthly">🥊 Oui, ajouter l'Abonnement Club Kickboxing & Boxe (+150.000 ₲ / mois)</option>
+                <option value="club_trial">🆓 Réserver un 1er Jour d'Essai GRATUIT au Club (0 ₲)</option>
+                <option value="club_already">✓ J'ai déjà mon abonnement au club / Déjà membre (0 ₲)</option>
+                <option value="club_none">— Non merci, uniquement le programme nutritif</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- BANNIÈRE CITATION NUTRITION CRO PERCUTANTE -->
+          <div class="modal-nutrition-quote-box">
+            <div class="quote-icon">🥊🥗</div>
+            <div class="quote-content">
+              <div class="quote-main" data-i18n="quoteMain">« S'entraîner c'est 50% du travail, l'autre moitié c'est de bien se nourrir. »</div>
+              <div class="quote-sub" data-i18n="quoteSub">« S'entraîner dur sans bien manger, c'est comme ramer sans rames ! » — Règle d'or de l'Olympe</div>
+            </div>
+          </div>
+
+          <!-- ÉTAPE 2 : PROGRAMME NUTRITIF DU CLUB -->
+          <div class="checkout-step-block">
+            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+              <span class="step-num-badge" data-i18n="step2Badge">Étape 2</span>
+              <h4 class="step-title" style="margin: 0;" data-i18n="step2Title">Choisis ton Programme Nutritif (Cuisine du Club)</h4>
+            </div>
+            <div class="form-group">
+              <select id="checkoutPlanSelect" class="form-input">
+                <optgroup label="📅 PACKS MENSUELS (Mois Complet • Lun à Sam - Dimanche Fermé)">
+                  <option value="pack_fighter_pro_mensual" selected>⭐ Fighter Pro Mensuel (2 Plats/Jour : Midi + Soir) — 950.000 ₲ / mois</option>
+                  <option value="pack_1_plato_mensual">Pack 1 Plat/Jour Mensuel (Midi ou Soir) — 500.000 ₲ / mois</option>
+                  <option value="combo_elite_mensual">🏆 Combo Fighter Elite Mensuel (Club Boxe + 2 Plats/Jour) — 1.100.000 ₲ / mois</option>
+                </optgroup>
+                <optgroup label="⚡ PACKS HEBDOMADAIRES (Semaine • 6 Jours Lun à Sam)">
+                  <option value="pack_fighter_pro_semanal">⭐ Fighter Pro Hebdo (2 Plats/Jour : 12 Plats) — 260.000 ₲ / sem</option>
+                  <option value="pack_1_plato_semanal">Pack 1 Plat/Jour Hebdo (1 Plat/Jour : 6 Plats) — 140.000 ₲ / sem</option>
+                  <option value="combo_elite_semanal">🏆 Combo Fighter Elite Hebdo (Passe Club + 2 Plats/Jour) — 300.000 ₲ / sem</option>
+                </optgroup>
+                <optgroup label="🍽️ PLATS À L'UNITÉ & STREET-FOOD">
+                  <option value="plato_unico">🍽️ Plat Unique du Jour / Street-Food (Dès 7.000 ₲ à 25.000 ₲)</option>
+                </optgroup>
+                <optgroup label="🥊 ENTRAÎNEMENT SEUL">
+                  <option value="none">— Aucun repas (Uniquement abonnement au Club)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- DYNAMIC SINGLE DISH PICKER (Visible when plato_unico is selected) -->
+            <div id="singleDishGroup" style="display: none; background: #06090c; padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle); margin-top: 10px;">
+              <div class="form-group">
+                <label for="dishSelect">Sélectionne ton Plat ou Street-Food :</label>
+                <select id="dishSelect" class="form-input">
+                  <option value="lunes_explosivo">El Explosivo (Lundi - Poulet Grillé 200g + Riz + Salade) - 25.000 ₲</option>
+                  <option value="martes_sparring">El Sparring (Mardi - Wok Pâtes + Bœuf Sauté 180g) - 25.000 ₲</option>
+                  <option value="miercoles_stroganoff">El Clásico Potencia (Mercredi - Stroganoff Bœuf/Poulet) - 25.000 ₲</option>
+                  <option value="jueves_dubai">Spécial Dubaï (Jeudi - Tataki de Bœuf Saisi) - 25.000 ₲</option>
+                  <option value="viernes_guiso">Guiso del Peleador (Vendredi - Ragoût Poulet 200g + Pâtes) - 25.000 ₲</option>
+                  <option value="sabado_milanesa">El Placer Atlético (Samedi - Milanaise Poulet + Purée Maison) - 25.000 ₲</option>
+                  <option value="hamburguesa_olimpo">Burger Olimpo (Bœuf + Œuf + Cheddar) - 14.000 ₲</option>
+                  <option value="club_milanesa">Club Poulet Milanaise (Triple Étage Protéiné) - 15.000 ₲</option>
+                  <option value="sandwich_pollo_repollo">Sandwich Poulet-Chou (Poulet Effiloché) - 10.000 ₲</option>
+                  <option value="tostados_paraguayos">Toastés Paraguayens-Italiens (Mozzarella + Jamón) - 7.000 ₲</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="plateQuantity">Nombre de Plats (5 achetés = le 6ème OFFERT !) :</label>
+                <input type="number" id="plateQuantity" class="form-input" value="1" min="1" max="10">
+              </div>
+            </div>
+          </div>
+
+          <!-- AUTO DEBIT SWITCH (-5%) -->
+          <div class="auto-debit-toggle-bar">
+            <div class="auto-debit-toggle-label">
+              <span class="ad-title" data-i18n="adTitle">🔄 Activer le Débit Automatique Bancard (-5% de remise)</span>
+              <span class="ad-sub" data-i18n="adSub">Renouvellement automatique chaque mois. Résiliable à tout moment en 1 clic.</span>
+            </div>
+            <input type="checkbox" id="chkAutoDebit" checked style="width: 20px; height: 20px; cursor: pointer;">
+          </div>
+
+          <!-- OPTIONS SUPPLÉMENTAIRES (LIVRAISON +20% & DOUBLE PROTÉINE) -->
+          <div class="checkout-section-block">
+            <h4 class="block-title" data-i18n="blockServices">3. Services & Livraison</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-body); cursor: pointer;">
+                <input type="checkbox" id="chkDelivery">
+                <span data-i18n="lblDelivery"><strong>Service Livraison à Domicile (+20% de l'abonnement)</strong> — Retrait au club gratuit sinon.</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-body); cursor: pointer;">
+                <input type="checkbox" id="chkDoubleProtein">
+                <span data-i18n="lblDoubleProt">Double Portion de Protéine (+2x Viande/Poulet : +10.000 ₲ par repas)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- CUSTOMER DETAILS -->
+          <div class="checkout-section-block">
+            <h4 class="block-title" data-i18n="blockCustomer">4. Vos Coordonnées</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="custName" data-i18n="lblCustName">Nom & Prénom *</label>
+                <input type="text" id="custName" class="form-input" placeholder="Ex: Jean Dupont" required>
+              </div>
+              <div class="form-group">
+                <label for="custPhone" data-i18n="lblCustPhone">WhatsApp / Téléphone *</label>
+                <input type="tel" id="custPhone" class="form-input" placeholder="Ex: 0981 123456" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="custCI" data-i18n="lblCustCI">C.I. ou RUC (pour la facture paraguayenne) *</label>
+                <input type="text" id="custCI" class="form-input" placeholder="Ex: 4.567.890-1" required>
+              </div>
+              <div class="form-group">
+                <label for="custAddress" data-i18n="lblCustAddress">Adresse de Livraison ou Retrait au Club</label>
+                <input type="text" id="custAddress" class="form-input" placeholder="Ex: Retrait Bristol Areguá ou adresse complète">
+              </div>
+            </div>
+          </div>
+
+          <!-- GATEWAY SELECTION (BANCARD, SIPAP, TIGO, QR) -->
+          <div class="checkout-section-block">
+            <h4 class="block-title" data-i18n="blockPayment">5. Moyen de Paiement Localisé au Paraguay</h4>
+            <div class="gateway-selector-tabs">
+              <div class="btn-gateway-tab active" data-gateway="bancard">
+                <span>💳</span>
+                <span class="gw-name">Bancard vPOS</span>
+              </div>
+              <div class="btn-gateway-tab" data-gateway="sipap">
+                <span>🏦</span>
+                <span class="gw-name">SIPAP Virement</span>
+              </div>
+              <div class="btn-gateway-tab" data-gateway="tigo">
+                <span>📱</span>
+                <span class="gw-name">Tigo Money</span>
+              </div>
+              <div class="btn-gateway-tab" data-gateway="qr">
+                <span>📲</span>
+                <span class="gw-name">QR Bancard</span>
+              </div>
+            </div>
+
+            <!-- GATEWAY CONTENT PANELS -->
+            <div class="gateway-content-box">
+              <!-- BANCARD PANEL -->
+              <div class="gw-content-panel" id="gwPanel_bancard">
+                <div style="font-size: 13px; color: var(--brand-blue-light); font-weight: 700; margin-bottom: 8px;">
+                  🔒 Passerelle Officielle Bancard vPOS (Cartes de Crédit & Débit Paraguay)
+                </div>
+                <div class="form-group">
+                  <label>Numéro de Carte (Visa, Mastercard, Panal, Cabal)</label>
+                  <input type="text" id="cardNumInput" class="form-input" placeholder="•••• •••• •••• ••••" maxlength="19">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Date d'expiration (MM/AA)</label>
+                    <input type="text" class="form-input" placeholder="12/28" maxlength="5">
+                  </div>
+                  <div class="form-group">
+                    <label>Code CVV</label>
+                    <input type="password" class="form-input" placeholder="123" maxlength="4">
+                  </div>
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-dim);">
+                  ✓ Tokenisation sécurisée PCI-DSS certifiée par Bancard Paraguay. Prêt pour débit automatique.
+                </div>
+              </div>
+
+              <!-- SIPAP PANEL -->
+              <div class="gw-content-panel" id="gwPanel_sipap" style="display: none;">
+                <div style="font-size: 13px; color: var(--brand-blue-light); font-weight: 700; margin-bottom: 8px;">
+                  🏦 Coordonnées Bancaires SIPAP (Virement Interbancaire en Guaraníes) :
+                </div>
+                <div style="font-size: 13px; color: #cbd5e1; line-height: 1.6; background: #06090c; padding: 12px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                  <strong>Banque :</strong> Banco Continental / Basa<br>
+                  <strong>Titulaire :</strong> Olimpo Team Kickboxing & Sports Resto<br>
+                  <strong>RUC :</strong> 80099562-4<br>
+                  <strong>Caisse d'Épargne Gs :</strong> 01-234567-89<br>
+                  <strong>Lieu :</strong> Bristol d'Areguá, près du Cacique
+                </div>
+                <button type="button" class="btn-copy-sipap" onclick="window.copySipapData()">
+                  📋 Copier les Données SIPAP pour Virer
+                </button>
+              </div>
+
+              <!-- TIGO MONEY PANEL -->
+              <div class="gw-content-panel" id="gwPanel_tigo" style="display: none;">
+                <div style="font-size: 13px; color: #fff; font-weight: 700; margin-bottom: 8px;">
+                  📱 Débit Instantané sur Portefeuille Mobile (Tigo Money / Personal) :
+                </div>
+                <div class="form-group">
+                  <label>Numéro de Téléphone Portefeuille (Paraguay)</label>
+                  <input type="tel" class="form-input" placeholder="0981 xxx xxx">
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-dim);">
+                  Une notification push sera envoyée sur votre téléphone pour saisir votre code PIN et approuver le paiement.
+                </div>
+              </div>
+
+              <!-- QR PANEL -->
+              <div class="gw-content-panel" id="gwPanel_qr" style="display: none;">
+                <div style="text-align: center; padding: 10px;">
+                  <div style="font-size: 13px; color: var(--brand-blue-light); font-weight: 700; margin-bottom: 8px;">
+                    📲 Scannez depuis l'application de votre banque au Paraguay (QR Simple)
+                  </div>
+                  <div style="display: inline-block; background: #fff; padding: 12px; border-radius: 6px;">
+                    <img src="logo_olimpo.png" alt="QR Code" style="width: 130px; height: 130px; object-fit: contain;">
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">
+                    Compatible avec Itaú, Continental, Ueno, Familiar, Sudameris, Atlas et GNB.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ORDER SUMMARY (CALCUL DYNAMIQUE) -->
+          <div class="order-summary-box">
+            <div class="summary-line">
+              <span id="sumClubName">Club Kickboxing (150k/mois) :</span>
+              <span id="sumClubPrice">150.000 ₲</span>
+            </div>
+            <div class="summary-line">
+              <span id="sumPlanName">Pack Nutrition :</span>
+              <span id="sumPlanPrice">950.000 ₲</span>
+            </div>
+            <div class="summary-line">
+              <span data-i18n="sumDiscountLabel">Remise Débit Automatique (-5%) :</span>
+              <span id="sumDiscount" style="color: var(--green-gain);">-55.000 ₲</span>
+            </div>
+            <div class="summary-line">
+              <span data-i18n="sumDeliveryLabel">Livraison Areguá (+20% abonnement) :</span>
+              <span id="sumDelivery">0 ₲</span>
+            </div>
+            <div class="summary-line">
+              <span data-i18n="sumProtLabel">Double Portion Protéine :</span>
+              <span id="sumExtraProtein">0 ₲</span>
+            </div>
+            <div class="summary-line total">
+              <span data-i18n="sumTotalLabel">TOTAL À RÉGLER :</span>
+              <span id="sumTotal">1.045.000 ₲</span>
+            </div>
+          </div>
+
+          <!-- LEGAL ACCEPTANCE CHECKBOX -->
+          <div style="margin-top: 14px; font-size: 12px; color: var(--text-dim); display: flex; align-items: flex-start; gap: 8px;">
+            <input type="checkbox" id="chkAcceptLegal" checked required style="margin-top: 2px;">
+            <label for="chkAcceptLegal" data-i18n="lblLegalAccept">
+              J'accepte les <a href="#" onclick="window.openLegalModal(); return false;" style="color: var(--brand-blue-light); text-decoration: underline;">conditions légales & sanitaires</a> applicables aux clubs de sport et à la restauration au Paraguay.
+            </label>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <button type="submit" class="btn-submit-order" data-i18n="btnSubmitOrder">
+            Valider la Commande & Transmettre sur WhatsApp (+595 995 620416)
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: CONDITIONS LÉGALES APPLICABLES AU PARAGUAY (INAN, DEPORTES, BANCARD)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="legalModal">
+    <div class="legal-modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Conditions Légales & Réglementaires (Paraguay)</h3>
+        <button class="btn-modal-close" id="btnCloseLegalModal">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px;">
+        <div class="legal-article">
+          <h4>1. Identification et Établissement (Areguá, Paraguay)</h4>
+          <p>
+            Le complexe <strong>« Olimpo Team Kickboxing & Restaurante del Olimpo »</strong> est situé à Bristol d'Areguá, près du Cacique (Avenida Mariscal Estigarribia), ville d'Areguá, Département Central, République du Paraguay. Téléphone officiel de contact et WhatsApp : +595 995 620416.
+          </p>
+        </div>
+
+        <div class="legal-article">
+          <h4>2. Réglementation Sanitaire & Alimentaire (INAN / MSPyBS)</h4>
+          <p>
+            Toutes les préparations culinaires servies par le Restaurante del Olimpo respectent les normes d'hygiène et de manipulation des aliments édictées par l'<strong>Instituto Nacional de Alimentación y Nutrición (INAN)</strong> et le Ministère de la Santé Publique et du Bien-être Social du Paraguay. Les macronutriments sont pesés et préparés le jour même. La chaîne du froid est strictement observée pour l'ensemble des viandes fraîches (poulet, bœuf) et produits laitiers (kéfir artisanal).
+          </p>
+        </div>
+
+        <div class="legal-article">
+          <h4>3. Aptitude Physique & Pratique des Sports de Combat (Ley N° 2874/06 del Deporte)</h4>
+          <p>
+            Conformément aux lois paraguayennes régissant les activités physiques et sportives, tout adhérent aux cours de <strong>Kickboxing K-1 Rules</strong> et de <strong>Boxe Traditionnelle Anglaise</strong> atteste être en bonne condition cardiovasculaire et apte à la pratique sportive d'intensité modérée à haute. Le port des protections individuelles (bandes, protège-dents, gants réglementaires) est obligatoire lors des séances de sparring contrôlé.
+          </p>
+        </div>
+
+        <div class="legal-article">
+          <h4>4. Débit Automatique Bancard & Modalités d'Annulation</h4>
+          <p>
+            Les abonnements souscrits avec l'option « Débit Automatique » bénéficient d'une réduction contractuelle de 5%. Les règlements sont opérés de manière récurrente via la plateforme sécurisée <strong>Bancard vPOS Paraguay</strong> (certifiée PCI-DSS). L'utilisateur peut suspendre ou annuler son prélèvement automatique à tout moment par simple message WhatsApp au +595 995 620416 au moins 48 heures avant la date de renouvellement, sans aucune pénalité de sortie.
+          </p>
+        </div>
+
+        <div class="legal-article">
+          <h4>5. Facturation Légale (Ley N° 6380/19 de Modernización Tributaria)</h4>
+          <p>
+            Toutes les opérations font l'objet d'une Factura Legal officielle (Tributación Paraguay - DNIT) avec TVA incluse (10% et 5%). Les adhérents et clients fournissent leur numéro de RUC ou Cédula de Identidad (C.I.) lors de la validation pour l'émission fiscale.
+          </p>
+        </div>
+
+        <div class="legal-article">
+          <h4>6. Service de Livraison à Domicile</h4>
+          <p>
+            Le service de livraison couvre le périmètre d'Areguá et environs immédiats avec un supplément de 20% du montant de l'abonnement ou commande. Les retraits directs au club (Bristol d'Areguá) sont 100% gratuits aux horaires de service (11h00-13h00 et 18h00-20h30).
+          </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+          <button class="btn-hero-primary" onclick="window.closeLegalModal()" style="display: inline-block;">J'ai compris et j'accepte</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       FLYER LIGHTBOX MODAL
+       ========================================================================== -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+      <img src="" alt="Flyer Preview" id="lightboxImg" class="lightbox-img">
+      <h4 id="lightboxTitle" style="color: #fff; font-size: 15px; font-weight: 700; text-align: center; margin: 4px 0;"></h4>
+      <div class="lightbox-actions" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+        <div style="display: flex; gap: 8px; width: 100%;">
+          <a href="stories/assets/Menu_Oficial_Restaurante_del_Olimpo.pdf" target="_blank" rel="noopener noreferrer" class="btn-lightbox-download" style="background: var(--brand-blue); flex: 1;">📄 Abrir PDF Completo</a>
+          <a href="" id="lightboxDownloadBtn" class="btn-lightbox-download" style="background: #1e293b; border: 1px solid #334155; flex: 1;" download>⬇ PNG</a>
+        </div>
+        <button class="btn-lightbox-close" id="btnCloseLightbox" style="width: 100%;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MOBILE STICKY ACTION BAR
+       ========================================================================== -->
+  <div class="mobile-sticky-bar">
+    <a href="#inicio" class="mobile-sticky-btn active">
+      <span>🏠</span>
+      <span>Accueil</span>
+    </a>
+    <a href="#club" class="mobile-sticky-btn">
+      <span>🥊</span>
+      <span>Club (150k)</span>
+    </a>
+    <a href="#restaurante" class="mobile-sticky-btn">
+      <span>🥗</span>
+      <span>Menu</span>
+    </a>
+    <a href="#afiliados" class="mobile-sticky-btn highlight">
+      <span>💰</span>
+      <span>Gains</span>
+    </a>
+    <button class="btn-mobile-order-pill" onclick="window.openCheckout('pack_fighter_pro')">
+      Commander
+    </button>
+  </div>
+
+  <!-- ==========================================================================
+       MAIN FOOTER (DARK #070a0c)
+       ========================================================================== -->
+  <footer class="main-footer">
+    <div class="card-lisere-top" style="margin-bottom: 30px;"></div>
+    <div class="footer-grid">
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+          <img src="logo_olimpo.png" alt="Logo" style="width: 36px; height: 36px;">
+          <span style="font-family: var(--font-greek); font-size: 16px; font-weight: 700;">OLIMPO <span style="color: var(--brand-blue);">TEAM</span></span>
+        </div>
+        <p style="color: var(--text-dim); font-size: 13.5px; line-height: 1.6; margin-bottom: 15px;">
+          Le premier complexe d'Areguá combinant ring de Kickboxing K-1, Boxe Traditionnelle Anglaise et cuisine saine calibrée aux macronutriments pour athlètes.
+        </p>
+        <p style="font-size: 13px; color: var(--brand-blue-light); font-weight: 600; margin-bottom: 4px;">
+          📍 Sede: Bristol d'Areguá, près du Cacique (Areguá, Paraguay)
+        </p>
+        <p style="font-size: 13px; color: #cbd5e1; font-weight: 600;">
+          WhatsApp : +595 995 620416 (¡Sans Réservation!)
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Fighting Club</h4>
+        <ul class="footer-links">
+          <li><a href="#club">Kickboxing K-1 Rules</a></li>
+          <li><a href="#club">Boxe Traditionnelle Anglaise</a></li>
+          <li><a href="#club">Sacs Lourds & Pattes d'Ours</a></li>
+          <li><a href="#club">Planning des Entraînements</a></li>
+          <li><a href="#tarifas">Adhésion Club (150.000 ₲)</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Restaurant Fit</h4>
+        <ul class="footer-links">
+          <li><a href="#restaurante">La Règle d'Or (1/3, 1/3, 1/3)</a></li>
+          <li><a href="#restaurante">Carte de la Semaine</a></li>
+          <li><a href="#restaurante">Street-Food Protéinée</a></li>
+          <li><a href="#restaurante">Boissons Récupération</a></li>
+          <li><a href="#flyers">Télécharger les Flyers</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Affiliation & Légal</h4>
+        <ul class="footer-links">
+          <li><a href="#afiliados">Programme Ambassadeur (15%)</a></li>
+          <li><a href="#afiliados">Calculateur de Gains</a></li>
+          <li><a href="#afiliados">Générer son Lien Tracké</a></li>
+          <li><a href="#" onclick="window.openLegalModal(); return false;">Conditions Légales (Paraguay)</a></li>
+          <li><a href="#contacto">Service Client & WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Olimpo Team Kickboxing & Restaurant de l'Olympe. Bristol d'Areguá, près du Cacique, Paraguay.</div>
+      <div>Architecture marketing CRO & alternance visuelle sobre.</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

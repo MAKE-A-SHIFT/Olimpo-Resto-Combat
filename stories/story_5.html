@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Story 5 - Bebidas Funcionales, Horarios y Delivery</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .story-page-box {
+      margin-top: 10px;
+      margin-bottom: 16px;
+      padding: 22px 24px;
+      background: rgba(12, 17, 24, 0.94);
+      border: 3.5px solid #00f0ff;
+      border-radius: 28px;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.35), inset 0 0 25px rgba(0, 240, 255, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .box-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed rgba(0, 240, 255, 0.3);
+      padding-bottom: 12px;
+    }
+
+    .box-header-text {
+      text-align: left;
+    }
+
+    .tag-highlight {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffd32a;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .box-main-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 40px;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .box-main-title span {
+      color: #00f0ff;
+    }
+
+    /* Trio Drinks Hero Showcase */
+    .drinks-hero-card {
+      background: #141b22;
+      border: 2.5px solid #00f0ff;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      position: relative;
+      height: 440px;
+    }
+
+    .drinks-hero-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .drinks-hero-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(8, 12, 16, 0.92);
+      border: 1.5px solid #ffd32a;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffd32a;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* 3 Drinks Grid */
+    .drinks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .drink-col-card {
+      background: #0f161e;
+      border: 1.5px solid rgba(0, 240, 255, 0.35);
+      border-radius: 18px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .drink-col-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .drink-col-price {
+      font-family: 'Anton', sans-serif;
+      font-size: 28px;
+      color: #ffd32a;
+      letter-spacing: 0.5px;
+    }
+
+    .drink-col-desc {
+      font-size: 12px;
+      color: #a4b0be;
+      line-height: 1.35;
+    }
+
+    /* Logistics & Delivery Rows */
+    .logistics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .logistic-card {
+      background: #0e151d;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .logistic-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #00f0ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logistic-text {
+      font-size: 12.5px;
+      color: #d1d8e0;
+      line-height: 1.35;
+    }
+
+    .logistic-text b {
+      color: #ffffff;
+    }
+
+    /* Loyalty Reward Banner */
+    .loyalty-banner {
+      background: linear-gradient(90deg, #182318 0%, #0d1e13 100%);
+      border: 2px solid #2ed573;
+      border-radius: 18px;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(46, 213, 115, 0.2);
+    }
+
+    .loyalty-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .loyalty-icon {
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .loyalty-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: #2ed573;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .loyalty-sub {
+      font-size: 12.5px;
+      color: #ffffff;
+    }
+
+    .loyalty-badge {
+      background: #2ed573;
+      color: #000000;
+      font-family: 'Anton', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-overlay"></div>
+
+  <!-- Decorative Greek Meander Bars -->
+  <img src="assets/greek_meander_bar.svg" style="position:absolute; top:0; left:0; width:100%; opacity:0.35; z-index:2;">
+  <img src="assets/greek_meander_bar.svg" style="position:absolute; bottom:110px; left:0; width:100%; opacity:0.35; z-index:2;">
+
+  <div class="story-content">
+    <!-- Header -->
+    <header class="story-header">
+      <div class="header-top-row">
+        <img class="brand-logo" src="assets/logo_olimpo.png" alt="Olimpo Team Logo">
+        <div class="brand-titles">
+          <div class="brand-pretitle">Bebidas, Logística & Pedidos</div>
+          <div class="brand-name">RESTAURANTE DEL OLIMPO</div>
+        </div>
+      </div>
+      <h1 class="main-headline">BEBIDAS FUNCIONALES & DELIVERY</h1>
+      <p class="sub-headline">Hidratación deportiva, probióticos artesanales y servicio diario hasta tu puerta.</p>
+    </header>
+
+    <!-- Main Content Box -->
+    <div class="story-page-box">
+      <div class="box-header-row">
+        <div class="box-header-text">
+          <div class="tag-highlight">★ Page 5 : Bebidas & Logística ★</div>
+          <div class="box-main-title">RECUPERACIÓN <span>& SERVICIO DIARIO</span></div>
+        </div>
+        
+        <!-- Scalloped Rosette Badge -->
+        <div class="rosette-badge">
+          <svg width="125" height="125" viewBox="0 0 160 160">
+            <path d="M 80 5 L 89 20 L 105 10 L 110 27 L 128 22 L 129 40 L 147 40 L 142 58 L 158 63 L 148 79 L 160 89 L 146 101 L 153 118 L 137 124 L 139 142 L 122 142 L 118 159 L 102 153 L 93 168 L 80 156 L 67 168 L 58 153 L 42 159 L 38 142 L 21 142 L 23 124 L 7 118 L 14 101 L 0 89 L 12 79 L 2 63 L 18 58 L 13 40 L 31 40 L 32 22 L 50 27 L 55 10 L 71 20 Z" fill="#00f0ff" />
+            <circle cx="80" cy="80" r="64" fill="#080c10" />
+            <circle cx="80" cy="80" r="60" fill="#00f0ff" stroke="#000" stroke-width="2" />
+            <text x="80" y="66" text-anchor="middle" font-size="16" font-weight="900" fill="#000" font-family="'Anton', sans-serif">BEBIDAS</text>
+            <text x="80" y="96" text-anchor="middle" font-size="24" font-weight="900" fill="#000" font-family="'Anton', sans-serif">5.000 ₲</text>
+            <text x="80" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#000" font-family="'Montserrat', sans-serif">CADA UNA</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Trio Drinks Hero Showcase -->
+      <div class="drinks-hero-card">
+        <img src="assets/new_menu/drinks_recovery_trio.jpg" alt="Trío de Bebidas Funcionales">
+        <div class="drinks-hero-badge">Trío de Bebidas Funcionales (5.000 ₲ c/u)</div>
+      </div>
+
+      <!-- 3 Drinks Column Cards -->
+      <div class="drinks-grid">
+        <!-- Aqua Fresca -->
+        <div class="drink-col-card">
+          <div class="drink-col-title">Aqua Fresca (1L)</div>
+          <div class="drink-col-price">5.000 ₲</div>
+          <div class="drink-col-desc">1 litro de agua fresca con pH neutro que cuida tu salud e hidratación celular.</div>
+        </div>
+
+        <!-- El Elixir de Thor -->
+        <div class="drink-col-card" style="border-color:#ffd32a;">
+          <div class="drink-col-title">El Elixir de Thor</div>
+          <div class="drink-col-price">5.000 ₲</div>
+          <div class="drink-col-desc">Néctar revitalizante de naranja y piña fresca, potenciado con jengibre puro.</div>
+        </div>
+
+        <!-- Kefir de Leche Artesanal -->
+        <div class="drink-col-card">
+          <div class="drink-col-title">Kéfir Artesanal</div>
+          <div class="drink-col-price">5.000 ₲</div>
+          <div class="drink-col-desc">Kéfir de leche probiótico que favorece digestión armoniosa y flora intestinal.</div>
+        </div>
+      </div>
+
+      <!-- Logistics Row (Horarios & Delivery) -->
+      <div class="logistics-row">
+        <!-- Horarios -->
+        <div class="logistic-card">
+          <div class="logistic-title">⏰ Horarios de Pedidos</div>
+          <div class="logistic-text">
+            <b>Turno Mediodía:</b> 11:00 hs a 13:00 hs<br>
+            <b>Turno Noche:</b> 18:00 hs a 20:30 hs<br>
+            <i style="color:#747d8c; font-size:11.5px;">(Lunes a Sábado • Domingo cerrado)</i>
+          </div>
+        </div>
+
+        <!-- Delivery -->
+        <div class="logistic-card">
+          <div class="logistic-title">🛵 Servicio de Delivery</div>
+          <div class="logistic-text">
+            Llevamos tu pedido o tu <b>Pack diario</b> hasta tu puerta por solo <b>10.000 Gs</b> en Areguá y alrededores.
+          </div>
+        </div>
+      </div>
+
+      <!-- Loyalty Reward Banner -->
+      <div class="loyalty-banner">
+        <div class="loyalty-left">
+          <div class="loyalty-icon">🎁</div>
+          <div>
+            <div class="loyalty-title">Recompensa de Fidelidad</div>
+            <div class="loyalty-sub">Por cada <b>5 platos</b> que pidas, te llevás <b>1 plato 100% GRATIS</b>.</div>
+          </div>
+        </div>
+        <div class="loyalty-badge">5 + 1 GRATIS</div>
+      </div>
+    </div>
+
+    <!-- Bottom WhatsApp Bar strictly with +595 995 620416 -->
+    <div class="footer-cta">
+      <div class="cta-bar">
+        <div class="cta-left">
+          <img class="cta-logo" src="assets/logo_olimpo.png" alt="Olimpo Logo">
+          <div class="cta-info">
+            <div class="cta-label">Pedidos & Suscripciones WhatsApp</div>
+            <div class="cta-phone">+595 995 620416</div>
+          </div>
+        </div>
+        <div class="cta-right">
+          <div class="cta-tag">¡Sin Reserva!</div>
+          <div class="whatsapp-icon-wrap">
+            <svg class="whatsapp-icon" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.392-12.416c-5.514 0-10 4.486-10 10 0 1.761.458 3.418 1.258 4.864l-1.336 4.88 5.006-1.314c1.397.764 2.99 1.206 4.685 1.206 5.514 0 10-4.486 10-10 0-5.514-4.486-10-10-10z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="footer-sub">
+        Preparaciones deportivas sanas • <span>Al alcance de todos</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
