@@ -149,10 +149,35 @@
           referrals: Array.isArray(memberObj.referrals) ? memberObj.referrals : [],
           orders: Array.isArray(memberObj.orders) ? memberObj.orders : [],
           paidOut: Number(memberObj.paidOut || 0),
+          rewardMonth: memberObj.rewardMonth || new Date().toISOString().slice(0, 7),
           updatedAt: new Date().toISOString()
         }, { merge: true });
       } catch (err) {
         console.warn('[Olimpo Firebase] syncMemberToCloud warning:', err);
+      }
+    },
+
+    async registerEmailAuth(email, password) {
+      if (!this.isCloudConnected || !this.auth || !this.sdk || !email || !password) return null;
+      try {
+        const { createUserWithEmailAndPassword } = this.sdk;
+        const cred = await createUserWithEmailAndPassword(this.auth, email, password);
+        return cred.user;
+      } catch (err) {
+        console.warn('[Olimpo Firebase] registerEmailAuth note:', err.message);
+        return null;
+      }
+    },
+
+    async loginEmailAuth(email, password) {
+      if (!this.isCloudConnected || !this.auth || !this.sdk || !email || !password) return null;
+      try {
+        const { signInWithEmailAndPassword } = this.sdk;
+        const cred = await signInWithEmailAndPassword(this.auth, email, password);
+        return cred.user;
+      } catch (err) {
+        console.warn('[Olimpo Firebase] loginEmailAuth note:', err.message);
+        return null;
       }
     },
 

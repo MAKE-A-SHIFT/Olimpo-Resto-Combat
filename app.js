@@ -839,24 +839,70 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  function getCurrentRewardMonth() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+  }
+
+  // Automatic End-of-Month Profit Expiration Engine:
+  // If a new calendar month starts and the member did not withdraw their profits at the end of the previous month,
+  // unwithdrawn profits are automatically deleted/reset to 0 ₲ and the member must wait until the end of the new month.
+  function checkAndApplyMonthlyProfitExpiration(student, db) {
+    if (!student) return;
+    const currentMonth = getCurrentRewardMonth();
+    if (!student.rewardMonth) {
+      student.rewardMonth = currentMonth;
+      saveStudentsDB(db);
+      return;
+    }
+    if (student.rewardMonth < currentMonth) {
+      const refs = Array.isArray(student.referrals) ? student.referrals : [];
+      const totalEarn = refs.reduce((acc, r) => acc + (r.commission || 0), 0);
+      const unwithdrawn = Math.max(0, totalEarn - (student.paidOut || 0));
+      if (unwithdrawn > 0) {
+        student.expiredLastMonth = unwithdrawn;
+        student.expiredMonthName = student.rewardMonth;
+      }
+      // Reset profits for the new month
+      student.referrals = [];
+      student.paidOut = 0;
+      student.rewardMonth = currentMonth;
+      saveStudentsDB(db);
+      if (window.OlimpoFirebase) {
+        window.OlimpoFirebase.syncMemberToCloud(student);
+      }
+    }
+  }
+
   function renderStudentPortal() {
     const db = getStudentsDB();
     const activeCode = state.activeStudentCode;
     const student = activeCode && db[activeCode] ? db[activeCode] : null;
     const lang = state.lang || 'es';
 
+    if (student) {
+      checkAndApplyMonthlyProfitExpiration(student, db);
+    }
+
     // 1. Update Navbar "JOIN" Buttons (Desktop Top-Left & Mobile Burger Replacement)
+    // When logged out -> "JOIN" button
+    // When logged in  -> Circular Profile Icon button (.logged-in)
     const btnJoinDesktop = document.getElementById('btnNavJoinDesktop');
     const btnJoinMobile = document.getElementById('btnNavJoinMobile');
     const txtJoinDesktop = document.getElementById('navJoinTextDesktop');
     const txtJoinMobile = document.getElementById('navJoinTextMobile');
 
     if (student) {
-      const shortName = (student.name || student.code).split(' ')[0].toUpperCase().slice(0, 10);
-      if (btnJoinDesktop) btnJoinDesktop.classList.add('logged-in');
-      if (btnJoinMobile) btnJoinMobile.classList.add('logged-in');
-      if (txtJoinDesktop) txtJoinDesktop.textContent = `👤 ${shortName}`;
-      if (txtJoinMobile) txtJoinMobile.textContent = `👤 ${shortName}`;
+      if (btnJoinDesktop) {
+        btnJoinDesktop.classList.add('logged-in');
+        btnJoinDesktop.title = student.email || student.name || student.code;
+      }
+      if (btnJoinMobile) {
+        btnJoinMobile.classList.add('logged-in');
+        btnJoinMobile.title = student.email || student.name || student.code;
+      }
 
       // Pre-fill Checkout Customer Name & Phone automatically when logged in
       const custNameEl = document.getElementById('custName');
@@ -864,8 +910,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (custNameEl && !custNameEl.value && student.name) custNameEl.value = student.name;
       if (custPhoneEl && !custPhoneEl.value && student.phone) custPhoneEl.value = student.phone;
     } else {
-      if (btnJoinDesktop) btnJoinDesktop.classList.remove('logged-in');
-      if (btnJoinMobile) btnJoinMobile.classList.remove('logged-in');
+      if (btnJoinDesktop) {
+        btnJoinDesktop.classList.remove('logged-in');
+        btnJoinDesktop.title = 'JOIN';
+      }
+      if (btnJoinMobile) {
+        btnJoinMobile.classList.remove('logged-in');
+        btnJoinMobile.title = 'JOIN';
+      }
       if (txtJoinDesktop) txtJoinDesktop.textContent = 'JOIN';
       if (txtJoinMobile) txtJoinMobile.textContent = 'JOIN';
     }
@@ -877,10 +929,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const balance = Math.max(0, totalEarn - (student ? (student.paidOut || 0) : 0));
 
     const emptyMsg = {
-      es: 'Aún no tenés referidos registrados. ¡Compartí tu enlace o registrá a tu primer amigo arriba!',
-      fr: 'Aucun filleul enregistré pour le moment. Partage ton lien ou enregistre ton premier ami ci-dessus !',
-      en: 'No referrals registered yet. Share your link or register your first referred friend above!'
-    }[lang] || 'Aucun filleul enregistré.';
+      es: 'Aún no tenés afiliados registrados este mes. ¡Compartí tu enlace personal arriba!',
+      fr: 'Aucun affilié enregistré ce mois-ci. Partage ton lien personnel ci-dessus !',
+      en: 'No affiliates registered this month yet. Share your personal link above!'
+    }[lang] || 'Aucun affilié enregistré.';
 
     const historyHtml = refs.length === 0
       ? `<div style="font-size: 12.5px; color: var(--text-dim); padding: 8px 4px;">${emptyMsg}</div>`
@@ -898,6 +950,25 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         }).join('');
 
+    // Calculate End-of-Month Withdrawal Window Status
+    const now = new Date();
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const currentDay = now.getDate();
+    const daysLeft = Math.max(0, lastDayOfMonth - currentDay);
+    const isWindowOpen = currentDay >= 25;
+
+    const statusBadgeText = {
+      es: isWindowOpen
+        ? `🟢 Ventana de retiro ABIERTA (${daysLeft} días restantes antes del borrado)`
+        : `⏳ Fin de mes en ${daysLeft} días (Retiro del 25 al ${lastDayOfMonth})`,
+      fr: isWindowOpen
+        ? `🟢 Retrait de fin de mois OUVERT (${daysLeft}j restants avant suppression)`
+        : `⏳ Fin du mois dans ${daysLeft} jours (Retrait du 25 au ${lastDayOfMonth})`,
+      en: isWindowOpen
+        ? `🟢 Month-End Withdrawal OPEN (${daysLeft} days left before reset)`
+        : `⏳ Month-end in ${daysLeft} days (Withdraw from 25th to ${lastDayOfMonth}th)`
+    }[lang];
+
     // 2. Update Pop-up Member Modal (#memberAuthModal)
     const memAuthView = document.getElementById('memAuthView');
     const memDashboardView = document.getElementById('memDashboardView');
@@ -914,8 +985,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const memKpiTotalEarn = document.getElementById('memKpiTotalEarn');
         const memKpiBalance = document.getElementById('memKpiBalance');
         const memModalHistoryList = document.getElementById('memModalHistoryList');
+        const memMonthEndStatusBadge = document.getElementById('memMonthEndStatusBadge');
+        const memExpiredAlert = document.getElementById('memExpiredAlert');
 
-        if (memDashName) memDashName.textContent = student.name || student.code;
+        if (memDashName) memDashName.textContent = student.email || student.name || student.code;
         if (memDashMeta) {
           const parts = [];
           if (student.email) parts.push(`✉️ ${student.email}`);
@@ -929,6 +1002,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (memKpiTotalEarn) memKpiTotalEarn.textContent = `${totalEarn.toLocaleString('es-PY')} ₲`;
         if (memKpiBalance) memKpiBalance.textContent = `${balance.toLocaleString('es-PY')} ₲`;
         if (memModalHistoryList) memModalHistoryList.innerHTML = historyHtml;
+        if (memMonthEndStatusBadge) memMonthEndStatusBadge.textContent = statusBadgeText;
+
+        if (memExpiredAlert) {
+          if (student.expiredLastMonth && student.expiredLastMonth > 0) {
+            const expStr = student.expiredLastMonth.toLocaleString('es-PY');
+            memExpiredAlert.style.display = 'block';
+            memExpiredAlert.textContent = {
+              es: `⚠️ Tus ganancias no retiradas del mes pasado (${expStr} ₲) fueron eliminadas automáticamente. Deberás esperar a fin de este mes para retirar tus nuevos beneficios.`,
+              fr: `⚠️ Tes profits non retirés du mois dernier (${expStr} ₲) ont été supprimés automatiquement. Tu dois attendre la fin de ce mois pour retirer tes nouveaux gains.`,
+              en: `⚠️ Your unwithdrawn profits from last month (${expStr} ₲) were automatically deleted. You must wait until the end of this month to withdraw new profits.`
+            }[lang];
+          } else {
+            memExpiredAlert.style.display = 'none';
+          }
+        }
       } else {
         memAuthView.style.display = 'block';
         memDashboardView.style.display = 'none';
@@ -946,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
     studentAuthBox.style.display = 'none';
     studentDashboardBox.style.display = 'block';
 
-    if (stuProfileName) stuProfileName.textContent = student.name || student.code;
+    if (stuProfileName) stuProfileName.textContent = student.email || student.name || student.code;
     if (stuProfilePhone) stuProfilePhone.textContent = student.phone ? `• ${student.phone}` : '';
     if (stuCodeBadge) stuCodeBadge.textContent = student.code;
     if (genLinkText) genLinkText.textContent = link;
@@ -962,21 +1050,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function activateMemberSession(memberObj) {
     if (!memberObj || !memberObj.code) return;
     const db = getStudentsDB();
+    const currentMonth = getCurrentRewardMonth();
     db[memberObj.code] = {
+      rewardMonth: currentMonth,
       ...(db[memberObj.code] || {}),
       ...memberObj
     };
     saveStudentsDB(db);
     state.activeStudentCode = memberObj.code;
     localStorage.setItem('olimpo_active_student', memberObj.code);
-
-    if (memberObj.goal && goalsDataMultilingual.es[memberObj.goal]) {
-      state.activeGoal = memberObj.goal;
-      document.querySelectorAll('.btn-goal-tab').forEach(b => {
-        b.classList.toggle('active', b.getAttribute('data-goal') === memberObj.goal);
-      });
-      updateGoalDisplay(state.lang);
-    }
 
     renderStudentPortal();
     if (window.OlimpoFirebase) {
@@ -985,17 +1067,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- POP-UP MEMBER AUTH MODAL & FIREBASE CLOUD HANDLERS ---
+  // --- POP-UP MEMBER AUTH MODAL (3D FLIP CARD & MEMBER SPACE) ---
   const memberAuthModal = document.getElementById('memberAuthModal');
+
+  window.flipMemberAuthCard = function(toSignup) {
+    const flipCard = document.getElementById('memFlipCard');
+    if (!flipCard) return;
+    if (toSignup) {
+      flipCard.classList.add('is-flipped');
+    } else {
+      flipCard.classList.remove('is-flipped');
+    }
+  };
+
+  window.switchMemberAuthTab = function(tab) {
+    window.flipMemberAuthCard(tab === 'signup');
+  };
 
   window.openMemberModal = function(defaultTab = 'login') {
     if (!memberAuthModal) return;
-    const regRefInput = document.getElementById('regRefCode');
-    if (regRefInput && !regRefInput.value && state.affiliateRef) {
-      regRefInput.value = state.affiliateRef;
-    }
     if (!state.activeStudentCode) {
-      window.switchMemberAuthTab(defaultTab);
+      window.flipMemberAuthCard(defaultTab === 'signup');
     }
     renderStudentPortal();
     memberAuthModal.classList.add('open');
@@ -1007,84 +1099,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (memberAuthModal) {
     memberAuthModal.addEventListener('click', (e) => {
-      if (e.target === memberAuthModal) window.closeMemberModal();
+      if (e.target === memberAuthModal || e.target.classList.contains('mem-flip-scene')) {
+        window.closeMemberModal();
+      }
     });
   }
 
-  window.switchMemberAuthTab = function(tab) {
-    const tabBtnLogin = document.getElementById('tabBtnLogin');
-    const tabBtnSignup = document.getElementById('tabBtnSignup');
-    const memLoginForm = document.getElementById('memLoginForm');
-    const memSignupForm = document.getElementById('memSignupForm');
-    if (tab === 'signup') {
-      if (tabBtnLogin) tabBtnLogin.classList.remove('active');
-      if (tabBtnSignup) tabBtnSignup.classList.add('active');
-      if (memLoginForm) memLoginForm.style.display = 'none';
-      if (memSignupForm) memSignupForm.style.display = 'block';
-    } else {
-      if (tabBtnLogin) tabBtnLogin.classList.add('active');
-      if (tabBtnSignup) tabBtnSignup.classList.remove('active');
-      if (memLoginForm) memLoginForm.style.display = 'block';
-      if (memSignupForm) memSignupForm.style.display = 'none';
-    }
-  };
-
-  window.toggleFirebaseConfigPanel = function() {
-    const drawer = document.getElementById('firebaseConfigDrawer');
-    if (!drawer) return;
-    drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
-  };
-
-  window.refreshFirebaseBadgeLang = function() {
-    const textEl = document.getElementById('firebaseStatusText');
-    if (!textEl) return;
-    const lang = state.lang || 'es';
-    const isConnected = window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected;
-    const labels = {
-      es: {
-        connected: '☁️ Conectado a Firebase Cloud (100% Gratis • Spark)',
-        hybrid: '⚡ Base de Datos Activa (100% Gratis • Configurar Firebase)'
-      },
-      fr: {
-        connected: '☁️ Connecté à Firebase Cloud (100% Gratuit • Spark)',
-        hybrid: '⚡ Base Membre Active (100% Gratuit • Configurer Firebase)'
-      },
-      en: {
-        connected: '☁️ Connected to Firebase Cloud (100% Free • Spark)',
-        hybrid: '⚡ Member DB Active (100% Free • Configure Firebase)'
-      }
-    }[lang] || {};
-    textEl.textContent = isConnected ? labels.connected : labels.hybrid;
-  };
-
-  window.saveFirebaseCloudConfig = async function() {
-    const input = document.getElementById('firebaseConfigInput');
-    const lang = state.lang || 'es';
-    if (!input || !window.OlimpoFirebase) return;
-    const res = window.OlimpoFirebase.parseAndSaveConfig(input.value);
-    if (!res.ok) {
-      const errMsg = {
-        es: '⚠️ Formato firebaseConfig inválido. Asegurate de incluir apiKey y projectId.',
-        fr: '⚠️ Format firebaseConfig invalide. Vérifie que apiKey et projectId sont présents.',
-        en: '⚠️ Invalid firebaseConfig format. Make sure apiKey and projectId are included.'
-      }[lang];
-      showToast(errMsg);
-      return;
-    }
-    const connected = await window.OlimpoFirebase.init();
-    if (connected) {
-      const drawer = document.getElementById('firebaseConfigDrawer');
-      if (drawer) drawer.style.display = 'none';
-      const okMsg = {
-        es: '☁️ ¡Firebase Firestore & Auth conectados con éxito!',
-        fr: '☁️ Firebase Firestore & Auth connectés avec succès !',
-        en: '☁️ Firebase Firestore & Auth successfully connected!'
-      }[lang];
-      showToast(okMsg);
-    }
-  };
-
-  // --- LOGIN FORM SUBMISSION (#memLoginForm) ---
+  // --- LOGIN FORM SUBMISSION (FRONT OF 3D CARD: #memLoginForm) ---
   const memLoginForm = document.getElementById('memLoginForm');
   if (memLoginForm) {
     memLoginForm.addEventListener('submit', async (e) => {
@@ -1094,14 +1115,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const passInput = document.getElementById('loginPassword');
       const rawId = idInput ? idInput.value.trim() : '';
       const rawPass = passInput ? passInput.value.trim() : '';
-      if (!rawId) return;
+      if (!rawId || !rawPass) return;
 
-      const cleanCode = rawId.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+      const cleanCode = (rawId.includes('@') ? rawId.split('@')[0] : rawId).toUpperCase().replace(/[^A-Z0-9_-]/g, '');
       const db = getStudentsDB();
       let foundMember = null;
 
-      // 1. Try Firebase Cloud lookup first if connected
+      // 1. Try Firebase Cloud Auth + Firestore lookup if connected
       if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
+        if (rawId.includes('@')) {
+          await window.OlimpoFirebase.loginEmailAuth(rawId, rawPass);
+        }
         foundMember = await window.OlimpoFirebase.fetchMemberFromCloud(rawId);
       }
 
@@ -1113,95 +1137,107 @@ document.addEventListener('DOMContentLoaded', () => {
           const allMembers = Object.values(db);
           foundMember = allMembers.find(m =>
             (m.email && m.email.toLowerCase() === rawId.toLowerCase()) ||
-            (m.name && m.name.toLowerCase() === rawId.toLowerCase())
+            (m.name && m.name.toLowerCase() === rawId.toLowerCase()) ||
+            (m.code && m.code.toLowerCase() === rawId.toLowerCase())
           );
         }
       }
 
       if (foundMember) {
-        if (foundMember.pin && rawPass && foundMember.pin !== rawPass) {
+        if (foundMember.pin && foundMember.pin !== rawPass) {
           const errMsg = {
-            es: '⚠️ Contraseña o código PIN incorrecto.',
-            fr: '⚠️ Mot de passe ou code PIN incorrect.',
-            en: '⚠️ Incorrect password or PIN code.'
+            es: '⚠️ Contraseña incorrecta.',
+            fr: '⚠️ Mot de passe incorrect.',
+            en: '⚠️ Incorrect password.'
           }[lang];
           showToast(errMsg);
           return;
         }
         activateMemberSession(foundMember);
         const welcomeMsg = {
-          es: `✓ ¡Bienvenido de nuevo, ${foundMember.name}!`,
-          fr: `✓ Bon retour dans ton espace, ${foundMember.name} !`,
-          en: `✓ Welcome back, ${foundMember.name}!`
+          es: `✓ ¡Conectado como ${foundMember.email || foundMember.name}!`,
+          fr: `✓ Connecté à ton espace membre (${foundMember.email || foundMember.name}) !`,
+          en: `✓ Logged in as ${foundMember.email || foundMember.name}!`
         }[lang];
         showToast(welcomeMsg);
       } else {
-        // Instant account creation if user logs in directly with their alias + PIN
-        const newCode = cleanCode || 'ATLETA';
+        const newCode = cleanCode || 'MEMBRE';
         const newMember = {
           code: newCode,
           name: rawId.includes('@') ? rawId.split('@')[0].toUpperCase() : rawId,
           email: rawId.includes('@') ? rawId.toLowerCase() : '',
           phone: '',
-          pin: rawPass || '0000',
-          goal: state.activeGoal || 'mantenimiento',
+          pin: rawPass,
           clicks: 1,
           referrals: [],
-          paidOut: 0
+          paidOut: 0,
+          rewardMonth: getCurrentRewardMonth()
         };
         activateMemberSession(newMember);
         const createdMsg = {
-          es: `✓ ¡Espacio Miembro activado para ${newMember.name} (Código: ${newCode})!`,
-          fr: `✓ Espace Membre activé pour ${newMember.name} (Code : ${newCode}) !`,
-          en: `✓ Member Space activated for ${newMember.name} (Code: ${newCode})!`
+          es: `✓ ¡Conectado a tu Espacio Miembro (Código: ${newCode})!`,
+          fr: `✓ Connecté à ton Espace Membre (Code : ${newCode}) !`,
+          en: `✓ Logged in to your Member Space (Code: ${newCode})!`
         }[lang];
         showToast(createdMsg);
       }
     });
   }
 
-  // --- SIGNUP FORM SUBMISSION (#memSignupForm) ---
+  // --- SIGNUP FORM SUBMISSION (BACK OF 3D CARD: #memSignupForm) ---
   const memSignupForm = document.getElementById('memSignupForm');
   if (memSignupForm) {
     memSignupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const lang = state.lang || 'es';
-      const nameVal = document.getElementById('regName')?.value.trim() || '';
-      const phoneVal = document.getElementById('regPhone')?.value.trim() || '';
       const emailVal = document.getElementById('regEmail')?.value.trim().toLowerCase() || '';
-      const passVal = document.getElementById('regPassword')?.value.trim() || '0000';
-      const goalVal = document.getElementById('regGoal')?.value || 'mantenimiento';
-      const refByVal = document.getElementById('regRefCode')?.value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '') || '';
+      const passVal = document.getElementById('regPassword')?.value.trim() || '';
+      const passConfirmVal = document.getElementById('regPasswordConfirm')?.value.trim() || '';
 
-      if (!nameVal) return;
+      if (!emailVal || !passVal) return;
 
-      const baseCode = nameVal.split(' ')[0].toUpperCase().replace(/[^A-Z0-9]/g, '') || 'OLIMPO';
-      const phoneDigits = phoneVal.replace(/\D/g, '').slice(-3);
-      const cleanCode = phoneDigits ? `${baseCode}${phoneDigits}` : baseCode;
+      if (passVal !== passConfirmVal) {
+        const mismatchMsg = {
+          es: '⚠️ Las contraseñas no coinciden. Verificalas.',
+          fr: '⚠️ Les mots de passe ne correspondent pas.',
+          en: '⚠️ Passwords do not match.'
+        }[lang];
+        showToast(mismatchMsg);
+        document.getElementById('regPasswordConfirm')?.focus();
+        return;
+      }
 
+      const prefix = emailVal.split('@')[0].toUpperCase().replace(/[^A-Z0-9]/g, '') || 'OLIMPO';
+      const cleanCode = prefix.slice(0, 12);
+
+      if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
+        await window.OlimpoFirebase.registerEmailAuth(emailVal, passVal);
+      }
+
+      const refByVal = (state.affiliateRef || '').toUpperCase().replace(/[^A-Z0-9_-]/g, '');
       const newMember = {
         code: cleanCode,
-        name: nameVal,
+        name: prefix,
         email: emailVal,
-        phone: phoneVal,
+        phone: '',
         pin: passVal,
-        goal: goalVal,
         referredBy: refByVal,
         clicks: 1,
         referrals: [],
         paidOut: 0,
+        rewardMonth: getCurrentRewardMonth(),
         createdAt: new Date().toISOString()
       };
 
-      // Credit referrer if refByVal exists in DB
+      // Credit referrer if user signed up via an affiliate link (?ref=CODE)
       if (refByVal && refByVal !== cleanCode) {
         const db = getStudentsDB();
         if (!db[refByVal]) {
-          db[refByVal] = { code: refByVal, name: refByVal, phone: '', pin: '', clicks: 1, referrals: [], paidOut: 0 };
+          db[refByVal] = { code: refByVal, name: refByVal, phone: '', pin: '', clicks: 1, referrals: [], paidOut: 0, rewardMonth: getCurrentRewardMonth() };
         }
         db[refByVal].referrals = db[refByVal].referrals || [];
         db[refByVal].referrals.unshift({
-          friendName: nameVal,
+          friendName: emailVal,
           planKey: 'club_150k',
           commission: 22500,
           date: new Date().toLocaleDateString('es-PY')
@@ -1215,51 +1251,18 @@ document.addEventListener('DOMContentLoaded', () => {
       activateMemberSession(newMember);
 
       const okMsg = {
-        es: `🎉 ¡Cuenta creada con éxito! Tu código miembro es ${cleanCode}`,
-        fr: `🎉 Compte membre créé avec succès ! Ton code est ${cleanCode}`,
-        en: `🎉 Member account created! Your code is ${cleanCode}`
+        es: `🎉 ¡Cuenta creada! Tu icono de perfil y tu espacio miembro están activos (Código: ${cleanCode})`,
+        fr: `🎉 Compte créé ! Ton icône de profil et ton espace membre sont actifs (Code : ${cleanCode})`,
+        en: `🎉 Account created! Your profile icon and member space are active (Code: ${cleanCode})`
       }[lang];
       showToast(okMsg);
     });
   }
 
-  // --- GOOGLE LOGIN HANDLER ---
-  window.handleGoogleMemberLogin = async function() {
-    const lang = state.lang || 'es';
-    if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
-      const res = await window.OlimpoFirebase.signInWithGoogle();
-      if (res.ok && res.user) {
-        const cleanCode = res.user.name.split(' ')[0].toUpperCase().replace(/[^A-Z0-9]/g, '') || 'ATLETA';
-        activateMemberSession({
-          code: cleanCode,
-          name: res.user.name,
-          email: res.user.email,
-          phone: res.user.phone || '',
-          pin: '',
-          goal: state.activeGoal || 'mantenimiento',
-          clicks: 1,
-          referrals: [],
-          paidOut: 0
-        });
-        showToast(`✓ ${res.user.name}`);
-        return;
-      }
-    }
-    // If Google OAuth popup requires Firebase Cloud keys or user is on local domain, switch to 30-sec signup tab
-    window.switchMemberAuthTab('signup');
-    const regNameInput = document.getElementById('regName');
-    if (regNameInput) regNameInput.focus();
-    const infoMsg = {
-      es: '🎓 Completá tu nombre y WhatsApp abajo para crear tu cuenta en 1 clic.',
-      fr: '🎓 Indique ton nom et ton WhatsApp ci-dessous pour créer ton compte en 1 clic.',
-      en: '🎓 Enter your name and WhatsApp below to create your account in 1 click.'
-    }[lang];
-    showToast(infoMsg);
-  };
-
   window.logoutMemberAccount = function() {
     state.activeStudentCode = '';
     localStorage.removeItem('olimpo_active_student');
+    window.flipMemberAuthCard(false);
     renderStudentPortal();
     const lang = state.lang || 'es';
     const msg = {
@@ -2071,7 +2074,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // AFFILIATE / STUDENT WITHDRAWAL REQUEST (-> +595 995 620416)
+  // AFFILIATE / MEMBER END-OF-MONTH PROFIT WITHDRAWAL REQUEST (-> +595 995 620416)
   // ==========================================================================
   window.openWithdrawModal = function() {
     const db = getStudentsDB();
@@ -2082,20 +2085,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const balance = Math.max(0, totalEarn - (student ? (student.paidOut || 0) : 0));
 
     const amountStr = balance.toLocaleString('es-PY');
-    const codeStr = student ? student.code : (state.affiliateRef || 'ALUMNO');
-    const nameStr = student ? student.name : codeStr;
+    const codeStr = student ? student.code : (state.affiliateRef || 'MIEMBRO');
+    const nameStr = student ? (student.email || student.name || codeStr) : codeStr;
     const phoneStr = student && student.phone ? student.phone : '';
+    const rewardMonth = student && student.rewardMonth ? student.rewardMonth : getCurrentRewardMonth();
 
     const msg = encodeURIComponent(
-      `💸 *SOLICITUD DE RETIRO DE COMISIONES - ESPACIO ALUMNO OLIMPO*\n` +
+      `💸 *RETIRO DE GANANCIAS DE FIN DE MES - ESPACIO MIEMBRO OLIMPO*\n` +
       `----------------------------------------\n` +
-      `👤 *Alumno / Embajador :* ${nameStr} (Código: ${codeStr})\n` +
+      `👤 *Miembro :* ${nameStr} (Código: ${codeStr})\n` +
       (phoneStr ? `📱 *WhatsApp :* ${phoneStr}\n` : '') +
-      `🤝 *Referidos Activos :* ${refs.length}\n` +
-      `💰 *Saldo Disponible a Retirar :* ${amountStr} ₲\n` +
+      `📅 *Mes del Retiro :* ${rewardMonth}\n` +
+      `🤝 *Afiliados Activos :* ${refs.length}\n` +
+      `💰 *Ganancias a Retirar (Fin de Mes) :* ${amountStr} ₲\n` +
       `🏦 *Medio Preferido :* Transferencia SIPAP / Tigo Money / Efectivo en el Club\n` +
       `----------------------------------------\n` +
-      `¡Hola! Solicito el cobro de mis comisiones acumuladas en el Espacio Alumno.`
+      `¡Hola! Solicito el retiro de mis ganancias de fin de mes antes del cierre mensual.`
     );
     window.open(`https://wa.me/595995620416?text=${msg}`, '_blank');
   };
@@ -2450,33 +2455,24 @@ document.addEventListener('DOMContentLoaded', () => {
             "stuPhonePlaceholder": "Ej: +595 981 123456",
             "custPhonePlaceholder": "Ej: 0981 123456",
             "custCIPlaceholder": "Ej: 4.567.890-1",
-            "memModalTitle": "🏛️ Espacio Miembro & Atleta Olimpo",
-            "memCloudBadgeHybrid": "⚡ Base de Datos Activa (100% Gratis • Firebase Spark)",
-            "fbDrawerTitle": "☁️ Sincronización Firebase Cloud (Plan Gratuito Spark 0 $/mes)",
-            "fbDrawerDesc": "Pegá acá tu objeto <code>firebaseConfig</code> desde la consola Firebase (Project Settings → Web App) para sincronizar todas las cuentas y referidos en Firestore Cloud gratis:",
-            "btnSaveFbConfig": "☁️ Conectar Firebase",
-            "memTabLogin": "🔑 Iniciar Sesión",
-            "memTabSignup": "🎓 Crear mi Cuenta",
-            "memLoginLead": "Iniciá sesión en tu cuenta miembro Olimpo para acceder a tu panel de control, tu enlace de embajador y tus pedidos rápidos:",
-            "lblLoginId": "Email, Nombre/Alias o Código Miembro *",
-            "loginIdPlaceholder": "Ej: alex@email.com o GUERRERO_ALEX",
-            "lblLoginPass": "Contraseña o Código PIN *",
-            "btnMemLoginSubmit": "🔑 Entrar a Mi Espacio Miembro",
-            "memOrDivider": "o acceso rápido",
-            "btnMemGoogle": "Continuar con Google (Firebase Auth)",
-            "memNoAccountPrompt": "¿Todavía no tenés cuenta miembro?",
-            "memCreateNowLink": "Crear mi cuenta gratis →",
-            "memSignupLead": "Creá tu cuenta miembro Olimpo gratis en 30 segundos. Accedé al seguimiento de tus comidas, tu objetivo físico y tus comisiones de referido (10% a 15%):",
-            "lblRegName": "Nombre & Apellido o Alias *",
-            "regNamePlaceholder": "Ej: Alex Benítez",
-            "lblRegPhone": "WhatsApp / Teléfono *",
-            "lblRegEmail": "Correo Electrónico *",
-            "regEmailPlaceholder": "Ej: alex@email.com",
-            "lblRegPass": "Contraseña o Código PIN (mín. 4 car.) *",
-            "lblRegGoal": "Tu Objetivo Físico Actual",
-            "btnMemSignupSubmit": "🚀 Crear Mi Cuenta Miembro Olimpo",
-            "memAlreadyAccountPrompt": "¿Ya tenés una cuenta miembro?",
-            "memLoginNowLink": "Iniciar sesión acá →",
+            "memModalTitle": "👤 Mi Espacio Miembro & Afiliados",
+            "memCardLoginTitle": "Iniciar Sesión",
+            "memCardLoginSub": "Accedé a tu espacio miembro Olimpo",
+            "lblClassicLogin": "Email o Usuario",
+            "classicEmailPlaceholder": "ejemplo@email.com",
+            "lblClassicPass": "Contraseña",
+            "btnClassicLogin": "Iniciar sesión",
+            "memFlipToSignup": "¿Todavía no tenés cuenta? Registrate gratis",
+            "memCardSignupTitle": "Registro Gratuito",
+            "memCardSignupSub": "Creá tu cuenta miembro en segundos",
+            "lblClassicEmail": "Email",
+            "lblClassicPassConfirm": "Confirmar contraseña",
+            "btnClassicSignup": "Registrarse gratis",
+            "memFlipToLogin": "¿Ya tenés una cuenta? Iniciá sesión",
+            "memMyLinkLabel": "🔗 Tu Enlace Personal de Afiliado (10% a 15% de comisión)",
+            "memMonthEndTitle": "Retiro de Ganancias a Fin de Mes",
+            "memMonthEndDesc": "Podés retirar tus ganancias <strong>a fin de mes (del 25 al último día del mes)</strong>. ⚠️ <strong>Atención:</strong> si no retirás tus ganancias antes de que termine el mes, <strong>se eliminarán automáticamente (vuelven a 0 ₲)</strong> y deberás esperar al mes siguiente para retirar tus nuevas ganancias.",
+            "btnWithdrawMonthEnd": "💸 Retirar mis ganancias de fin de mes",
             "btnMemOrderPack": "🥗 Pedir un Pack",
             "btnMemLogout": "🚪 Cerrar Sesión"
       },
@@ -2805,33 +2801,24 @@ document.addEventListener('DOMContentLoaded', () => {
             "stuPhonePlaceholder": "Ex: +595 981 123456",
             "custPhonePlaceholder": "Ex: 0981 123456",
             "custCIPlaceholder": "Ex: 4.567.890-1",
-            "memModalTitle": "🏛️ Espace Membre & Athlète Olimpo",
-            "memCloudBadgeHybrid": "⚡ Base Membre Active (100% Gratuit • Firebase Spark)",
-            "fbDrawerTitle": "☁️ Synchronisation Firebase Cloud (Plan Gratuit Spark 0 $/mois)",
-            "fbDrawerDesc": "Colle ici ton objet <code>firebaseConfig</code> depuis la console Firebase (Project Settings → Web App) pour synchroniser tous les comptes membres et parrainages sur Firestore Cloud gratuitement :",
-            "btnSaveFbConfig": "☁️ Connecter Firebase",
-            "memTabLogin": "🔑 Se Connecter",
-            "memTabSignup": "🎓 Créer mon Compte",
-            "memLoginLead": "Connecte-toi à ton compte membre Olimpo pour accéder à ton tableau de bord, ton lien ambassadeur et tes commandes rapides :",
-            "lblLoginId": "Email, Prénom/Pseudo ou Code Membre *",
-            "loginIdPlaceholder": "Ex: alex@email.com ou GUERRIER_ALEX",
-            "lblLoginPass": "Mot de passe ou Code PIN *",
-            "btnMemLoginSubmit": "🔑 Se Connecter à Mon Espace Membre",
-            "memOrDivider": "ou connexion rapide",
-            "btnMemGoogle": "Continuer avec Google (Firebase Auth)",
-            "memNoAccountPrompt": "Pas encore de compte membre ?",
-            "memCreateNowLink": "Créer mon compte gratuitement →",
-            "memSignupLead": "Crée ton compte membre Olimpo gratuitement en 30 secondes. Accède au suivi de tes repas, ton objectif physique et tes commissions de parrainage (10% à 15%) :",
-            "lblRegName": "Nom & Prénom ou Pseudo *",
-            "regNamePlaceholder": "Ex: Alex Benítez",
-            "lblRegPhone": "WhatsApp / Téléphone *",
-            "lblRegEmail": "Adresse Email *",
-            "regEmailPlaceholder": "Ex: alex@email.com",
-            "lblRegPass": "Mot de passe ou Code PIN (min. 4 car.) *",
-            "lblRegGoal": "Ton Objectif Physique Actuel",
-            "btnMemSignupSubmit": "🚀 Créer Mon Compte Membre Olimpo",
-            "memAlreadyAccountPrompt": "Tu as déjà un compte membre ?",
-            "memLoginNowLink": "Se connecter ici →",
+            "memModalTitle": "👤 Mon Espace Membre & Affiliation",
+            "memCardLoginTitle": "Connexion",
+            "memCardLoginSub": "Accède à ton espace membre Olimpo",
+            "lblClassicLogin": "Email ou Identifiant",
+            "classicEmailPlaceholder": "exemple@email.com",
+            "lblClassicPass": "Mot de passe",
+            "btnClassicLogin": "Se connecter",
+            "memFlipToSignup": "Pas encore de compte ? Inscris-toi gratuitement",
+            "memCardSignupTitle": "Inscription Gratuite",
+            "memCardSignupSub": "Crée ton compte membre en quelques secondes",
+            "lblClassicEmail": "Email",
+            "lblClassicPassConfirm": "Confirmer le mot de passe",
+            "btnClassicSignup": "S'inscrire gratuitement",
+            "memFlipToLogin": "Déjà un compte ? Connecte-toi",
+            "memMyLinkLabel": "🔗 Ton Lien Personnel d'Affiliation (10% à 15% de commission)",
+            "memMonthEndTitle": "Retrait des Profits en Fin de Mois",
+            "memMonthEndDesc": "Tu peux venir retirer tes profits <strong>en fin de mois (du 25 au dernier jour du mois)</strong>. ⚠️ <strong>Attention :</strong> si tu ne retires pas tes profits avant la fin du mois, ils seront <strong>supprimés automatiquement à la fin du mois (remis à 0 ₲)</strong> et tu devras attendre la fin du mois prochain pour retirer tes nouveaux gains.",
+            "btnWithdrawMonthEnd": "💸 Retirer mes profits de fin de mois",
             "btnMemOrderPack": "🥗 Commander un Pack",
             "btnMemLogout": "🚪 Déconnexion"
       },
@@ -3160,33 +3147,24 @@ document.addEventListener('DOMContentLoaded', () => {
             "stuPhonePlaceholder": "Ex: +595 981 123456",
             "custPhonePlaceholder": "Ex: 0981 123456",
             "custCIPlaceholder": "Ex: 4.567.890-1",
-            "memModalTitle": "🏛️ Olimpo Member & Athlete Space",
-            "memCloudBadgeHybrid": "⚡ Member DB Active (100% Free • Firebase Spark)",
-            "fbDrawerTitle": "☁️ Firebase Cloud Sync (Free Spark Plan $0/month)",
-            "fbDrawerDesc": "Paste your <code>firebaseConfig</code> object from the Firebase Console (Project Settings → Web App) to sync all member accounts and referrals to Firestore Cloud for free:",
-            "btnSaveFbConfig": "☁️ Connect Firebase",
-            "memTabLogin": "🔑 Log In",
-            "memTabSignup": "🎓 Create Account",
-            "memLoginLead": "Log in to your Olimpo member account to access your dashboard, ambassador link, and quick ordering:",
-            "lblLoginId": "Email, Name/Alias, or Member Code *",
-            "loginIdPlaceholder": "Ex: alex@email.com or WARRIOR_ALEX",
-            "lblLoginPass": "Password or PIN Code *",
-            "btnMemLoginSubmit": "🔑 Log In to My Member Space",
-            "memOrDivider": "or quick sign-in",
-            "btnMemGoogle": "Continue with Google (Firebase Auth)",
-            "memNoAccountPrompt": "Don't have a member account yet?",
-            "memCreateNowLink": "Create my free account →",
-            "memSignupLead": "Create your free Olimpo member account in 30 seconds. Track your meals, physical goal, and referral commissions (10% to 15%):",
-            "lblRegName": "Full Name or Fighter Alias *",
-            "regNamePlaceholder": "Ex: Alex Benítez",
-            "lblRegPhone": "WhatsApp / Phone *",
-            "lblRegEmail": "Email Address *",
-            "regEmailPlaceholder": "Ex: alex@email.com",
-            "lblRegPass": "Password or PIN Code (min. 4 chars) *",
-            "lblRegGoal": "Your Current Physical Goal",
-            "btnMemSignupSubmit": "🚀 Create My Olimpo Member Account",
-            "memAlreadyAccountPrompt": "Already have a member account?",
-            "memLoginNowLink": "Log in here →",
+            "memModalTitle": "👤 My Member & Affiliate Space",
+            "memCardLoginTitle": "Log In",
+            "memCardLoginSub": "Access your Olimpo member space",
+            "lblClassicLogin": "Email or Username",
+            "classicEmailPlaceholder": "example@email.com",
+            "lblClassicPass": "Password",
+            "btnClassicLogin": "Log in",
+            "memFlipToSignup": "Don't have an account yet? Sign up for free",
+            "memCardSignupTitle": "Free Sign Up",
+            "memCardSignupSub": "Create your member account in seconds",
+            "lblClassicEmail": "Email",
+            "lblClassicPassConfirm": "Confirm password",
+            "btnClassicSignup": "Sign up for free",
+            "memFlipToLogin": "Already have an account? Log in",
+            "memMyLinkLabel": "🔗 Your Personal Affiliate Link (10% to 15% commission)",
+            "memMonthEndTitle": "End-of-Month Profit Withdrawal",
+            "memMonthEndDesc": "You can withdraw your profits <strong>at the end of the month (from the 25th to the last day of the month)</strong>. ⚠️ <strong>Warning:</strong> if you do not withdraw your profits before the end of the month, they will be <strong>automatically deleted (reset to 0 ₲)</strong> and you will have to wait until next month to withdraw new earnings.",
+            "btnWithdrawMonthEnd": "💸 Withdraw my end-of-month profits",
             "btnMemOrderPack": "🥗 Order a Pack",
             "btnMemLogout": "🚪 Log Out"
       }

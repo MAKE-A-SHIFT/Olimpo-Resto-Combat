@@ -3308,8 +3308,8 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   BOUTON "JOIN" NAVBAR (HAUT GAUCHE DESKTOP & REMPLACE BURGER SUR MOBILE)
-   & POP-UP MODAL ESPACE MEMBRE (FIREBASE SPARK FREE)
+   BOUTON "JOIN" NAVBAR (DEVIENT ICÔNE DE PROFIL UNE FOIS CONNECTÉ)
+   & POP-UP CARTE 3D FLIP (LOGIN <-> INSCRIPTION) + ESPACE MEMBRE
    ========================================================================== */
 
 .nav-left-group {
@@ -3320,14 +3320,14 @@ button, input, select, textarea {
 }
 
 .btn-nav-join {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
   background: linear-gradient(135deg, #0084ff 0%, #0062cc 100%);
   color: #ffffff;
   border: 1px solid rgba(56, 189, 248, 0.45);
-  padding: 8px 15px;
+  padding: 8px 16px;
   border-radius: 6px;
   font-family: var(--font-greek);
   font-size: 12.5px;
@@ -3336,7 +3336,7 @@ button, input, select, textarea {
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 3px 12px rgba(0, 132, 255, 0.25);
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
 }
 
@@ -3346,24 +3346,54 @@ button, input, select, textarea {
   box-shadow: 0 5px 16px rgba(0, 132, 255, 0.4);
 }
 
+.join-btn-label {
+  display: inline-block;
+}
+
+.join-profile-avatar {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* UNE FOIS CONNECTÉ : LE BOUTON JOIN DEVIENT UNE ICÔNE DE PROFIL RONDE */
 .btn-nav-join.logged-in {
-  background: #111b24;
-  border-color: rgba(34, 197, 94, 0.55);
-  color: #f8fafc;
-}
-
-.join-status-dot {
-  width: 8px;
-  height: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-  flex-shrink: 0;
+  background: linear-gradient(145deg, #111b24 0%, #0a1016 100%);
+  border: 1.5px solid var(--brand-blue-light);
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(0, 132, 255, 0.35);
 }
 
-.btn-nav-join.logged-in .join-status-dot {
+.btn-nav-join.logged-in:hover {
+  border-color: #22c55e;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
+}
+
+.btn-nav-join.logged-in .join-btn-label {
+  display: none;
+}
+
+.btn-nav-join.logged-in .join-profile-avatar {
+  display: inline-flex;
+}
+
+.join-online-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+  border: 2px solid #090d10;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.9);
 }
 
 .btn-nav-join-desktop {
@@ -3374,153 +3404,166 @@ button, input, select, textarea {
   display: none;
 }
 
-/* MEMBER MODAL DIALOG */
-.member-modal-dialog {
-  max-width: 650px;
-}
+/* ==========================================================================
+   3D FLIP CARD POP-UP (LOGIN RECTO <-> SIGNUP VERSO)
+   ========================================================================== */
 
-.member-modal-header {
-  align-items: flex-start;
-}
-
-.firebase-status-pill {
-  margin-top: 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(14, 22, 30, 0.9);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: #cbd5e1;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.firebase-status-pill:hover {
-  border-color: var(--brand-blue-light);
-  color: #ffffff;
-}
-
-.firebase-status-pill.cloud-connected {
-  border-color: rgba(34, 197, 94, 0.45);
-  color: #dcfce7;
-}
-
-.firebase-status-pill .fb-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #38bdf8;
-}
-
-.firebase-config-drawer {
-  background: #070b0e;
-  border: 1px solid var(--brand-blue-border);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  margin-bottom: 18px;
-}
-
-.mem-auth-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  background: #070b0e;
-  padding: 5px;
-  border-radius: var(--radius-sm);
-  border: 1px solid #1e272f;
-  margin-bottom: 18px;
-}
-
-.mem-tab-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  padding: 11px 14px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mem-tab-btn.active {
-  background: var(--brand-blue);
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.28);
-}
-
-.mem-auth-lead {
-  font-size: 13px;
-  color: var(--text-dim);
-  line-height: 1.55;
-  margin-bottom: 16px;
-}
-
-.mem-auth-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 16px 0;
-  color: #64748b;
-  font-size: 12px;
-}
-
-.mem-auth-divider::before,
-.mem-auth-divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #1e272f;
-}
-
-.mem-auth-divider span {
-  padding: 0 12px;
-}
-
-.btn-google-auth {
+.mem-flip-scene {
   width: 100%;
-  background: #131b22;
-  border: 1px solid #263340;
-  color: #f8fafc;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 13.5px;
-  font-weight: 700;
+  max-width: 410px;
+  perspective: 1300px;
+  margin: auto;
+}
+
+.mem-flip-card {
+  position: relative;
+  width: 100%;
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.mem-flip-card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.mem-card-face {
+  grid-area: 1 / 1;
+  width: 100%;
+  background: linear-gradient(160deg, #0d1319 0%, #080c10 100%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 14px;
+  padding: 28px 26px 24px 26px;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.75);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mem-card-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.mem-card-back {
+  transform: rotateY(180deg);
+}
+
+.mem-flip-card:not(.is-flipped) .mem-card-back {
+  pointer-events: none;
+}
+
+.mem-flip-card.is-flipped .mem-card-front {
+  pointer-events: none;
+}
+
+.mem-card-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #1e272f;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.btn-google-auth:hover {
-  background: #1a242d;
-  border-color: var(--brand-blue-light);
+.mem-card-close:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ffffff;
 }
 
-.mem-switch-prompt {
-  margin-top: 16px;
+.mem-card-header {
   text-align: center;
-  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.mem-card-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin: 0 auto 10px auto;
+}
+
+.mem-card-title {
+  font-family: var(--font-greek);
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.mem-card-sub {
+  font-size: 12.5px;
   color: var(--text-dim);
 }
 
-.btn-link-inline {
+.mem-classic-form .form-group {
+  margin-bottom: 14px;
+}
+
+.mem-classic-form label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.mem-classic-submit {
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 18px;
+  font-size: 14px;
+}
+
+.mem-card-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #18212a;
+  text-align: center;
+}
+
+.mem-flip-link {
   background: transparent;
   border: none;
   color: var(--brand-blue-light);
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
-  margin-left: 5px;
-  font-size: 13px;
+  transition: color 0.2s ease;
 }
 
-/* CONNECTED MEMBER DASHBOARD INSIDE MODAL */
+.mem-flip-link:hover {
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   ESPACE MEMBRE CONNECTÉ & BOÎTE DE RETRAIT DE FIN DE MOIS
+   ========================================================================== */
+
+.member-modal-dialog {
+  max-width: 660px;
+  width: 100%;
+}
+
+.member-modal-header {
+  align-items: center;
+}
+
 .mem-profile-banner {
   display: flex;
   justify-content: space-between;
@@ -3544,11 +3587,11 @@ button, input, select, textarea {
   height: 48px;
   border-radius: 50%;
   background: rgba(0, 132, 255, 0.16);
-  border: 1px solid var(--brand-blue);
+  border: 1.5px solid var(--brand-blue-light);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
   flex-shrink: 0;
 }
 
@@ -3591,6 +3634,74 @@ button, input, select, textarea {
   font-weight: 800;
   color: #ffffff;
   margin-top: 3px;
+}
+
+.mem-monthend-box {
+  margin-top: 16px;
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.09) 0%, rgba(15, 23, 30, 0.95) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.mem-monthend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mem-monthend-badge {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fcd34d;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.mem-monthend-desc {
+  font-size: 12.5px;
+  color: #e2e8f0;
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.mem-expired-notice {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.mem-monthend-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-withdraw-monthend {
+  width: 100%;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  border: 1px solid rgba(74, 222, 128, 0.45);
+  color: #ffffff;
+  padding: 11px 18px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+}
+
+.btn-withdraw-monthend:hover {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 650px) {
