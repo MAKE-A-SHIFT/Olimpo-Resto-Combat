@@ -28,13 +28,21 @@
   <!-- MAIN STICKY NAVBAR (ÉPURÉE, AÉRÉE, NON-WRAPPING) -->
   <header class="main-navbar">
     <div class="nav-container">
-      <a href="#inicio" class="brand-wrapper">
-        <img src="logo_olimpo.png" alt="Olimpo Team Logo" class="brand-logo-img">
-        <div class="brand-titles">
-          <span class="brand-name">OLIMPO <span style="color: var(--brand-blue);">TEAM</span></span>
-          <span class="brand-subtitle" data-i18n="navBrandSub">Club & Resto Fit</span>
-        </div>
-      </a>
+      <div class="nav-left-group">
+        <!-- BOUTON JOIN EN HAUT À GAUCHE DE LA MENU BAR (DESKTOP) -->
+        <button type="button" class="btn-nav-join btn-nav-join-desktop" id="btnNavJoinDesktop" onclick="window.openMemberModal()">
+          <span class="join-status-dot" id="navJoinDotDesktop"></span>
+          <span id="navJoinTextDesktop">JOIN</span>
+        </button>
+
+        <a href="#inicio" class="brand-wrapper">
+          <img src="logo_olimpo.png" alt="Olimpo Team Logo" class="brand-logo-img">
+          <div class="brand-titles">
+            <span class="brand-name">OLIMPO <span style="color: var(--brand-blue);">TEAM</span></span>
+            <span class="brand-subtitle" data-i18n="navBrandSub">Club & Resto Fit</span>
+          </div>
+        </a>
+      </div>
 
       <nav class="nav-menu">
         <ul class="nav-links" id="navLinks">
@@ -62,7 +70,12 @@
         <button class="btn-cta-nav" onclick="window.openCheckout('pack_fighter_pro')">
           <span data-i18n="navJoin">Rejoindre</span>
         </button>
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Ouvrir le menu">☰</button>
+
+        <!-- BOUTON JOIN À LA PLACE DU BURGER SUR SMARTPHONE & AUTRES FORMATS OÙ LE BURGER APPARAÎT -->
+        <button type="button" class="btn-nav-join btn-nav-join-mobile" id="btnNavJoinMobile" onclick="window.openMemberModal()" aria-label="JOIN - Espace Membre">
+          <span class="join-status-dot" id="navJoinDotMobile"></span>
+          <span id="navJoinTextMobile">JOIN</span>
+        </button>
       </div>
     </div>
   </header>
@@ -1391,6 +1404,240 @@
     </div>
   </footer>
 
+  <!-- ==========================================================================
+       POP-UP MODAL : CONNEXION / INSCRIPTION & ESPACE MEMBRE (FIREBASE SPARK FREE)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="memberAuthModal">
+    <div class="modal-dialog member-modal-dialog">
+      <div class="modal-header member-modal-header">
+        <div>
+          <h3 class="modal-title" data-i18n="memModalTitle">🏛️ Espace Membre & Athlète Olimpo</h3>
+          <button type="button" class="firebase-status-pill" id="firebaseStatusBadge" onclick="window.toggleFirebaseConfigPanel()">
+            <span class="fb-dot" id="firebaseStatusDot"></span>
+            <span id="firebaseStatusText" data-i18n="memCloudBadgeHybrid">⚡ Base Membre Active (100% Gratuit • Firebase Spark)</span>
+          </button>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseMemberModal" onclick="window.closeMemberModal()">✕</button>
+      </div>
+
+      <div class="modal-body member-modal-body">
+        <!-- PANNEAU OPTIONNEL DE CONNEXION CLÉS FIREBASE CLOUD (100% GRATUIT SPARK TIER) -->
+        <div id="firebaseConfigDrawer" class="firebase-config-drawer" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="color: var(--brand-blue-light); font-size: 13px;" data-i18n="fbDrawerTitle">☁️ Synchronisation Firebase Cloud (Plan Gratuit Spark 0 $/mois)</strong>
+            <button type="button" onclick="window.toggleFirebaseConfigPanel()" style="background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 13px;">✕</button>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 10px;" data-i18n="fbDrawerDesc">
+            Colle ici ton objet <code>firebaseConfig</code> depuis la console Firebase (Project Settings → Web App) pour synchroniser tous les comptes membres et parrainages sur Firestore Cloud gratuitement :
+          </p>
+          <textarea id="firebaseConfigInput" class="form-input" rows="4" style="font-family: monospace; font-size: 11.5px; margin-bottom: 10px;" placeholder='{ "apiKey": "AIza...", "authDomain": "olimpo.firebaseapp.com", "projectId": "olimpo-..." }'></textarea>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-gen-link" style="height: 38px; padding: 0 16px; font-size: 12.5px;" onclick="window.saveFirebaseCloudConfig()" data-i18n="btnSaveFbConfig">
+              ☁️ Connecter Firebase
+            </button>
+          </div>
+        </div>
+
+        <!-- VUE A : CONNEXION OU CRÉATION DE COMPTE MEMBRE (NON CONNECTÉ) -->
+        <div id="memAuthView">
+          <div class="mem-auth-tabs">
+            <button type="button" class="mem-tab-btn active" id="tabBtnLogin" onclick="window.switchMemberAuthTab('login')" data-i18n="memTabLogin">
+              🔑 Se Connecter
+            </button>
+            <button type="button" class="mem-tab-btn" id="tabBtnSignup" onclick="window.switchMemberAuthTab('signup')" data-i18n="memTabSignup">
+              🎓 Créer mon Compte
+            </button>
+          </div>
+
+          <!-- FORMULAIRE 1 : CONNEXION -->
+          <form id="memLoginForm" class="mem-auth-form">
+            <p class="mem-auth-lead" data-i18n="memLoginLead">
+              Connecte-toi à ton compte membre Olimpo pour accéder à ton tableau de bord, ton lien ambassadeur et tes commandes rapides :
+            </p>
+
+            <div class="form-group">
+              <label for="loginIdentifier" data-i18n="lblLoginId">Email, Prénom/Pseudo ou Code Membre *</label>
+              <input type="text" id="loginIdentifier" class="form-input" placeholder="Ex: alex@email.com ou GUERRIER_ALEX" data-i18n-placeholder="loginIdPlaceholder" required>
+            </div>
+
+            <div class="form-group">
+              <label for="loginPassword" data-i18n="lblLoginPass">Mot de passe ou Code PIN *</label>
+              <input type="password" id="loginPassword" class="form-input" placeholder="••••" required>
+            </div>
+
+            <button type="submit" class="btn-submit-order" style="margin-top: 6px;" data-i18n="btnMemLoginSubmit">
+              🔑 Se Connecter à Mon Espace Membre
+            </button>
+
+            <div class="mem-auth-divider">
+              <span data-i18n="memOrDivider">ou connexion rapide</span>
+            </div>
+
+            <button type="button" class="btn-google-auth" id="btnGoogleAuth" onclick="window.handleGoogleMemberLogin()">
+              <span>🌐</span>
+              <span data-i18n="btnMemGoogle">Continuer avec Google (Firebase Auth)</span>
+            </button>
+
+            <div class="mem-switch-prompt">
+              <span data-i18n="memNoAccountPrompt">Pas encore de compte membre ?</span>
+              <button type="button" class="btn-link-inline" onclick="window.switchMemberAuthTab('signup')" data-i18n="memCreateNowLink">Créer mon compte gratuitement →</button>
+            </div>
+          </form>
+
+          <!-- FORMULAIRE 2 : INSCRIPTION / CRÉATION DE COMPTE MEMBRE -->
+          <form id="memSignupForm" class="mem-auth-form" style="display: none;">
+            <p class="mem-auth-lead" data-i18n="memSignupLead">
+              Crée ton compte membre Olimpo gratuitement en 30 secondes. Accède au suivi de tes repas, ton objectif physique et tes commissions de parrainage (10% à 15%) :
+            </p>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="regName" data-i18n="lblRegName">Nom & Prénom ou Pseudo *</label>
+                <input type="text" id="regName" class="form-input" placeholder="Ex: Alex Benítez" data-i18n-placeholder="regNamePlaceholder" required>
+              </div>
+              <div class="form-group">
+                <label for="regPhone" data-i18n="lblRegPhone">WhatsApp / Téléphone *</label>
+                <input type="tel" id="regPhone" class="form-input" placeholder="Ex: +595 981 123456" data-i18n-placeholder="stuPhonePlaceholder" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="regEmail" data-i18n="lblRegEmail">Adresse Email *</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="Ex: alex@email.com" data-i18n-placeholder="regEmailPlaceholder" required>
+              </div>
+              <div class="form-group">
+                <label for="regPassword" data-i18n="lblRegPass">Mot de passe ou Code PIN (min. 4 car.) *</label>
+                <input type="password" id="regPassword" class="form-input" placeholder="••••" minlength="4" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="regGoal" data-i18n="lblRegGoal">Ton Objectif Physique Actuel</label>
+                <select id="regGoal" class="form-input">
+                  <option value="mantenimiento" data-i18n="goalTabMaintenance">3. Maintien (Règle d'Or)</option>
+                  <option value="perdida_peso" data-i18n="goalTabWeightLoss">1. Perte de Poids</option>
+                  <option value="definicion" data-i18n="goalTabCutting">2. Sèche & Définition</option>
+                  <option value="ganancia_masa" data-i18n="goalTabBulking">4. Prise de Masse</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="regRefCode" data-i18n="lblCustRefCode">Code Parrain / Élève Olimpo (Optionnel)</label>
+                <input type="text" id="regRefCode" class="form-input" placeholder="Ex: ALEX" data-i18n-placeholder="custRefCodePlaceholder">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit-order" style="margin-top: 6px;" data-i18n="btnMemSignupSubmit">
+              🚀 Créer Mon Compte Membre Olimpo
+            </button>
+
+            <div class="mem-switch-prompt">
+              <span data-i18n="memAlreadyAccountPrompt">Tu as déjà un compte membre ?</span>
+              <button type="button" class="btn-link-inline" onclick="window.switchMemberAuthTab('login')" data-i18n="memLoginNowLink">Se connecter ici →</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- VUE B : ESPACE MEMBRE CONNECTÉ (TABLEAU DE BORD COMPLET DANS LA POP-UP) -->
+        <div id="memDashboardView" style="display: none;">
+          <div class="mem-profile-banner">
+            <div class="mem-profile-info">
+              <div class="mem-avatar-circle" id="memDashAvatar">🥊</div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <strong id="memDashName" style="color: #fff; font-size: 17px;">ATHLÈTE OLIMPO</strong>
+                  <span class="student-badge-pill" data-i18n="stuConnectedBadge">🟢 Espace Élève Actif</span>
+                </div>
+                <div id="memDashMeta" style="font-size: 12.5px; color: var(--text-dim); margin-top: 3px;"></div>
+                <div style="font-size: 12.5px; color: #cbd5e1; margin-top: 6px;">
+                  <span data-i18n="stuCodeLabel">Ton Code Parrain à donner à tes amis :</span>
+                  <strong id="memDashCode" style="color: var(--brand-blue-light); background: #080c0f; padding: 2px 9px; border-radius: 4px; border: 1px solid var(--brand-blue-border); margin-left: 6px;">OLIMPO</strong>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-hero-primary" style="padding: 8px 14px; font-size: 12px;" onclick="window.closeMemberModal(); window.openCheckout('pack_fighter_pro');" data-i18n="btnMemOrderPack">
+                🥗 Commander un Pack
+              </button>
+              <button type="button" class="btn-mem-logout" onclick="window.logoutMemberAccount()" data-i18n="btnMemLogout">
+                🚪 Déconnexion
+              </button>
+            </div>
+          </div>
+
+          <!-- LIEN D'AFFILIATION PERSONNEL DANS LA POP-UP -->
+          <div class="generated-link-display" style="display: flex; margin-top: 14px; margin-bottom: 18px;">
+            <span class="link-text" id="memDashLinkText">https://olimpo.com/?ref=OLIMPO</span>
+            <div class="link-buttons">
+              <button type="button" class="btn-copy-link" onclick="window.copyMemberReferralLink()" data-i18n="btnCopyLink">📋 Copier le Lien</button>
+              <button type="button" class="btn-share-wa" onclick="window.shareMemberReferralWa()" data-i18n="btnShareWa">📲 Partager sur WhatsApp</button>
+            </div>
+          </div>
+
+          <!-- COMPTEURS KPIS MEMBRE -->
+          <div class="mem-kpi-grid">
+            <div class="mem-kpi-box">
+              <div class="mem-kpi-lbl" data-i18n="dashClicks">Clics sur ton lien</div>
+              <div class="mem-kpi-val" id="memKpiClicks">0</div>
+            </div>
+            <div class="mem-kpi-box">
+              <div class="mem-kpi-lbl" data-i18n="dashSignups">Filleuls inscrits</div>
+              <div class="mem-kpi-val" id="memKpiSignups" style="color: var(--brand-blue-light);">0</div>
+            </div>
+            <div class="mem-kpi-box">
+              <div class="mem-kpi-lbl" data-i18n="dashTotalEarn">Commissions totales</div>
+              <div class="mem-kpi-val" id="memKpiTotalEarn" style="color: var(--brand-blue-light);">0 ₲</div>
+            </div>
+            <div class="mem-kpi-box">
+              <div class="mem-kpi-lbl" data-i18n="dashBalance">Solde disponible</div>
+              <div class="mem-kpi-val" id="memKpiBalance" style="color: var(--green-gain);">0 ₲</div>
+            </div>
+          </div>
+
+          <!-- AJOUTER UN FILLEUL DEPUIS LA POP-UP MEMBRE -->
+          <div class="student-add-ref-box" style="margin-top: 16px;">
+            <h5 style="font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px;" data-i18n="stuAddRefTitle">
+              ➕ Enregistrer un Filleul Parrainé (Club ou Pack Repas)
+            </h5>
+            <div class="student-ref-form-grid" style="margin-top: 10px;">
+              <div class="student-field">
+                <label for="memModalFriendName" data-i18n="stuRefFriendLbl">Nom & Prénom de ton Filleul *</label>
+                <input type="text" id="memModalFriendName" class="student-input" placeholder="Ex: Lucas Martinez" data-i18n-placeholder="stuRefFriendPlaceholder">
+              </div>
+              <div class="student-field">
+                <label for="memModalFriendPlan" data-i18n="stuRefPlanLbl">Abonnement souscrit par ton Filleul *</label>
+                <select id="memModalFriendPlan" class="student-input">
+                  <option value="club_150k" data-i18n="stuRefOptClub">🥊 Abonnement Club (150.000 ₲) → Ta Commission : +22.500 ₲ (15%)</option>
+                  <option value="pack_1_mensual" data-i18n="stuRefOptPack1">🥗 Pack 1 Plat/Jour Mensuel (500.000 ₲) → Ta Commission : +50.000 ₲ (10%)</option>
+                  <option value="fighter_pro_mensual" data-i18n="stuRefOptPro">⭐ Pack Fighter Pro Mensuel (950.000 ₲) → Ta Commission : +95.000 ₲ (10%)</option>
+                  <option value="combo_elite_mensual" data-i18n="stuRefOptElite">🏆 Combo Fighter Elite (1.100.000 ₲) → Ta Commission : +117.500 ₲</option>
+                  <option value="pack_semanal" data-i18n="stuRefOptWeekly">⚡ Pack Semaine (140k - 260k ₲) → Ta Commission : +20.000 ₲ (10%)</option>
+                </select>
+              </div>
+              <button type="button" class="btn-gen-link" style="height: 45px; padding: 0 16px;" onclick="window.addReferralFromModal()" data-i18n="btnAddReferral">
+                ✅ Valider ce Filleul
+              </button>
+            </div>
+
+            <div class="student-history-list" id="memModalHistoryList"></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #1e272f;">
+            <button type="button" class="btn-hero-secondary" style="padding: 9px 14px; font-size: 12.5px;" onclick="window.openTrialWhatsApp()" data-i18n="btnBookTrial">
+              🥊 Réserver un Essai Gratuit
+            </button>
+            <button type="button" class="btn-hero-primary" style="padding: 9px 16px; font-size: 12.5px;" onclick="window.openWithdrawModal()" data-i18n="btnWithdraw">
+              💸 Demander un Virement de Gains
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="firebase-service.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

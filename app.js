@@ -840,49 +840,51 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function renderStudentPortal() {
-    if (!studentAuthBox || !studentDashboardBox) return;
     const db = getStudentsDB();
     const activeCode = state.activeStudentCode;
     const student = activeCode && db[activeCode] ? db[activeCode] : null;
+    const lang = state.lang || 'es';
 
-    if (!student) {
-      studentAuthBox.style.display = 'block';
-      studentDashboardBox.style.display = 'none';
-      return;
+    // 1. Update Navbar "JOIN" Buttons (Desktop Top-Left & Mobile Burger Replacement)
+    const btnJoinDesktop = document.getElementById('btnNavJoinDesktop');
+    const btnJoinMobile = document.getElementById('btnNavJoinMobile');
+    const txtJoinDesktop = document.getElementById('navJoinTextDesktop');
+    const txtJoinMobile = document.getElementById('navJoinTextMobile');
+
+    if (student) {
+      const shortName = (student.name || student.code).split(' ')[0].toUpperCase().slice(0, 10);
+      if (btnJoinDesktop) btnJoinDesktop.classList.add('logged-in');
+      if (btnJoinMobile) btnJoinMobile.classList.add('logged-in');
+      if (txtJoinDesktop) txtJoinDesktop.textContent = `👤 ${shortName}`;
+      if (txtJoinMobile) txtJoinMobile.textContent = `👤 ${shortName}`;
+
+      // Pre-fill Checkout Customer Name & Phone automatically when logged in
+      const custNameEl = document.getElementById('custName');
+      const custPhoneEl = document.getElementById('custPhone');
+      if (custNameEl && !custNameEl.value && student.name) custNameEl.value = student.name;
+      if (custPhoneEl && !custPhoneEl.value && student.phone) custPhoneEl.value = student.phone;
+    } else {
+      if (btnJoinDesktop) btnJoinDesktop.classList.remove('logged-in');
+      if (btnJoinMobile) btnJoinMobile.classList.remove('logged-in');
+      if (txtJoinDesktop) txtJoinDesktop.textContent = 'JOIN';
+      if (txtJoinMobile) txtJoinMobile.textContent = 'JOIN';
     }
 
-    studentAuthBox.style.display = 'none';
-    studentDashboardBox.style.display = 'block';
-
-    if (stuProfileName) stuProfileName.textContent = student.name || student.code;
-    if (stuProfilePhone) stuProfilePhone.textContent = student.phone ? `• ${student.phone}` : '';
-    if (stuCodeBadge) stuCodeBadge.textContent = student.code;
-
     const baseUrl = window.location.origin + window.location.pathname;
-    const link = `${baseUrl}?ref=${student.code}`;
-    if (genLinkText) genLinkText.textContent = link;
-
-    const refs = Array.isArray(student.referrals) ? student.referrals : [];
+    const link = student ? `${baseUrl}?ref=${student.code}` : `${baseUrl}?ref=OLIMPO`;
+    const refs = student && Array.isArray(student.referrals) ? student.referrals : [];
     const totalEarn = refs.reduce((acc, r) => acc + (r.commission || 0), 0);
-    const balance = Math.max(0, totalEarn - (student.paidOut || 0));
+    const balance = Math.max(0, totalEarn - (student ? (student.paidOut || 0) : 0));
 
-    if (stuClicksVal) stuClicksVal.textContent = String(student.clicks || 0);
-    if (stuSignupsVal) stuSignupsVal.textContent = String(refs.length);
-    if (stuTotalEarnVal) stuTotalEarnVal.textContent = `${totalEarn.toLocaleString('es-PY')} ₲`;
-    if (stuBalanceVal) stuBalanceVal.textContent = `${balance.toLocaleString('es-PY')} ₲`;
+    const emptyMsg = {
+      es: 'Aún no tenés referidos registrados. ¡Compartí tu enlace o registrá a tu primer amigo arriba!',
+      fr: 'Aucun filleul enregistré pour le moment. Partage ton lien ou enregistre ton premier ami ci-dessus !',
+      en: 'No referrals registered yet. Share your link or register your first referred friend above!'
+    }[lang] || 'Aucun filleul enregistré.';
 
-    if (studentHistoryList) {
-      const lang = state.lang || 'es';
-      const emptyMsg = {
-        es: 'Aún no tenés referidos registrados. ¡Compartí tu enlace o registrá a tu primer amigo arriba!',
-        fr: 'Aucun filleul enregistré pour le moment. Partage ton lien ou enregistre ton premier ami ci-dessus !',
-        en: 'No referrals registered yet. Share your link or register your first referred friend above!'
-      }[lang] || 'Aucun filleul enregistré.';
-
-      if (refs.length === 0) {
-        studentHistoryList.innerHTML = `<div style="font-size: 12.5px; color: var(--text-dim); padding: 8px 4px;">${emptyMsg}</div>`;
-      } else {
-        studentHistoryList.innerHTML = refs.map(r => {
+    const historyHtml = refs.length === 0
+      ? `<div style="font-size: 12.5px; color: var(--text-dim); padding: 8px 4px;">${emptyMsg}</div>`
+      : refs.map(r => {
           const planObj = referralPlanConfig[r.planKey];
           const planName = planObj ? (planObj.label[lang] || planObj.label.es) : r.planKey;
           return `
@@ -895,8 +897,431 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
         }).join('');
+
+    // 2. Update Pop-up Member Modal (#memberAuthModal)
+    const memAuthView = document.getElementById('memAuthView');
+    const memDashboardView = document.getElementById('memDashboardView');
+    if (memAuthView && memDashboardView) {
+      if (student) {
+        memAuthView.style.display = 'none';
+        memDashboardView.style.display = 'block';
+        const memDashName = document.getElementById('memDashName');
+        const memDashMeta = document.getElementById('memDashMeta');
+        const memDashCode = document.getElementById('memDashCode');
+        const memDashLinkText = document.getElementById('memDashLinkText');
+        const memKpiClicks = document.getElementById('memKpiClicks');
+        const memKpiSignups = document.getElementById('memKpiSignups');
+        const memKpiTotalEarn = document.getElementById('memKpiTotalEarn');
+        const memKpiBalance = document.getElementById('memKpiBalance');
+        const memModalHistoryList = document.getElementById('memModalHistoryList');
+
+        if (memDashName) memDashName.textContent = student.name || student.code;
+        if (memDashMeta) {
+          const parts = [];
+          if (student.email) parts.push(`✉️ ${student.email}`);
+          if (student.phone) parts.push(`📱 ${student.phone}`);
+          memDashMeta.textContent = parts.join('  •  ');
+        }
+        if (memDashCode) memDashCode.textContent = student.code;
+        if (memDashLinkText) memDashLinkText.textContent = link;
+        if (memKpiClicks) memKpiClicks.textContent = String(student.clicks || 0);
+        if (memKpiSignups) memKpiSignups.textContent = String(refs.length);
+        if (memKpiTotalEarn) memKpiTotalEarn.textContent = `${totalEarn.toLocaleString('es-PY')} ₲`;
+        if (memKpiBalance) memKpiBalance.textContent = `${balance.toLocaleString('es-PY')} ₲`;
+        if (memModalHistoryList) memModalHistoryList.innerHTML = historyHtml;
+      } else {
+        memAuthView.style.display = 'block';
+        memDashboardView.style.display = 'none';
       }
     }
+
+    // 3. Update Section 6 On-Page Student Portal (#studentPortal)
+    if (!studentAuthBox || !studentDashboardBox) return;
+    if (!student) {
+      studentAuthBox.style.display = 'block';
+      studentDashboardBox.style.display = 'none';
+      return;
+    }
+
+    studentAuthBox.style.display = 'none';
+    studentDashboardBox.style.display = 'block';
+
+    if (stuProfileName) stuProfileName.textContent = student.name || student.code;
+    if (stuProfilePhone) stuProfilePhone.textContent = student.phone ? `• ${student.phone}` : '';
+    if (stuCodeBadge) stuCodeBadge.textContent = student.code;
+    if (genLinkText) genLinkText.textContent = link;
+
+    if (stuClicksVal) stuClicksVal.textContent = String(student.clicks || 0);
+    if (stuSignupsVal) stuSignupsVal.textContent = String(refs.length);
+    if (stuTotalEarnVal) stuTotalEarnVal.textContent = `${totalEarn.toLocaleString('es-PY')} ₲`;
+    if (stuBalanceVal) stuBalanceVal.textContent = `${balance.toLocaleString('es-PY')} ₲`;
+    if (studentHistoryList) studentHistoryList.innerHTML = historyHtml;
+  }
+
+  // --- HELPER: ACTIVATE & SYNC LOGGED-IN MEMBER ---
+  function activateMemberSession(memberObj) {
+    if (!memberObj || !memberObj.code) return;
+    const db = getStudentsDB();
+    db[memberObj.code] = {
+      ...(db[memberObj.code] || {}),
+      ...memberObj
+    };
+    saveStudentsDB(db);
+    state.activeStudentCode = memberObj.code;
+    localStorage.setItem('olimpo_active_student', memberObj.code);
+
+    if (memberObj.goal && goalsDataMultilingual.es[memberObj.goal]) {
+      state.activeGoal = memberObj.goal;
+      document.querySelectorAll('.btn-goal-tab').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-goal') === memberObj.goal);
+      });
+      updateGoalDisplay(state.lang);
+    }
+
+    renderStudentPortal();
+    if (window.OlimpoFirebase) {
+      window.OlimpoFirebase.syncMemberToCloud(db[memberObj.code]);
+      window.OlimpoFirebase.subscribeToMember(memberObj.code);
+    }
+  }
+
+  // --- POP-UP MEMBER AUTH MODAL & FIREBASE CLOUD HANDLERS ---
+  const memberAuthModal = document.getElementById('memberAuthModal');
+
+  window.openMemberModal = function(defaultTab = 'login') {
+    if (!memberAuthModal) return;
+    const regRefInput = document.getElementById('regRefCode');
+    if (regRefInput && !regRefInput.value && state.affiliateRef) {
+      regRefInput.value = state.affiliateRef;
+    }
+    if (!state.activeStudentCode) {
+      window.switchMemberAuthTab(defaultTab);
+    }
+    renderStudentPortal();
+    memberAuthModal.classList.add('open');
+  };
+
+  window.closeMemberModal = function() {
+    if (memberAuthModal) memberAuthModal.classList.remove('open');
+  };
+
+  if (memberAuthModal) {
+    memberAuthModal.addEventListener('click', (e) => {
+      if (e.target === memberAuthModal) window.closeMemberModal();
+    });
+  }
+
+  window.switchMemberAuthTab = function(tab) {
+    const tabBtnLogin = document.getElementById('tabBtnLogin');
+    const tabBtnSignup = document.getElementById('tabBtnSignup');
+    const memLoginForm = document.getElementById('memLoginForm');
+    const memSignupForm = document.getElementById('memSignupForm');
+    if (tab === 'signup') {
+      if (tabBtnLogin) tabBtnLogin.classList.remove('active');
+      if (tabBtnSignup) tabBtnSignup.classList.add('active');
+      if (memLoginForm) memLoginForm.style.display = 'none';
+      if (memSignupForm) memSignupForm.style.display = 'block';
+    } else {
+      if (tabBtnLogin) tabBtnLogin.classList.add('active');
+      if (tabBtnSignup) tabBtnSignup.classList.remove('active');
+      if (memLoginForm) memLoginForm.style.display = 'block';
+      if (memSignupForm) memSignupForm.style.display = 'none';
+    }
+  };
+
+  window.toggleFirebaseConfigPanel = function() {
+    const drawer = document.getElementById('firebaseConfigDrawer');
+    if (!drawer) return;
+    drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+  };
+
+  window.refreshFirebaseBadgeLang = function() {
+    const textEl = document.getElementById('firebaseStatusText');
+    if (!textEl) return;
+    const lang = state.lang || 'es';
+    const isConnected = window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected;
+    const labels = {
+      es: {
+        connected: '☁️ Conectado a Firebase Cloud (100% Gratis • Spark)',
+        hybrid: '⚡ Base de Datos Activa (100% Gratis • Configurar Firebase)'
+      },
+      fr: {
+        connected: '☁️ Connecté à Firebase Cloud (100% Gratuit • Spark)',
+        hybrid: '⚡ Base Membre Active (100% Gratuit • Configurer Firebase)'
+      },
+      en: {
+        connected: '☁️ Connected to Firebase Cloud (100% Free • Spark)',
+        hybrid: '⚡ Member DB Active (100% Free • Configure Firebase)'
+      }
+    }[lang] || {};
+    textEl.textContent = isConnected ? labels.connected : labels.hybrid;
+  };
+
+  window.saveFirebaseCloudConfig = async function() {
+    const input = document.getElementById('firebaseConfigInput');
+    const lang = state.lang || 'es';
+    if (!input || !window.OlimpoFirebase) return;
+    const res = window.OlimpoFirebase.parseAndSaveConfig(input.value);
+    if (!res.ok) {
+      const errMsg = {
+        es: '⚠️ Formato firebaseConfig inválido. Asegurate de incluir apiKey y projectId.',
+        fr: '⚠️ Format firebaseConfig invalide. Vérifie que apiKey et projectId sont présents.',
+        en: '⚠️ Invalid firebaseConfig format. Make sure apiKey and projectId are included.'
+      }[lang];
+      showToast(errMsg);
+      return;
+    }
+    const connected = await window.OlimpoFirebase.init();
+    if (connected) {
+      const drawer = document.getElementById('firebaseConfigDrawer');
+      if (drawer) drawer.style.display = 'none';
+      const okMsg = {
+        es: '☁️ ¡Firebase Firestore & Auth conectados con éxito!',
+        fr: '☁️ Firebase Firestore & Auth connectés avec succès !',
+        en: '☁️ Firebase Firestore & Auth successfully connected!'
+      }[lang];
+      showToast(okMsg);
+    }
+  };
+
+  // --- LOGIN FORM SUBMISSION (#memLoginForm) ---
+  const memLoginForm = document.getElementById('memLoginForm');
+  if (memLoginForm) {
+    memLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const lang = state.lang || 'es';
+      const idInput = document.getElementById('loginIdentifier');
+      const passInput = document.getElementById('loginPassword');
+      const rawId = idInput ? idInput.value.trim() : '';
+      const rawPass = passInput ? passInput.value.trim() : '';
+      if (!rawId) return;
+
+      const cleanCode = rawId.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+      const db = getStudentsDB();
+      let foundMember = null;
+
+      // 1. Try Firebase Cloud lookup first if connected
+      if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
+        foundMember = await window.OlimpoFirebase.fetchMemberFromCloud(rawId);
+      }
+
+      // 2. Try local DB lookup by code, email, or name
+      if (!foundMember) {
+        if (db[cleanCode]) {
+          foundMember = db[cleanCode];
+        } else {
+          const allMembers = Object.values(db);
+          foundMember = allMembers.find(m =>
+            (m.email && m.email.toLowerCase() === rawId.toLowerCase()) ||
+            (m.name && m.name.toLowerCase() === rawId.toLowerCase())
+          );
+        }
+      }
+
+      if (foundMember) {
+        if (foundMember.pin && rawPass && foundMember.pin !== rawPass) {
+          const errMsg = {
+            es: '⚠️ Contraseña o código PIN incorrecto.',
+            fr: '⚠️ Mot de passe ou code PIN incorrect.',
+            en: '⚠️ Incorrect password or PIN code.'
+          }[lang];
+          showToast(errMsg);
+          return;
+        }
+        activateMemberSession(foundMember);
+        const welcomeMsg = {
+          es: `✓ ¡Bienvenido de nuevo, ${foundMember.name}!`,
+          fr: `✓ Bon retour dans ton espace, ${foundMember.name} !`,
+          en: `✓ Welcome back, ${foundMember.name}!`
+        }[lang];
+        showToast(welcomeMsg);
+      } else {
+        // Instant account creation if user logs in directly with their alias + PIN
+        const newCode = cleanCode || 'ATLETA';
+        const newMember = {
+          code: newCode,
+          name: rawId.includes('@') ? rawId.split('@')[0].toUpperCase() : rawId,
+          email: rawId.includes('@') ? rawId.toLowerCase() : '',
+          phone: '',
+          pin: rawPass || '0000',
+          goal: state.activeGoal || 'mantenimiento',
+          clicks: 1,
+          referrals: [],
+          paidOut: 0
+        };
+        activateMemberSession(newMember);
+        const createdMsg = {
+          es: `✓ ¡Espacio Miembro activado para ${newMember.name} (Código: ${newCode})!`,
+          fr: `✓ Espace Membre activé pour ${newMember.name} (Code : ${newCode}) !`,
+          en: `✓ Member Space activated for ${newMember.name} (Code: ${newCode})!`
+        }[lang];
+        showToast(createdMsg);
+      }
+    });
+  }
+
+  // --- SIGNUP FORM SUBMISSION (#memSignupForm) ---
+  const memSignupForm = document.getElementById('memSignupForm');
+  if (memSignupForm) {
+    memSignupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const lang = state.lang || 'es';
+      const nameVal = document.getElementById('regName')?.value.trim() || '';
+      const phoneVal = document.getElementById('regPhone')?.value.trim() || '';
+      const emailVal = document.getElementById('regEmail')?.value.trim().toLowerCase() || '';
+      const passVal = document.getElementById('regPassword')?.value.trim() || '0000';
+      const goalVal = document.getElementById('regGoal')?.value || 'mantenimiento';
+      const refByVal = document.getElementById('regRefCode')?.value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '') || '';
+
+      if (!nameVal) return;
+
+      const baseCode = nameVal.split(' ')[0].toUpperCase().replace(/[^A-Z0-9]/g, '') || 'OLIMPO';
+      const phoneDigits = phoneVal.replace(/\D/g, '').slice(-3);
+      const cleanCode = phoneDigits ? `${baseCode}${phoneDigits}` : baseCode;
+
+      const newMember = {
+        code: cleanCode,
+        name: nameVal,
+        email: emailVal,
+        phone: phoneVal,
+        pin: passVal,
+        goal: goalVal,
+        referredBy: refByVal,
+        clicks: 1,
+        referrals: [],
+        paidOut: 0,
+        createdAt: new Date().toISOString()
+      };
+
+      // Credit referrer if refByVal exists in DB
+      if (refByVal && refByVal !== cleanCode) {
+        const db = getStudentsDB();
+        if (!db[refByVal]) {
+          db[refByVal] = { code: refByVal, name: refByVal, phone: '', pin: '', clicks: 1, referrals: [], paidOut: 0 };
+        }
+        db[refByVal].referrals = db[refByVal].referrals || [];
+        db[refByVal].referrals.unshift({
+          friendName: nameVal,
+          planKey: 'club_150k',
+          commission: 22500,
+          date: new Date().toLocaleDateString('es-PY')
+        });
+        saveStudentsDB(db);
+        if (window.OlimpoFirebase) {
+          window.OlimpoFirebase.syncMemberToCloud(db[refByVal]);
+        }
+      }
+
+      activateMemberSession(newMember);
+
+      const okMsg = {
+        es: `🎉 ¡Cuenta creada con éxito! Tu código miembro es ${cleanCode}`,
+        fr: `🎉 Compte membre créé avec succès ! Ton code est ${cleanCode}`,
+        en: `🎉 Member account created! Your code is ${cleanCode}`
+      }[lang];
+      showToast(okMsg);
+    });
+  }
+
+  // --- GOOGLE LOGIN HANDLER ---
+  window.handleGoogleMemberLogin = async function() {
+    const lang = state.lang || 'es';
+    if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
+      const res = await window.OlimpoFirebase.signInWithGoogle();
+      if (res.ok && res.user) {
+        const cleanCode = res.user.name.split(' ')[0].toUpperCase().replace(/[^A-Z0-9]/g, '') || 'ATLETA';
+        activateMemberSession({
+          code: cleanCode,
+          name: res.user.name,
+          email: res.user.email,
+          phone: res.user.phone || '',
+          pin: '',
+          goal: state.activeGoal || 'mantenimiento',
+          clicks: 1,
+          referrals: [],
+          paidOut: 0
+        });
+        showToast(`✓ ${res.user.name}`);
+        return;
+      }
+    }
+    // If Google OAuth popup requires Firebase Cloud keys or user is on local domain, switch to 30-sec signup tab
+    window.switchMemberAuthTab('signup');
+    const regNameInput = document.getElementById('regName');
+    if (regNameInput) regNameInput.focus();
+    const infoMsg = {
+      es: '🎓 Completá tu nombre y WhatsApp abajo para crear tu cuenta en 1 clic.',
+      fr: '🎓 Indique ton nom et ton WhatsApp ci-dessous pour créer ton compte en 1 clic.',
+      en: '🎓 Enter your name and WhatsApp below to create your account in 1 click.'
+    }[lang];
+    showToast(infoMsg);
+  };
+
+  window.logoutMemberAccount = function() {
+    state.activeStudentCode = '';
+    localStorage.removeItem('olimpo_active_student');
+    renderStudentPortal();
+    const lang = state.lang || 'es';
+    const msg = {
+      es: 'Sesión cerrada correctamente.',
+      fr: 'Session déconnectée avec succès.',
+      en: 'Logged out successfully.'
+    }[lang];
+    showToast(msg);
+  };
+
+  window.copyMemberReferralLink = function() {
+    const el = document.getElementById('memDashLinkText');
+    if (!el) return;
+    const text = el.textContent;
+    const lang = state.lang || 'es';
+    const copiedMsg = {
+      es: '✓ ¡Enlace copiado al portapapeles!',
+      fr: '✓ Lien copié dans le presse-papiers !',
+      en: '✓ Link copied to clipboard!'
+    }[lang];
+    navigator.clipboard.writeText(text).then(() => showToast(copiedMsg)).catch(() => showToast(copiedMsg));
+  };
+
+  window.shareMemberReferralWa = function() {
+    const el = document.getElementById('memDashLinkText');
+    const link = el ? el.textContent : window.location.href;
+    const lang = state.lang || 'es';
+    const shareTexts = {
+      es: `🥊 ¡Hola! Te invito a entrenar en Olimpo Team Kickboxing & Boxeo (Areguá) y a comer saludable en el restaurante del club.\nSumate con mi enlace oficial de embajador:\n👉 ${link}\n¡Nos vemos en el ring!`,
+      fr: `🥊 Salut ! Je t'invite à t'entraîner au club Olimpo Team Kickboxing & Boxe (Areguá) et à manger sainement au restaurant du club.\nRejoins-nous via mon lien ambassadeur :\n👉 ${link}\nÀ très vite sur le ring !`,
+      en: `🥊 Hey! Join me at Olimpo Team Kickboxing & Boxing Club (Areguá) and fuel up at the club's fit restaurant.\nSign up through my ambassador link:\n👉 ${link}\nSee you in the ring!`
+    };
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareTexts[lang] || shareTexts.es)}`, '_blank');
+  };
+
+  window.addReferralFromModal = function() {
+    const nameInput = document.getElementById('memModalFriendName');
+    const planSelect = document.getElementById('memModalFriendPlan');
+    if (!nameInput || !planSelect) return;
+    if (refFriendNameInput) refFriendNameInput.value = nameInput.value;
+    if (refFriendPlanSelect) refFriendPlanSelect.value = planSelect.value;
+    nameInput.value = '';
+    if (btnAddReferral) btnAddReferral.click();
+  };
+
+  // Initialize Firebase Cloud Service & Real-Time Listeners
+  if (window.OlimpoFirebase) {
+    window.OlimpoFirebase.onMemberUpdate((cloudMember) => {
+      if (!cloudMember || !cloudMember.code) return;
+      const db = getStudentsDB();
+      db[cloudMember.code] = { ...(db[cloudMember.code] || {}), ...cloudMember };
+      saveStudentsDB(db);
+      renderStudentPortal();
+    });
+    window.OlimpoFirebase.init().then((connected) => {
+      if (connected && state.affiliateRef) {
+        window.OlimpoFirebase.incrementReferralClick(state.affiliateRef);
+      }
+      if (connected && state.activeStudentCode) {
+        window.OlimpoFirebase.subscribeToMember(state.activeStudentCode);
+      }
+    });
   }
 
   if (btnGenLink && aliasInput) {
@@ -949,6 +1374,10 @@ document.addEventListener('DOMContentLoaded', () => {
       state.activeStudentCode = cleanCode;
       localStorage.setItem('olimpo_active_student', cleanCode);
       renderStudentPortal();
+      if (window.OlimpoFirebase) {
+        window.OlimpoFirebase.syncMemberToCloud(db[cleanCode]);
+        window.OlimpoFirebase.subscribeToMember(cleanCode);
+      }
 
       const okMsg = {
         es: `✓ ¡Espacio Alumno activado para ${rawName} (Código: ${cleanCode})!`,
@@ -1002,6 +1431,9 @@ document.addEventListener('DOMContentLoaded', () => {
       saveStudentsDB(db);
       if (refFriendNameInput) refFriendNameInput.value = '';
       renderStudentPortal();
+      if (window.OlimpoFirebase) {
+        window.OlimpoFirebase.syncMemberToCloud(db[activeCode]);
+      }
 
       const planTitle = planInfo.label[lang] || planInfo.label.es;
       const waMsg = encodeURIComponent(
@@ -2017,7 +2449,36 @@ document.addEventListener('DOMContentLoaded', () => {
             "custRefCodePlaceholder": "Ej: ALEX",
             "stuPhonePlaceholder": "Ej: +595 981 123456",
             "custPhonePlaceholder": "Ej: 0981 123456",
-            "custCIPlaceholder": "Ej: 4.567.890-1"
+            "custCIPlaceholder": "Ej: 4.567.890-1",
+            "memModalTitle": "🏛️ Espacio Miembro & Atleta Olimpo",
+            "memCloudBadgeHybrid": "⚡ Base de Datos Activa (100% Gratis • Firebase Spark)",
+            "fbDrawerTitle": "☁️ Sincronización Firebase Cloud (Plan Gratuito Spark 0 $/mes)",
+            "fbDrawerDesc": "Pegá acá tu objeto <code>firebaseConfig</code> desde la consola Firebase (Project Settings → Web App) para sincronizar todas las cuentas y referidos en Firestore Cloud gratis:",
+            "btnSaveFbConfig": "☁️ Conectar Firebase",
+            "memTabLogin": "🔑 Iniciar Sesión",
+            "memTabSignup": "🎓 Crear mi Cuenta",
+            "memLoginLead": "Iniciá sesión en tu cuenta miembro Olimpo para acceder a tu panel de control, tu enlace de embajador y tus pedidos rápidos:",
+            "lblLoginId": "Email, Nombre/Alias o Código Miembro *",
+            "loginIdPlaceholder": "Ej: alex@email.com o GUERRERO_ALEX",
+            "lblLoginPass": "Contraseña o Código PIN *",
+            "btnMemLoginSubmit": "🔑 Entrar a Mi Espacio Miembro",
+            "memOrDivider": "o acceso rápido",
+            "btnMemGoogle": "Continuar con Google (Firebase Auth)",
+            "memNoAccountPrompt": "¿Todavía no tenés cuenta miembro?",
+            "memCreateNowLink": "Crear mi cuenta gratis →",
+            "memSignupLead": "Creá tu cuenta miembro Olimpo gratis en 30 segundos. Accedé al seguimiento de tus comidas, tu objetivo físico y tus comisiones de referido (10% a 15%):",
+            "lblRegName": "Nombre & Apellido o Alias *",
+            "regNamePlaceholder": "Ej: Alex Benítez",
+            "lblRegPhone": "WhatsApp / Teléfono *",
+            "lblRegEmail": "Correo Electrónico *",
+            "regEmailPlaceholder": "Ej: alex@email.com",
+            "lblRegPass": "Contraseña o Código PIN (mín. 4 car.) *",
+            "lblRegGoal": "Tu Objetivo Físico Actual",
+            "btnMemSignupSubmit": "🚀 Crear Mi Cuenta Miembro Olimpo",
+            "memAlreadyAccountPrompt": "¿Ya tenés una cuenta miembro?",
+            "memLoginNowLink": "Iniciar sesión acá →",
+            "btnMemOrderPack": "🥗 Pedir un Pack",
+            "btnMemLogout": "🚪 Cerrar Sesión"
       },
       "fr": {
             "alertBar": "Cuota del día : 50 plats frais cuisinés chaque matin • Lundi au Samedi à Areguá • Sans Réservation requise",
@@ -2343,7 +2804,36 @@ document.addEventListener('DOMContentLoaded', () => {
             "custRefCodePlaceholder": "Ex: ALEX",
             "stuPhonePlaceholder": "Ex: +595 981 123456",
             "custPhonePlaceholder": "Ex: 0981 123456",
-            "custCIPlaceholder": "Ex: 4.567.890-1"
+            "custCIPlaceholder": "Ex: 4.567.890-1",
+            "memModalTitle": "🏛️ Espace Membre & Athlète Olimpo",
+            "memCloudBadgeHybrid": "⚡ Base Membre Active (100% Gratuit • Firebase Spark)",
+            "fbDrawerTitle": "☁️ Synchronisation Firebase Cloud (Plan Gratuit Spark 0 $/mois)",
+            "fbDrawerDesc": "Colle ici ton objet <code>firebaseConfig</code> depuis la console Firebase (Project Settings → Web App) pour synchroniser tous les comptes membres et parrainages sur Firestore Cloud gratuitement :",
+            "btnSaveFbConfig": "☁️ Connecter Firebase",
+            "memTabLogin": "🔑 Se Connecter",
+            "memTabSignup": "🎓 Créer mon Compte",
+            "memLoginLead": "Connecte-toi à ton compte membre Olimpo pour accéder à ton tableau de bord, ton lien ambassadeur et tes commandes rapides :",
+            "lblLoginId": "Email, Prénom/Pseudo ou Code Membre *",
+            "loginIdPlaceholder": "Ex: alex@email.com ou GUERRIER_ALEX",
+            "lblLoginPass": "Mot de passe ou Code PIN *",
+            "btnMemLoginSubmit": "🔑 Se Connecter à Mon Espace Membre",
+            "memOrDivider": "ou connexion rapide",
+            "btnMemGoogle": "Continuer avec Google (Firebase Auth)",
+            "memNoAccountPrompt": "Pas encore de compte membre ?",
+            "memCreateNowLink": "Créer mon compte gratuitement →",
+            "memSignupLead": "Crée ton compte membre Olimpo gratuitement en 30 secondes. Accède au suivi de tes repas, ton objectif physique et tes commissions de parrainage (10% à 15%) :",
+            "lblRegName": "Nom & Prénom ou Pseudo *",
+            "regNamePlaceholder": "Ex: Alex Benítez",
+            "lblRegPhone": "WhatsApp / Téléphone *",
+            "lblRegEmail": "Adresse Email *",
+            "regEmailPlaceholder": "Ex: alex@email.com",
+            "lblRegPass": "Mot de passe ou Code PIN (min. 4 car.) *",
+            "lblRegGoal": "Ton Objectif Physique Actuel",
+            "btnMemSignupSubmit": "🚀 Créer Mon Compte Membre Olimpo",
+            "memAlreadyAccountPrompt": "Tu as déjà un compte membre ?",
+            "memLoginNowLink": "Se connecter ici →",
+            "btnMemOrderPack": "🥗 Commander un Pack",
+            "btnMemLogout": "🚪 Déconnexion"
       },
       "en": {
             "alertBar": "Daily capacity: 50 fresh meals cooked every morning • Monday to Saturday in Areguá • No reservation required",
@@ -2669,7 +3159,36 @@ document.addEventListener('DOMContentLoaded', () => {
             "custRefCodePlaceholder": "Ex: ALEX",
             "stuPhonePlaceholder": "Ex: +595 981 123456",
             "custPhonePlaceholder": "Ex: 0981 123456",
-            "custCIPlaceholder": "Ex: 4.567.890-1"
+            "custCIPlaceholder": "Ex: 4.567.890-1",
+            "memModalTitle": "🏛️ Olimpo Member & Athlete Space",
+            "memCloudBadgeHybrid": "⚡ Member DB Active (100% Free • Firebase Spark)",
+            "fbDrawerTitle": "☁️ Firebase Cloud Sync (Free Spark Plan $0/month)",
+            "fbDrawerDesc": "Paste your <code>firebaseConfig</code> object from the Firebase Console (Project Settings → Web App) to sync all member accounts and referrals to Firestore Cloud for free:",
+            "btnSaveFbConfig": "☁️ Connect Firebase",
+            "memTabLogin": "🔑 Log In",
+            "memTabSignup": "🎓 Create Account",
+            "memLoginLead": "Log in to your Olimpo member account to access your dashboard, ambassador link, and quick ordering:",
+            "lblLoginId": "Email, Name/Alias, or Member Code *",
+            "loginIdPlaceholder": "Ex: alex@email.com or WARRIOR_ALEX",
+            "lblLoginPass": "Password or PIN Code *",
+            "btnMemLoginSubmit": "🔑 Log In to My Member Space",
+            "memOrDivider": "or quick sign-in",
+            "btnMemGoogle": "Continue with Google (Firebase Auth)",
+            "memNoAccountPrompt": "Don't have a member account yet?",
+            "memCreateNowLink": "Create my free account →",
+            "memSignupLead": "Create your free Olimpo member account in 30 seconds. Track your meals, physical goal, and referral commissions (10% to 15%):",
+            "lblRegName": "Full Name or Fighter Alias *",
+            "regNamePlaceholder": "Ex: Alex Benítez",
+            "lblRegPhone": "WhatsApp / Phone *",
+            "lblRegEmail": "Email Address *",
+            "regEmailPlaceholder": "Ex: alex@email.com",
+            "lblRegPass": "Password or PIN Code (min. 4 chars) *",
+            "lblRegGoal": "Your Current Physical Goal",
+            "btnMemSignupSubmit": "🚀 Create My Olimpo Member Account",
+            "memAlreadyAccountPrompt": "Already have a member account?",
+            "memLoginNowLink": "Log in here →",
+            "btnMemOrderPack": "🥗 Order a Pack",
+            "btnMemLogout": "🚪 Log Out"
       }
 };
 
@@ -2854,6 +3373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePricingDisplay();
     recalculateCheckoutSummary();
     renderStudentPortal();
+    if (typeof window.refreshFirebaseBadgeLang === "function") window.refreshFirebaseBadgeLang();
   }
 
   const langSelect = document.getElementById('langSelect');

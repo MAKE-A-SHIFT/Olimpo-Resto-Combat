@@ -3157,8 +3157,11 @@ button, input, select, textarea {
   .nav-links {
     display: none;
   }
-  .mobile-menu-toggle {
-    display: block;
+  .btn-nav-join-desktop {
+    display: none !important;
+  }
+  .btn-nav-join-mobile {
+    display: inline-flex !important;
   }
   .nav-actions .btn-cta-nav {
     display: none;
@@ -3303,3 +3306,296 @@ button, input, select, textarea {
     padding: 12px 18px;
   }
 }
+
+/* ==========================================================================
+   BOUTON "JOIN" NAVBAR (HAUT GAUCHE DESKTOP & REMPLACE BURGER SUR MOBILE)
+   & POP-UP MODAL ESPACE MEMBRE (FIREBASE SPARK FREE)
+   ========================================================================== */
+
+.nav-left-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.btn-nav-join {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #0084ff 0%, #0062cc 100%);
+  color: #ffffff;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-family: var(--font-greek);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 132, 255, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-nav-join:hover {
+  background: linear-gradient(135deg, #1a94ff 0%, #0070e0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(0, 132, 255, 0.4);
+}
+
+.btn-nav-join.logged-in {
+  background: #111b24;
+  border-color: rgba(34, 197, 94, 0.55);
+  color: #f8fafc;
+}
+
+.join-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+}
+
+.btn-nav-join.logged-in .join-status-dot {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+}
+
+.btn-nav-join-desktop {
+  display: inline-flex;
+}
+
+.btn-nav-join-mobile {
+  display: none;
+}
+
+/* MEMBER MODAL DIALOG */
+.member-modal-dialog {
+  max-width: 650px;
+}
+
+.member-modal-header {
+  align-items: flex-start;
+}
+
+.firebase-status-pill {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(14, 22, 30, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.firebase-status-pill:hover {
+  border-color: var(--brand-blue-light);
+  color: #ffffff;
+}
+
+.firebase-status-pill.cloud-connected {
+  border-color: rgba(34, 197, 94, 0.45);
+  color: #dcfce7;
+}
+
+.firebase-status-pill .fb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+}
+
+.firebase-config-drawer {
+  background: #070b0e;
+  border: 1px solid var(--brand-blue-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 18px;
+}
+
+.mem-auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #070b0e;
+  padding: 5px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #1e272f;
+  margin-bottom: 18px;
+}
+
+.mem-tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 11px 14px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mem-tab-btn.active {
+  background: var(--brand-blue);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.28);
+}
+
+.mem-auth-lead {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.mem-auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 16px 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.mem-auth-divider::before,
+.mem-auth-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #1e272f;
+}
+
+.mem-auth-divider span {
+  padding: 0 12px;
+}
+
+.btn-google-auth {
+  width: 100%;
+  background: #131b22;
+  border: 1px solid #263340;
+  color: #f8fafc;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-google-auth:hover {
+  background: #1a242d;
+  border-color: var(--brand-blue-light);
+}
+
+.mem-switch-prompt {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.btn-link-inline {
+  background: transparent;
+  border: none;
+  color: var(--brand-blue-light);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 5px;
+  font-size: 13px;
+}
+
+/* CONNECTED MEMBER DASHBOARD INSIDE MODAL */
+.mem-profile-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: #080c10;
+  border: 1px solid #1e272f;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+}
+
+.mem-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mem-avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 132, 255, 0.16);
+  border: 1px solid var(--brand-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.btn-mem-logout {
+  background: #141b21;
+  border: 1px solid #26323d;
+  color: #cbd5e1;
+  padding: 8px 13px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-mem-logout:hover {
+  border-color: #ef4444;
+  color: #fecaca;
+}
+
+.mem-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.mem-kpi-box {
+  background: #0c1217;
+  border: 1px solid #1e272f;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.mem-kpi-lbl {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.mem-kpi-val {
+  font-size: 19px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 3px;
+}
+
+@media (max-width: 650px) {
+  .mem-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
