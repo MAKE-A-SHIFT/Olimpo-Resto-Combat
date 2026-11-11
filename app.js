@@ -118,18 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- PRICING DATA (Official Paraguayan Guaraníes - Club 150k PYG) ---
   const pricingData = {
     semanal: {
-      plato_unico: { price: 25000, perMeal: 25000, name: 'Plato Único del Día', meals: '1 comida' },
-      pack_1_plato: { price: 140000, perMeal: 23333, name: 'Pack Semanal (1 Plato/Día)', meals: '6 comidas' },
-      pack_fighter_pro: { price: 260000, perMeal: 21666, name: 'Pack Semanal Fighter Pro (2 Platos/Día)', meals: '12 comidas' },
-      club_kickboxing: { price: 50000, perMeal: 8333, name: 'Pase Semanal Club Kickboxing & Boxe', meals: '6 días' },
-      combo_elite: { price: 300000, perMeal: 16666, name: 'Combo Semanal Fighter Elite (Club + 2 Platos/Día)', meals: 'Total' }
+      plato_unico: { price: 25000, perMeal: 25000, name: '1 Plato a elección', meals: '1 comida' },
+      pack_1_plato: { price: 140000, perMeal: 23333, name: '1 Plato / día', meals: '6 comidas' },
+      pack_fighter_pro: { price: 260000, perMeal: 21666, name: '2 Platos / día (Fighter Pro)', meals: '12 comidas' },
+      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Club Kickboxing & Boxeo', meals: 'Mes completo', isMonthlyOnly: true },
+      combo_elite: { price: 300000, perMeal: 16666, name: 'Combo : Club + 2 Platos / día', meals: 'Total' }
     },
     mensual: {
-      plato_unico: { price: 25000, perMeal: 25000, name: 'Plato Único del Día', meals: '1 comida' },
-      pack_1_plato: { price: 500000, perMeal: 20833, name: 'Abono Mensual (1 Plato/Día)', meals: 'Mes completo (Lun a Sáb)' },
-      pack_fighter_pro: { price: 950000, perMeal: 19791, name: 'Abono Mensual Fighter Pro (2 Platos/Día)', meals: 'Mes completo (2 platos/día)' },
-      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Membresía Mensual Club Libre (150k PYG)', meals: 'Mes completo' },
-      combo_elite: { price: 1100000, perMeal: 16500, name: 'Combo Mensual Fighter Elite (Club + 2 Platos/Día)', meals: 'Total' }
+      plato_unico: { price: 25000, perMeal: 25000, name: '1 Plato a elección', meals: '1 comida' },
+      pack_1_plato: { price: 500000, perMeal: 20833, name: '1 Plato / día', meals: 'Mes completo (Lun a Sáb)' },
+      pack_fighter_pro: { price: 950000, perMeal: 19791, name: '2 Platos / día (Fighter Pro)', meals: 'Mes completo (2 platos/día)' },
+      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Club Kickboxing & Boxeo', meals: 'Mes completo', isMonthlyOnly: true },
+      combo_elite: { price: 1100000, perMeal: 16500, name: 'Combo : Club + 2 Platos / día', meals: 'Total' }
     }
   };
 
@@ -719,19 +719,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updatePricingDisplay() {
     const currentData = pricingData[state.selectedCycle] || pricingData.mensual;
-    const isDiscounted = state.autoDebitActive;
+    const isDiscounted = true; // Débit automatique toujours actif (-5% inclus)
     const lang = state.lang || 'es';
 
     const priceUnitLabels = {
-      es: { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado', comboSub: 'Club Ilimitado + 2 Platos/Día' },
-      fr: { sem: '/sem', mes: '/mois', save: 'Économise', perPlate: '/ plat', clubFree: 'Accès Libre Illimité', comboSub: 'Club Illimité + 2 Plats/Jour' },
-      en: { sem: '/wk', mes: '/mo', save: 'Save', perPlate: '/ meal', clubFree: 'Unlimited Gym Access', comboSub: 'Unlimited Club + 2 Meals/Day' }
-    }[lang] || { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado', comboSub: 'Club Ilimitado + 2 Platos/Día' };
+      es: { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado (Cuota mensual)', comboSub: 'Club Ilimitado + 2 Platos/Día' },
+      fr: { sem: '/sem', mes: '/mois', save: 'Économise', perPlate: '/ plat', clubFree: 'Accès Libre Illimité (Paiement mensuel)', comboSub: 'Club Illimité + 2 Plats/Jour' },
+      en: { sem: '/wk', mes: '/mo', save: 'Save', perPlate: '/ meal', clubFree: 'Unlimited Gym Access (Monthly only)', comboSub: 'Unlimited Club + 2 Meals/Day' }
+    }[lang] || { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado (Cuota mensual)', comboSub: 'Club Ilimitado + 2 Platos/Día' };
 
     const periodUnit = state.selectedCycle === 'semanal' ? priceUnitLabels.sem : priceUnitLabels.mes;
 
     ['pack_1_plato', 'pack_fighter_pro', 'club_kickboxing', 'combo_elite'].forEach(key => {
-      const plan = currentData[key];
+      // El pago del Club de Combate es estrictamente mensual, nunca semanal
+      const plan = (key === 'club_kickboxing') ? pricingData.mensual.club_kickboxing : currentData[key];
       if (!plan) return;
 
       const basePrice = plan.price;
@@ -743,19 +744,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const strikeWrap = document.getElementById(`strikeWrap_${key}`);
       const perMealElem = document.getElementById(`perMeal_${key}`);
 
+      // El club siempre muestra /mes
+      const unitToDisplay = (key === 'club_kickboxing') ? priceUnitLabels.mes : periodUnit;
+
       if (priceElem) {
-        priceElem.innerHTML = `${finalPrice.toLocaleString('es-PY')} ₲ <span>${periodUnit}</span>`;
+        priceElem.innerHTML = `${finalPrice.toLocaleString('es-PY')} ₲ <span>${unitToDisplay}</span>`;
       }
       if (strikeWrap) {
-        if (isDiscounted) {
-          strikeWrap.style.display = 'flex';
-          strikeWrap.innerHTML = `
-            <span class="old-price-line">${basePrice.toLocaleString('es-PY')} ₲</span>
-            <span class="discount-save-pill">${priceUnitLabels.save} ${savedAmount.toLocaleString('es-PY')} ₲</span>
-          `;
-        } else {
-          strikeWrap.style.display = 'none';
-        }
+        strikeWrap.style.display = 'flex';
+        strikeWrap.innerHTML = `
+          <span class="old-price-line">${basePrice.toLocaleString('es-PY')} ₲</span>
+          <span class="discount-save-pill">${priceUnitLabels.save} ${savedAmount.toLocaleString('es-PY')} ₲</span>
+        `;
       }
       if (perMealElem) {
         if (key === 'club_kickboxing') {
@@ -872,17 +872,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Automatic End-of-Month Profit Expiration Engine:
-  // If a new calendar month starts and the member did not withdraw their profits at the end of the previous month,
-  // unwithdrawn profits are automatically deleted/reset to 0 ₲ and the member must wait until the end of the new month.
+  // Automatic Monthly Profit Expiration Engine:
+  // Affiliates can withdraw their profits ONLY on the 1st of each month.
+  // If the 1st passes (day > 1 of a new month) and profits were not withdrawn, they are automatically reset to 0 ₲.
   function checkAndApplyMonthlyProfitExpiration(student, db) {
     if (!student) return;
     const currentMonth = getCurrentRewardMonth();
+    const now = new Date();
+    const currentDay = now.getDate();
     if (!student.rewardMonth) {
       student.rewardMonth = currentMonth;
       saveStudentsDB(db);
       return;
     }
-    if (student.rewardMonth < currentMonth) {
+    if (student.rewardMonth < currentMonth && currentDay > 1) {
       const refs = Array.isArray(student.referrals) ? student.referrals : [];
       const totalEarn = refs.reduce((acc, r) => acc + (r.commission || 0), 0);
       const unwithdrawn = Math.max(0, totalEarn - (student.paidOut || 0));
@@ -911,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
       checkAndApplyMonthlyProfitExpiration(student, db);
     }
 
-    // 1. Update Navbar "JOIN" Buttons (Desktop Top-Left & Mobile Burger Replacement)
+    // 1. Update Navbar "JOIN" Buttons (Desktop Top-Right & Mobile Burger Replacement)
     // When logged out -> "JOIN" button
     // When logged in  -> Circular Profile Icon button (.logged-in)
     const btnJoinDesktop = document.getElementById('btnNavJoinDesktop');
@@ -975,23 +978,21 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         }).join('');
 
-    // Calculate End-of-Month Withdrawal Window Status
+    // Calculate 1st-of-Month Withdrawal Window Status (Retrait uniquement le 1 de chaque mois)
     const now = new Date();
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const currentDay = now.getDate();
-    const daysLeft = Math.max(0, lastDayOfMonth - currentDay);
-    const isWindowOpen = currentDay >= 25;
+    const isWindowOpen = (currentDay === 1);
 
     const statusBadgeText = {
       es: isWindowOpen
-        ? `🟢 Ventana de retiro ABIERTA (${daysLeft} días restantes antes del borrado)`
-        : `⏳ Fin de mes en ${daysLeft} días (Retiro del 25 al ${lastDayOfMonth})`,
+        ? `🟢 Ventana de retiro ABIERTA HOY (1 de cada mes)`
+        : `⏳ Retiro disponible el 1 de cada mes`,
       fr: isWindowOpen
-        ? `🟢 Retrait de fin de mois OUVERT (${daysLeft}j restants avant suppression)`
-        : `⏳ Fin du mois dans ${daysLeft} jours (Retrait du 25 au ${lastDayOfMonth})`,
+        ? `🟢 Retrait OUVERT AUJOURD'HUI (1er du mois)`
+        : `⏳ Retrait disponible le 1er de chaque mois`,
       en: isWindowOpen
-        ? `🟢 Month-End Withdrawal OPEN (${daysLeft} days left before reset)`
-        : `⏳ Month-end in ${daysLeft} days (Withdraw from 25th to ${lastDayOfMonth}th)`
+        ? `🟢 Withdrawal OPEN TODAY (1st of each month)`
+        : `⏳ Withdrawal available on the 1st of each month`
     }[lang];
 
     // 2. Update Pop-up Member Modal (#memberAuthModal)
@@ -1669,8 +1670,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (autoDebitCheckbox) {
-    autoDebitCheckbox.addEventListener('change', (e) => {
-      state.autoDebitActive = e.target.checked;
+    autoDebitCheckbox.checked = true;
+    state.autoDebitActive = true;
+    autoDebitCheckbox.addEventListener('change', () => {
+      autoDebitCheckbox.checked = true;
+      state.autoDebitActive = true;
       recalculateCheckoutSummary();
       updatePricingDisplay();
     });
@@ -1696,50 +1700,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = state.lang || 'es';
     const labels = {
       es: {
-        proMensual: '⭐ Pack Fighter Pro Mensual (2 Platos/Día • Mes Completo)',
-        proSemanal: '⭐ Pack Fighter Pro Semanal (2 Platos/Día • 12 Comidas)',
-        pack1Mensual: 'Pack 1 Plato/Día Mensual (Mes Completo • Lun a Sáb)',
-        pack1Semanal: 'Pack 1 Plato/Día Semanal (6 Comidas • Lun a Sáb)',
-        eliteMensual: '🏆 Combo Fighter Elite Mensual (Club Boxeo + 2 Platos/Día)',
-        eliteSemanal: '🏆 Combo Fighter Elite Semanal (Pase Club + 2 Platos/Día)',
-        noMeals: '— Ningún pack de comida (Solo club)',
-        clubCombo: '✓ Club Kickboxing & Boxeo INCLUIDO en el Combo',
+        proMensual: '2 Platos / día (Fighter Pro) — 950.000 ₲',
+        proSemanal: '2 Platos / día (Fighter Pro) — 260.000 ₲',
+        pack1Mensual: '1 Plato / día — 500.000 ₲',
+        pack1Semanal: '1 Plato / día — 140.000 ₲',
+        eliteMensual: 'Combo : Club + 2 Platos / día — 1.100.000 ₲',
+        eliteSemanal: 'Combo : Club + 2 Platos / día — 300.000 ₲',
+        noMeals: 'Sin comida (Solo club)',
+        clubCombo: '✓ Club Kickboxing & Boxeo (Incluido)',
         clubPaid: (p, u) => `✓ Club Kickboxing & Boxeo (${p} ₲/${u})`,
-        clubTrial: '✓ Primer Día de Prueba GRATIS en el Club (0 ₲)',
-        clubAlready: '✓ Ya es Miembro Activo del Club',
-        clubNone: '— Sin suscripción al club',
+        clubTrial: '✓ 1er Día de Prueba GRATIS (0 ₲)',
+        clubAlready: '✓ Ya soy miembro del club (0 ₲)',
+        clubNone: '— Sin acceso al club',
         sem: 'sem',
         mes: 'mes'
       },
       fr: {
-        proMensual: '⭐ Pack Fighter Pro Mensuel (2 Plats/Jour • Mois Complet)',
-        proSemanal: '⭐ Pack Fighter Pro Hebdo (2 Plats/Jour • 12 Repas)',
-        pack1Mensual: 'Pack 1 Plat/Jour Mensuel (Mois Complet • Lun à Sam)',
-        pack1Semanal: 'Pack 1 Plat/Jour Hebdo (6 Repas • Lun à Sam)',
-        eliteMensual: '🏆 Combo Fighter Elite Mensuel (Club Boxe + 2 Plats/Jour)',
-        eliteSemanal: '🏆 Combo Fighter Elite Hebdo (Pass Club + 2 Plats/Jour)',
-        noMeals: '— Aucun pack repas (Club uniquement)',
-        clubCombo: '✓ Club Kickboxing & Boxe INCLUS dans le Combo',
+        proMensual: '2 repas / jour (Fighter Pro) — 950.000 ₲',
+        proSemanal: '2 repas / jour (Fighter Pro) — 260.000 ₲',
+        pack1Mensual: '1 repas / jour — 500.000 ₲',
+        pack1Semanal: '1 repas / jour — 140.000 ₲',
+        eliteMensual: 'Combo : Club + 2 repas / jour — 1.100.000 ₲',
+        eliteSemanal: 'Combo : Club + 2 repas / jour — 300.000 ₲',
+        noMeals: 'Sans repas (Club seul)',
+        clubCombo: '✓ Club Kickboxing & Boxe (Inclus)',
         clubPaid: (p, u) => `✓ Club Kickboxing & Boxe (${p} ₲/${u})`,
-        clubTrial: '✓ 1er Jour d\'Essai GRATUIT au Club (0 ₲)',
-        clubAlready: '✓ Déjà Membre Actif du Club',
-        clubNone: '— Sans abonnement au club',
+        clubTrial: '✓ 1er Cours d\'Essai GRATUIT (0 ₲)',
+        clubAlready: '✓ Déjà membre du club (0 ₲)',
+        clubNone: '— Pas d\'accès au club',
         sem: 'sem',
         mes: 'mois'
       },
       en: {
-        proMensual: '⭐ Monthly Fighter Pro Pack (2 Meals/Day • Full Month)',
-        proSemanal: '⭐ Weekly Fighter Pro Pack (2 Meals/Day • 12 Meals)',
-        pack1Mensual: 'Monthly 1 Meal/Day Pack (Full Month • Mon to Sat)',
-        pack1Semanal: 'Weekly 1 Meal/Day Pack (6 Meals • Mon to Sat)',
-        eliteMensual: '🏆 Monthly Fighter Elite Combo (Fight Club + 2 Meals/Day)',
-        eliteSemanal: '🏆 Weekly Fighter Elite Combo (Club Pass + 2 Meals/Day)',
-        noMeals: '— No meal pack (Club only)',
-        clubCombo: '✓ Kickboxing & Boxing Club INCLUDED in Combo',
+        proMensual: '2 Meals / day (Fighter Pro) — 950,000 ₲',
+        proSemanal: '2 Meals / day (Fighter Pro) — 260,000 ₲',
+        pack1Mensual: '1 Meal / day — 500,000 ₲',
+        pack1Semanal: '1 Meal / day — 140,000 ₲',
+        eliteMensual: 'Combo: Club + 2 Meals / day — 1,100,000 ₲',
+        eliteSemanal: 'Combo: Club + 2 Meals / day — 300,000 ₲',
+        noMeals: 'No meals (Club only)',
+        clubCombo: '✓ Kickboxing & Boxing Club (Included)',
         clubPaid: (p, u) => `✓ Kickboxing & Boxing Club (${p} ₲/${u})`,
-        clubTrial: '✓ 1st FREE Trial Day at the Club (0 ₲)',
-        clubAlready: '✓ Already an Active Club Member',
-        clubNone: '— No club membership',
+        clubTrial: '✓ 1st Trial Day FREE (0 ₲)',
+        clubAlready: '✓ Already a club member (0 ₲)',
+        clubNone: '— No club access',
         sem: 'wk',
         mes: 'mo'
       }
@@ -1790,9 +1794,9 @@ document.addEventListener('DOMContentLoaded', () => {
       clubBase = 0;
       clubLabel = labels.clubCombo;
     } else if (state.clubChoice === 'club_monthly') {
-      clubBase = packCycle === 'semanal' ? 50000 : 150000;
-      const u = packCycle === 'semanal' ? labels.sem : labels.mes;
-      clubLabel = labels.clubPaid(clubBase.toLocaleString('es-PY'), u);
+      // Le club est strictement mensuel (150.000 ₲ / mois), jamais à la semaine
+      clubBase = 150000;
+      clubLabel = labels.clubPaid('150.000', labels.mes);
     } else if (state.clubChoice === 'club_trial') {
       clubBase = 0;
       clubLabel = labels.clubTrial;
@@ -1806,9 +1810,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const subtotalBeforeDiscounts = clubBase + nutritionBase;
 
-    // 5% discount if auto-debit is active and subscription is present
+    // 5% de remise automatique (débit automatique inclus obligatoirement)
     let discount = 0;
-    if (state.autoDebitActive && subtotalBeforeDiscounts > 0 && state.nutritionChoice !== 'plato_unico') {
+    if (subtotalBeforeDiscounts > 0 && state.nutritionChoice !== 'plato_unico') {
       discount = Math.round(subtotalBeforeDiscounts * 0.05);
     }
 
@@ -2099,7 +2103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // AFFILIATE / MEMBER END-OF-MONTH PROFIT WITHDRAWAL REQUEST (-> +595 995 620416)
+  // AFFILIATE / MEMBER 1ST OF MONTH PROFIT WITHDRAWAL REQUEST (-> +595 995 620416)
   // ==========================================================================
   window.openWithdrawModal = function() {
     const db = getStudentsDB();
@@ -2116,16 +2120,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const rewardMonth = student && student.rewardMonth ? student.rewardMonth : getCurrentRewardMonth();
 
     const msg = encodeURIComponent(
-      `💸 *RETIRO DE GANANCIAS DE FIN DE MES - ESPACIO MIEMBRO OLIMPO*\n` +
+      `💸 *RETIRO DE GANANCIAS (1 DE CADA MES) - ESPACIO MIEMBRO OLIMPO*\n` +
       `----------------------------------------\n` +
       `👤 *Miembro :* ${nameStr} (Código: ${codeStr})\n` +
       (phoneStr ? `📱 *WhatsApp :* ${phoneStr}\n` : '') +
-      `📅 *Mes del Retiro :* ${rewardMonth}\n` +
+      `📅 *Fecha del Retiro :* 1 de cada mes (${rewardMonth})\n` +
       `🤝 *Afiliados Activos :* ${refs.length}\n` +
-      `💰 *Ganancias a Retirar (Fin de Mes) :* ${amountStr} ₲\n` +
+      `💰 *Ganancias a Retirar :* ${amountStr} ₲\n` +
       `🏦 *Medio Preferido :* Transferencia SIPAP / Tigo Money / Efectivo en el Club\n` +
       `----------------------------------------\n` +
-      `¡Hola! Solicito el retiro de mis ganancias de fin de mes antes del cierre mensual.`
+      `¡Hola! Solicito el retiro de mis ganancias del 1 de cada mes en Olimpo.`
     );
     window.open(`https://wa.me/595995620416?text=${msg}`, '_blank');
   };
@@ -2361,8 +2365,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "step2Title": "Elegí tu Programa Nutritivo (Cocina del Club)",
             "lblSelectDish": "Seleccioná tu Plato o Street-Food :",
             "lblPlateQuantity": "Cantidad de Platos (¡5 comprados = el 6to GRATIS!) :",
-            "adTitle": "🔄 Activar Débito Automático Bancard (-5% de descuento)",
-            "adSub": "Renovación automática cada mes. Cancelable en cualquier momento en 1 clic.",
+            "adTitle": "✓ Débito Automático Incluido (-5% de descuento)",
+            "adSub": "Pago automático sin complicaciones. Cancelable cuando quieras con 1 clic.",
+            "adStatusPill": "-5% INCLUIDO",
             "blockServices": "3. Servicios & Delivery",
             "lblDelivery": "<strong>Servicio de Delivery a Domicilio (+20% del abono)</strong> — Retiro en el club gratis.",
             "lblDoubleProt": "Doble Porción de Proteína (+2x Carne/Pollo : +10.000 ₲ por comida)",
@@ -2370,7 +2375,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "lblCustName": "Nombre & Apellido *",
             "custNamePlaceholder": "Ej: Carlos Benítez",
             "lblCustPhone": "WhatsApp / Teléfono *",
-            "lblCustCI": "C.I. o RUC (para la factura legal paraguaya) *",
+            "lblCustCI": "C.I. o RUC (Opcional)",
+            "custCIPlaceholder": "Opcional (Ej: 4.567.890-1)",
             "lblCustAddress": "Dirección de Delivery o Retiro en el Club",
             "custAddressPlaceholder": "Ej: Retiro en el club de Areguá o dirección completa",
             "blockPayment": "5. Medio de Pago Localizado en Paraguay",
@@ -2495,9 +2501,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "btnClassicSignup": "Registrarse gratis",
             "memFlipToLogin": "¿Ya tenés una cuenta? Iniciá sesión",
             "memMyLinkLabel": "🔗 Tu Enlace Personal de Afiliado (10% a 15% de comisión)",
-            "memMonthEndTitle": "Retiro de Ganancias a Fin de Mes",
-            "memMonthEndDesc": "Podés retirar tus ganancias <strong>a fin de mes (del 25 al último día del mes)</strong>. ⚠️ <strong>Atención:</strong> si no retirás tus ganancias antes de que termine el mes, <strong>se eliminarán automáticamente (vuelven a 0 ₲)</strong> y deberás esperar al mes siguiente para retirar tus nuevas ganancias.",
-            "btnWithdrawMonthEnd": "💸 Retirar mis ganancias de fin de mes",
+            "memMonthEndTitle": "Retiro de Ganancias el 1 de Cada Mes",
+            "memMonthEndDesc": "Podés retirar tus ganancias <strong>el 1 de cada mes</strong>. ⚠️ <strong>Atención:</strong> si no retirás tus ganancias el 1 del mes, <strong>se eliminarán automáticamente (vuelven a 0 ₲)</strong> y deberás esperar al 1 del mes siguiente para retirar tus nuevas ganancias.",
+            "btnWithdrawMonthEnd": "💸 Retirar mis ganancias (1 de cada mes)",
             "btnMemOrderPack": "🥗 Pedir un Pack",
             "btnMemLogout": "🚪 Cerrar Sesión"
       },
@@ -2707,8 +2713,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "step2Title": "Choisis ton Programme Nutritif (Cuisine du Club)",
             "lblSelectDish": "Sélectionne ton Plat ou Street-Food :",
             "lblPlateQuantity": "Nombre de Plats (5 achetés = le 6ème OFFERT !) :",
-            "adTitle": "🔄 Activer le Débit Automatique Bancard (-5% de remise)",
-            "adSub": "Renouvellement automatique chaque mois. Résiliable à tout moment en 1 clic.",
+            "adTitle": "✓ Débit Automatique Inclus (-5% de réduction)",
+            "adSub": "Paiement automatique et sans stress. Annulable à tout moment en 1 clic.",
+            "adStatusPill": "-5% INCLUS",
             "blockServices": "3. Services & Livraison",
             "lblDelivery": "<strong>Service Livraison à Domicile (+20% de l'abonnement)</strong> — Retrait au club gratuit sinon.",
             "lblDoubleProt": "Double Portion de Protéine (+2x Viande/Poulet : +10.000 ₲ par repas)",
@@ -2716,7 +2723,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "lblCustName": "Nom & Prénom *",
             "custNamePlaceholder": "Ex: Jean Dupont",
             "lblCustPhone": "WhatsApp / Téléphone *",
-            "lblCustCI": "C.I. ou RUC (pour la facture paraguayenne) *",
+            "lblCustCI": "C.I. ou RUC (Optionnel)",
+            "custCIPlaceholder": "Optionnel (Ex: 4.567.890-1)",
             "lblCustAddress": "Adresse de Livraison ou Retrait au Club",
             "custAddressPlaceholder": "Ex: Retrait au club d'Areguá ou adresse complète",
             "blockPayment": "5. Moyen de Paiement Localisé au Paraguay",
@@ -2841,9 +2849,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "btnClassicSignup": "S'inscrire gratuitement",
             "memFlipToLogin": "Déjà un compte ? Connecte-toi",
             "memMyLinkLabel": "🔗 Ton Lien Personnel d'Affiliation (10% à 15% de commission)",
-            "memMonthEndTitle": "Retrait des Profits en Fin de Mois",
-            "memMonthEndDesc": "Tu peux venir retirer tes profits <strong>en fin de mois (du 25 au dernier jour du mois)</strong>. ⚠️ <strong>Attention :</strong> si tu ne retires pas tes profits avant la fin du mois, ils seront <strong>supprimés automatiquement à la fin du mois (remis à 0 ₲)</strong> et tu devras attendre la fin du mois prochain pour retirer tes nouveaux gains.",
-            "btnWithdrawMonthEnd": "💸 Retirer mes profits de fin de mois",
+            "memMonthEndTitle": "Retrait des Profits le 1er de Chaque Mois",
+            "memMonthEndDesc": "Tu peux venir retirer tes profits <strong>le 1er de chaque mois</strong>. ⚠️ <strong>Attention :</strong> si tu ne retires pas tes profits le 1er du mois, ils seront <strong>supprimés automatiquement (remis à 0 ₲)</strong> et tu devras attendre le 1er du mois prochain pour retirer tes nouveaux gains.",
+            "btnWithdrawMonthEnd": "💸 Retirer mes profits (1er du mois)",
             "btnMemOrderPack": "🥗 Commander un Pack",
             "btnMemLogout": "🚪 Déconnexion"
       },
@@ -3053,8 +3061,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "step2Title": "Choose Your Nutrition Plan (Club Kitchen)",
             "lblSelectDish": "Select your Dish or Street-Food:",
             "lblPlateQuantity": "Number of Meals (Buy 5 = 6th FREE!):",
-            "adTitle": "🔄 Enable Bancard Auto-Debit (5% instant discount)",
-            "adSub": "Automatic renewal every month. Cancel anytime with 1 click.",
+            "adTitle": "✓ Automatic Debit Included (-5% discount)",
+            "adSub": "Automatic hassle-free payment. Cancel anytime in 1 click.",
+            "adStatusPill": "-5% INCLUDED",
             "blockServices": "3. Services & Delivery",
             "lblDelivery": "<strong>Home Delivery Service (+20% of subscription)</strong> — Free pickup at the club otherwise.",
             "lblDoubleProt": "Double Protein Portion (+2x Meat/Chicken: +10,000 ₲ per meal)",
@@ -3062,7 +3071,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "lblCustName": "Full Name *",
             "custNamePlaceholder": "Ex: John Doe",
             "lblCustPhone": "WhatsApp / Phone *",
-            "lblCustCI": "C.I. or RUC (for official Paraguay invoice) *",
+            "lblCustCI": "C.I. or RUC (Optional)",
+            "custCIPlaceholder": "Optional (e.g. 4.567.890-1)",
             "lblCustAddress": "Delivery Address or Club Pickup",
             "custAddressPlaceholder": "Ex: Club pickup at Areguá or full delivery address",
             "blockPayment": "5. Payment Gateway in Paraguay",
@@ -3187,9 +3197,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "btnClassicSignup": "Sign up for free",
             "memFlipToLogin": "Already have an account? Log in",
             "memMyLinkLabel": "🔗 Your Personal Affiliate Link (10% to 15% commission)",
-            "memMonthEndTitle": "End-of-Month Profit Withdrawal",
-            "memMonthEndDesc": "You can withdraw your profits <strong>at the end of the month (from the 25th to the last day of the month)</strong>. ⚠️ <strong>Warning:</strong> if you do not withdraw your profits before the end of the month, they will be <strong>automatically deleted (reset to 0 ₲)</strong> and you will have to wait until next month to withdraw new earnings.",
-            "btnWithdrawMonthEnd": "💸 Withdraw my end-of-month profits",
+            "memMonthEndTitle": "Profit Withdrawal on the 1st of Each Month",
+            "memMonthEndDesc": "You can withdraw your profits <strong>on the 1st of each month</strong>. ⚠️ <strong>Warning:</strong> if you do not withdraw your profits on the 1st of the month, they will be <strong>automatically reset (back to 0 ₲)</strong> and you will have to wait until the 1st of next month to withdraw new earnings.",
+            "btnWithdrawMonthEnd": "💸 Withdraw my profits (1st of each month)",
             "btnMemOrderPack": "🥗 Order a Pack",
             "btnMemLogout": "🚪 Log Out"
       }
@@ -3198,110 +3208,110 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutTranslations = {
     es: {
       clubChoices: {
-        club_monthly: '🥊 Sí, sumar la Membresía Club Kickboxing & Boxeo (+150.000 ₲ / mes)',
-        club_trial: '🆓 Reservar 1er Día de Prueba GRATIS en el Club (0 ₲)',
-        club_already: '✓ Ya soy miembro activo del club (0 ₲)',
-        club_none: '— No gracias, únicamente el programa de nutrición'
+        club_monthly: '🥊 Club Kickboxing & Boxeo (+150.000 ₲ / mes)',
+        club_trial: '🆓 1er Día de Prueba GRATIS (0 ₲)',
+        club_already: '✓ Ya soy miembro del club (0 ₲)',
+        club_none: '— Sin acceso al club'
       },
       optgroups: {
-        monthly: '📅 PACKS MENSUALES (Mes Completo • Lun a Sáb - Domingo Cerrado)',
-        weekly: '⚡ PACKS SEMANALES (Semana • 6 Días Lun a Sáb)',
-        single: '🍽️ PLATOS INDIVIDUALES & STREET-FOOD',
-        none: '🥊 SOLO ENTRENAMIENTO'
+        monthly: '📅 PLANES MENSUALES (Por mes)',
+        weekly: '⚡ PLANES SEMANALES (6 días)',
+        single: '🍽️ POR PLATO',
+        none: '🥊 SIN COMIDA'
       },
       plans: {
-        pack_fighter_pro_mensual: '⭐ Fighter Pro Mensual (2 Platos/Día : Almuerzo + Cena) — 950.000 ₲ / mes',
-        pack_1_plato_mensual: 'Pack 1 Plato/Día Mensual (Almuerzo o Cena) — 500.000 ₲ / mes',
-        combo_elite_mensual: '🏆 Combo Fighter Elite Mensual (Club Boxeo + 2 Platos/Día) — 1.100.000 ₲ / mes',
-        pack_fighter_pro_semanal: '⭐ Fighter Pro Semanal (2 Platos/Día : 12 Platos) — 260.000 ₲ / sem',
-        pack_1_plato_semanal: 'Pack 1 Plato/Día Semanal (1 Plato/Día : 6 Platos) — 140.000 ₲ / sem',
-        combo_elite_semanal: '🏆 Combo Fighter Elite Semanal (Pase Club + 2 Platos/Día) — 300.000 ₲ / sem',
-        plato_unico: '🍽️ Plato Único del Día / Street-Food (Desde 7.000 ₲ a 25.000 ₲)',
-        none: '— Ningún pack de comida (Únicamente membresía al Club)'
+        pack_fighter_pro_mensual: '2 Platos / día (Fighter Pro) — 950.000 ₲',
+        pack_1_plato_mensual: '1 Plato / día — 500.000 ₲',
+        combo_elite_mensual: 'Combo : Club + 2 Platos / día — 1.100.000 ₲',
+        pack_fighter_pro_semanal: '2 Platos / día (Fighter Pro) — 260.000 ₲',
+        pack_1_plato_semanal: '1 Plato / día — 140.000 ₲',
+        combo_elite_semanal: 'Combo : Club + 2 Platos / día — 300.000 ₲',
+        plato_unico: '1 Plato a elección (desde 7.000 ₲)',
+        none: 'Sin comida (Solo club)'
       },
       singleDishes: {
-        lunes_explosivo: 'El Explosivo (Lunes - Pollo Grillado + Arroz + Ensalada) - 25.000 ₲',
-        martes_sparring: 'El Sparring (Martes - Wok Fideos + Tiras de Carne) - 25.000 ₲',
-        miercoles_stroganoff: 'El Clásico Potencia (Miércoles - Stroganoff de Carne/Pollo) - 25.000 ₲',
-        jueves_dubai: 'Especial Dubaï (Jueves - Tataki de Lomo Sellado) - 25.000 ₲',
-        viernes_guiso: 'Guiso del Peleador (Viernes - Guiso Pollo + Fideos) - 25.000 ₲',
-        sabado_milanesa: 'El Placer Atlético (Sábado - Milanesa Pollo + Puré Casero) - 25.000 ₲',
-        hamburguesa_olimpo: 'Hamburguesa Olimpo (Carne + Huevo + Queso) - 14.000 ₲',
-        club_milanesa: 'Club Pollo Milanesa (Triple Piso Proteico) - 15.000 ₲',
-        sandwich_pollo_repollo: 'Sándwich Pollo-Repollo (Pollo Desmenuzado) - 10.000 ₲',
-        tostados_paraguayos: 'Tostados Paraguayos-Italianos (Mozzarella + Jamón) - 7.000 ₲'
+        lunes_explosivo: 'El Explosivo (Lunes - Pollo & Arroz) — 25.000 ₲',
+        martes_sparring: 'El Sparring (Martes - Carne & Fideos) — 25.000 ₲',
+        miercoles_stroganoff: 'Stroganoff Potencia (Miércoles) — 25.000 ₲',
+        jueves_dubai: 'Especial Dubaï (Jueves - Lomo) — 25.000 ₲',
+        viernes_guiso: 'Guiso del Peleador (Viernes) — 25.000 ₲',
+        sabado_milanesa: 'Milanesa Pollo (Sábado - Puré) — 25.000 ₲',
+        hamburguesa_olimpo: 'Hamburguesa Olimpo — 14.000 ₲',
+        club_milanesa: 'Club Sándwich Milanesa — 15.000 ₲',
+        sandwich_pollo_repollo: 'Sándwich Pollo — 10.000 ₲',
+        tostados_paraguayos: 'Tostados Mozzarella & Jamón — 7.000 ₲'
       }
     },
     fr: {
       clubChoices: {
-        club_monthly: '🥊 Oui, ajouter l\'Abonnement Club Kickboxing & Boxe (+150.000 ₲ / mois)',
-        club_trial: '🆓 Réserver un 1er Jour d\'Essai GRATUIT au Club (0 ₲)',
-        club_already: '✓ J\'ai déjà mon abonnement au club / Déjà membre (0 ₲)',
-        club_none: '— Non merci, uniquement le programme nutritif'
+        club_monthly: '🥊 Club Kickboxing & Boxe (+150.000 ₲ / mois)',
+        club_trial: '🆓 1er Cours d\'Essai GRATUIT (0 ₲)',
+        club_already: '✓ Déjà membre du club (0 ₲)',
+        club_none: '— Pas d\'accès au club'
       },
       optgroups: {
-        monthly: '📅 PACKS MENSUELS (Mois Complet • Lun à Sam - Dimanche Fermé)',
-        weekly: '⚡ PACKS HEBDOMADAIRES (Semaine • 6 Jours Lun à Sam)',
-        single: '🍽️ PLATS À L\'UNITÉ & STREET-FOOD',
-        none: '🥊 ENTRAÎNEMENT SEUL'
+        monthly: '📅 AU MOIS (Mensuel)',
+        weekly: '⚡ À LA SEMAINE (6 jours)',
+        single: '🍽️ AU PLAT',
+        none: '🥊 SANS REPAS'
       },
       plans: {
-        pack_fighter_pro_mensual: '⭐ Fighter Pro Mensuel (2 Plats/Jour : Midi + Soir) — 950.000 ₲ / mois',
-        pack_1_plato_mensual: 'Pack 1 Plat/Jour Mensuel (Midi ou Soir) — 500.000 ₲ / mois',
-        combo_elite_mensual: '🏆 Combo Fighter Elite Mensuel (Club Boxe + 2 Plats/Jour) — 1.100.000 ₲ / mois',
-        pack_fighter_pro_semanal: '⭐ Fighter Pro Hebdo (2 Plats/Jour : 12 Plats) — 260.000 ₲ / sem',
-        pack_1_plato_semanal: 'Pack 1 Plat/Jour Hebdo (1 Plat/Jour : 6 Plats) — 140.000 ₲ / sem',
-        combo_elite_semanal: '🏆 Combo Fighter Elite Hebdo (Passe Club + 2 Plats/Jour) — 300.000 ₲ / sem',
-        plato_unico: '🍽️ Plat Unique du Jour / Street-Food (Dès 7.000 ₲ à 25.000 ₲)',
-        none: '— Aucun repas (Uniquement abonnement au Club)'
+        pack_fighter_pro_mensual: '2 repas / jour (Fighter Pro) — 950.000 ₲',
+        pack_1_plato_mensual: '1 repas / jour — 500.000 ₲',
+        combo_elite_mensual: 'Combo : Club + 2 repas / jour — 1.100.000 ₲',
+        pack_fighter_pro_semanal: '2 repas / jour (Fighter Pro) — 260.000 ₲',
+        pack_1_plato_semanal: '1 repas / jour — 140.000 ₲',
+        combo_elite_semanal: 'Combo : Club + 2 repas / jour — 300.000 ₲',
+        plato_unico: '1 plat au choix (dès 7.000 ₲)',
+        none: 'Sans repas (Club seul)'
       },
       singleDishes: {
-        lunes_explosivo: 'El Explosivo (Lundi - Poulet Grillé 200g + Riz + Salade) - 25.000 ₲',
-        martes_sparring: 'El Sparring (Mardi - Wok Pâtes + Bœuf Sauté 180g) - 25.000 ₲',
-        miercoles_stroganoff: 'El Clásico Potencia (Mercredi - Stroganoff Bœuf/Poulet) - 25.000 ₲',
-        jueves_dubai: 'Spécial Dubaï (Jeudi - Tataki de Bœuf Saisi) - 25.000 ₲',
-        viernes_guiso: 'Guiso del Peleador (Vendredi - Ragoût Poulet 200g + Pâtes) - 25.000 ₲',
-        sabado_milanesa: 'El Placer Atlético (Samedi - Milanaise Poulet + Purée Maison) - 25.000 ₲',
-        hamburguesa_olimpo: 'Burger Olimpo (Bœuf + Œuf + Cheddar) - 14.000 ₲',
-        club_milanesa: 'Club Poulet Milanaise (Triple Étage Protéiné) - 15.000 ₲',
-        sandwich_pollo_repollo: 'Sandwich Poulet-Chou (Poulet Effiloché) - 10.000 ₲',
-        tostados_paraguayos: 'Toastés Paraguayens-Italiens (Mozzarella + Jamón) - 7.000 ₲'
+        lunes_explosivo: 'El Explosivo (Lundi - Poulet & Riz) — 25.000 ₲',
+        martes_sparring: 'El Sparring (Mardi - Bœuf & Pâtes) — 25.000 ₲',
+        miercoles_stroganoff: 'Stroganoff Potencia (Mercredi) — 25.000 ₲',
+        jueves_dubai: 'Spécial Dubaï (Jeudi - Bœuf) — 25.000 ₲',
+        viernes_guiso: 'Guiso del Peleador (Vendredi) — 25.000 ₲',
+        sabado_milanesa: 'Milanaise Poulet (Samedi - Purée) — 25.000 ₲',
+        hamburguesa_olimpo: 'Burger Olimpo — 14.000 ₲',
+        club_milanesa: 'Club Sandwich Milanaise — 15.000 ₲',
+        sandwich_pollo_repollo: 'Sandwich Poulet — 10.000 ₲',
+        tostados_paraguayos: 'Toastés Mozzarella & Jamón — 7.000 ₲'
       }
     },
     en: {
       clubChoices: {
-        club_monthly: '🥊 Yes, add Kickboxing & Boxing Club Membership (+150,000 ₲ / mo)',
-        club_trial: '🆓 Book 1st FREE Trial Day at the Club (0 ₲)',
-        club_already: '✓ Already an active club member (0 ₲)',
-        club_none: '— No thanks, nutrition program only'
+        club_monthly: '🥊 Kickboxing & Boxing Club (+150,000 ₲ / mo)',
+        club_trial: '🆓 1st Trial Day FREE (0 ₲)',
+        club_already: '✓ Already a club member (0 ₲)',
+        club_none: '— No club access'
       },
       optgroups: {
-        monthly: '📅 MONTHLY PACKS (Full Month • Mon to Sat - Sun Closed)',
-        weekly: '⚡ WEEKLY PACKS (6 Days • Mon to Sat)',
-        single: '🍽️ SINGLE MEALS & STREET-FOOD',
-        none: '🥊 TRAINING ONLY'
+        monthly: '📅 MONTHLY PLANS',
+        weekly: '⚡ WEEKLY PLANS (6 days)',
+        single: '🍽️ PER MEAL',
+        none: '🥊 NO MEALS'
       },
       plans: {
-        pack_fighter_pro_mensual: '⭐ Monthly Fighter Pro (2 Meals/Day: Lunch + Dinner) — 950,000 ₲ / mo',
-        pack_1_plato_mensual: 'Monthly 1 Meal/Day Pack (Lunch or Dinner) — 500,000 ₲ / mo',
-        combo_elite_mensual: '🏆 Monthly Elite Fighter Combo (Fight Club + 2 Meals/Day) — 1,100,000 ₲ / mo',
-        pack_fighter_pro_semanal: '⭐ Weekly Fighter Pro (2 Meals/Day: 12 Meals) — 260,000 ₲ / wk',
-        pack_1_plato_semanal: 'Weekly 1 Meal/Day Pack (1 Meal/Day: 6 Meals) — 140,000 ₲ / wk',
-        combo_elite_semanal: '🏆 Weekly Elite Fighter Combo (Club Pass + 2 Meals/Day) — 300,000 ₲ / wk',
-        plato_unico: '🍽️ Daily Single Meal / Street-Food (From 7,000 ₲ to 25,000 ₲)',
-        none: '— No meals (Gym training membership only)'
+        pack_fighter_pro_mensual: '2 Meals / day (Fighter Pro) — 950,000 ₲',
+        pack_1_plato_mensual: '1 Meal / day — 500,000 ₲',
+        combo_elite_mensual: 'Combo: Club + 2 Meals / day — 1,100,000 ₲',
+        pack_fighter_pro_semanal: '2 Meals / day (Fighter Pro) — 260,000 ₲',
+        pack_1_plato_semanal: '1 Meal / day — 140,000 ₲',
+        combo_elite_semanal: 'Combo: Club + 2 Meals / day — 300,000 ₲',
+        plato_unico: '1 Meal of choice (from 7,000 ₲)',
+        none: 'No meals (Club only)'
       },
       singleDishes: {
-        lunes_explosivo: 'The Explosive (Monday - Grilled Chicken 200g + Rice + Salad) - 25,000 ₲',
-        martes_sparring: 'The Sparring (Tuesday - Wok Noodles + Sliced Beef 180g) - 25,000 ₲',
-        miercoles_stroganoff: 'Classic Power (Wednesday - Beef/Chicken Stroganoff) - 25,000 ₲',
-        jueves_dubai: 'Dubai Special (Thursday - Seared Beef Tataki) - 25,000 ₲',
-        viernes_guiso: 'Fighter Stew (Friday - Chicken Stew 200g + Pasta) - 25,000 ₲',
-        sabado_milanesa: 'Athletic Pleasure (Saturday - Crispy Chicken Milanesa + Puree) - 25,000 ₲',
-        hamburguesa_olimpo: 'Olimpo Burger (Lean Beef + Egg + Cheese) - 14,000 ₲',
-        club_milanesa: 'Club Chicken Milanesa (Triple-Decker Protein Sandwich) - 15,000 ₲',
-        sandwich_pollo_repollo: 'Chicken-Cabbage Fit Sandwich (Shredded Chicken Breast) - 10,000 ₲',
-        tostados_paraguayos: 'Paraguayan-Italian Fit Toasts (Mozzarella + Ham) - 7,000 ₲'
+        lunes_explosivo: 'The Explosive (Monday - Chicken & Rice) — 25,000 ₲',
+        martes_sparring: 'The Sparring (Tuesday - Beef & Noodles) — 25,000 ₲',
+        miercoles_stroganoff: 'Classic Power Stroganoff (Wednesday) — 25,000 ₲',
+        jueves_dubai: 'Dubai Special (Thursday - Beef Tataki) — 25,000 ₲',
+        viernes_guiso: 'Fighter Stew (Friday - Chicken) — 25,000 ₲',
+        sabado_milanesa: 'Chicken Milanesa (Saturday - Puree) — 25,000 ₲',
+        hamburguesa_olimpo: 'Olimpo Burger — 14,000 ₲',
+        club_milanesa: 'Club Sandwich Milanaise — 15,000 ₲',
+        sandwich_pollo_repollo: 'Chicken Fit Sandwich — 10,000 ₲',
+        tostados_paraguayos: 'Toasts Mozzarella & Ham — 7,000 ₲'
       }
     }
   };

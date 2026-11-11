@@ -204,18 +204,6 @@
   <header class="main-navbar">
     <div class="nav-container">
       <div class="nav-left-group">
-        <!-- BOUTON JOIN EN HAUT À GAUCHE DE LA MENU BAR (DEVIENT ICÔNE DE PROFIL UNE FOIS CONNECTÉ) -->
-        <button type="button" class="btn-nav-join btn-nav-join-desktop" id="btnNavJoinDesktop" onclick="window.openMemberModal()" title="Espace Membre">
-          <span class="join-btn-label" id="navJoinTextDesktop">JOIN</span>
-          <span class="join-profile-avatar" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span class="join-online-dot"></span>
-          </span>
-        </button>
-
         <a href="#inicio" class="brand-wrapper">
           <img src="logo_olimpo.png" alt="Olimpo Team Logo" class="brand-logo-img">
           <div class="brand-titles">
@@ -252,7 +240,19 @@
           <span data-i18n="navJoin">Rejoindre</span>
         </button>
 
-        <!-- BOUTON JOIN À LA PLACE DU BURGER SUR SMARTPHONE & AUTRES FORMATS (DEVIENT ICÔNE DE PROFIL UNE FOIS CONNECTÉ) -->
+        <!-- BOUTON JOIN / ICÔNE DE PROFIL EN HAUT À DROITE (À CÔTÉ À DROITE DE REJOINDRE / UNIRSE) -->
+        <button type="button" class="btn-nav-join btn-nav-join-desktop" id="btnNavJoinDesktop" onclick="window.openMemberModal()" title="Espace Membre">
+          <span class="join-btn-label" id="navJoinTextDesktop">JOIN</span>
+          <span class="join-profile-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span class="join-online-dot"></span>
+          </span>
+        </button>
+
+        <!-- BOUTON JOIN SUR SMARTPHONE (FORMAT MOBILE) -->
         <button type="button" class="btn-nav-join btn-nav-join-mobile" id="btnNavJoinMobile" onclick="window.openMemberModal()" aria-label="JOIN - Espace Membre" title="Espace Membre">
           <span class="join-btn-label" id="navJoinTextMobile">JOIN</span>
           <span class="join-profile-avatar" aria-hidden="true">
@@ -1164,10 +1164,10 @@
             </p>
             <div class="form-group" style="margin-bottom: 0;">
               <select id="checkoutClubChoice" class="form-input">
-                <option value="club_monthly">🥊 Oui, ajouter l'Abonnement Club Kickboxing & Boxe (+150.000 ₲ / mois)</option>
-                <option value="club_trial">🆓 Réserver un 1er Jour d'Essai GRATUIT au Club (0 ₲)</option>
-                <option value="club_already">✓ J'ai déjà mon abonnement au club / Déjà membre (0 ₲)</option>
-                <option value="club_none">— Non merci, uniquement le programme nutritif</option>
+                <option value="club_monthly">🥊 Club Kickboxing & Boxe (+150.000 ₲ / mois)</option>
+                <option value="club_trial">🆓 1er Cours d'Essai GRATUIT (0 ₲)</option>
+                <option value="club_already">✓ Déjà membre du club (0 ₲)</option>
+                <option value="club_none">— Pas d'accès au club</option>
               </select>
             </div>
           </div>
@@ -1189,21 +1189,20 @@
             </div>
             <div class="form-group">
               <select id="checkoutPlanSelect" class="form-input">
-                <optgroup label="📅 PACKS MENSUELS (Mois Complet • Lun à Sam - Dimanche Fermé)">
-                  <option value="pack_fighter_pro_mensual" selected>⭐ Fighter Pro Mensuel (2 Plats/Jour : Midi + Soir) — 950.000 ₲ / mois</option>
-                  <option value="pack_1_plato_mensual">Pack 1 Plat/Jour Mensuel (Midi ou Soir) — 500.000 ₲ / mois</option>
-                  <option value="combo_elite_mensual">🏆 Combo Fighter Elite Mensuel (Club Boxe + 2 Plats/Jour) — 1.100.000 ₲ / mois</option>
+                <optgroup label="📅 AU MOIS (Mensuel)">
+                  <option value="pack_fighter_pro_mensual" selected>2 repas / jour (Fighter Pro) — 950.000 ₲</option>
+                  <option value="pack_1_plato_mensual">1 repas / jour — 500.000 ₲</option>
+                  <option value="combo_elite_mensual">Combo : Club + 2 repas / jour — 1.100.000 ₲</option>
                 </optgroup>
-                <optgroup label="⚡ PACKS HEBDOMADAIRES (Semaine • 6 Jours Lun à Sam)">
-                  <option value="pack_fighter_pro_semanal">⭐ Fighter Pro Hebdo (2 Plats/Jour : 12 Plats) — 260.000 ₲ / sem</option>
-                  <option value="pack_1_plato_semanal">Pack 1 Plat/Jour Hebdo (1 Plat/Jour : 6 Plats) — 140.000 ₲ / sem</option>
-                  <option value="combo_elite_semanal">🏆 Combo Fighter Elite Hebdo (Passe Club + 2 Plats/Jour) — 300.000 ₲ / sem</option>
+                <optgroup label="⚡ À LA SEMAINE (6 jours)">
+                  <option value="pack_fighter_pro_semanal">2 repas / jour (Fighter Pro) — 260.000 ₲</option>
+                  <option value="pack_1_plato_semanal">1 repas / jour — 140.000 ₲</option>
                 </optgroup>
-                <optgroup label="🍽️ PLATS À L'UNITÉ & STREET-FOOD">
-                  <option value="plato_unico">🍽️ Plat Unique du Jour / Street-Food (Dès 7.000 ₲ à 25.000 ₲)</option>
+                <optgroup label="🍽️ AU PLAT">
+                  <option value="plato_unico">1 plat au choix (dès 7.000 ₲)</option>
                 </optgroup>
-                <optgroup label="🥊 ENTRAÎNEMENT SEUL">
-                  <option value="none">— Aucun repas (Uniquement abonnement au Club)</option>
+                <optgroup label="🥊 SANS REPAS">
+                  <option value="none">Sans repas (Club seul)</option>
                 </optgroup>
               </select>
             </div>
@@ -1213,16 +1212,16 @@
               <div class="form-group">
                 <label for="dishSelect" data-i18n="lblSelectDish">Sélectionne ton Plat ou Street-Food :</label>
                 <select id="dishSelect" class="form-input">
-                  <option value="lunes_explosivo">El Explosivo (Lundi - Poulet Grillé 200g + Riz + Salade) - 25.000 ₲</option>
-                  <option value="martes_sparring">El Sparring (Mardi - Wok Pâtes + Bœuf Sauté 180g) - 25.000 ₲</option>
-                  <option value="miercoles_stroganoff">El Clásico Potencia (Mercredi - Stroganoff Bœuf/Poulet) - 25.000 ₲</option>
-                  <option value="jueves_dubai">Spécial Dubaï (Jeudi - Tataki de Bœuf Saisi) - 25.000 ₲</option>
-                  <option value="viernes_guiso">Guiso del Peleador (Vendredi - Ragoût Poulet 200g + Pâtes) - 25.000 ₲</option>
-                  <option value="sabado_milanesa">El Placer Atlético (Samedi - Milanaise Poulet + Purée Maison) - 25.000 ₲</option>
-                  <option value="hamburguesa_olimpo">Burger Olimpo (Bœuf + Œuf + Cheddar) - 14.000 ₲</option>
-                  <option value="club_milanesa">Club Poulet Milanaise (Triple Étage Protéiné) - 15.000 ₲</option>
-                  <option value="sandwich_pollo_repollo">Sandwich Poulet-Chou (Poulet Effiloché) - 10.000 ₲</option>
-                  <option value="tostados_paraguayos">Toastés Paraguayens-Italiens (Mozzarella + Jamón) - 7.000 ₲</option>
+                  <option value="lunes_explosivo">El Explosivo (Lundi - Poulet & Riz) — 25.000 ₲</option>
+                  <option value="martes_sparring">El Sparring (Mardi - Bœuf Sauté & Pâtes) — 25.000 ₲</option>
+                  <option value="miercoles_stroganoff">Stroganoff Potencia (Mercredi - Bœuf/Poulet) — 25.000 ₲</option>
+                  <option value="jueves_dubai">Spécial Dubaï (Jeudi - Tataki de Bœuf) — 25.000 ₲</option>
+                  <option value="viernes_guiso">Guiso del Peleador (Vendredi - Poulet & Pâtes) — 25.000 ₲</option>
+                  <option value="sabado_milanesa">Milanaise Poulet (Samedi - Purée Maison) — 25.000 ₲</option>
+                  <option value="hamburguesa_olimpo">Burger Olimpo — 14.000 ₲</option>
+                  <option value="club_milanesa">Club Sandwich Milanaise — 15.000 ₲</option>
+                  <option value="sandwich_pollo_repollo">Sandwich Poulet Effiloché — 10.000 ₲</option>
+                  <option value="tostados_paraguayos">Toastés Mozzarella & Jamón — 7.000 ₲</option>
                 </select>
               </div>
 
@@ -1233,13 +1232,14 @@
             </div>
           </div>
 
-          <!-- AUTO DEBIT SWITCH (-5%) -->
-          <div class="auto-debit-toggle-bar">
+          <!-- AUTO DEBIT SWITCH PERMANENT (-5% TOUJOURS INCLUS) -->
+          <div class="auto-debit-toggle-bar auto-debit-guarantee-bar">
             <div class="auto-debit-toggle-label">
-              <span class="ad-title" data-i18n="adTitle">🔄 Activer le Débit Automatique Bancard (-5% de remise)</span>
-              <span class="ad-sub" data-i18n="adSub">Renouvellement automatique chaque mois. Résiliable à tout moment en 1 clic.</span>
+              <span class="ad-title" data-i18n="adTitle">✓ Débit Automatique Inclus (-5% de réduction)</span>
+              <span class="ad-sub" data-i18n="adSub">Paiement sécurisé et automatique. Résiliable à tout moment en 1 clic.</span>
             </div>
-            <input type="checkbox" id="chkAutoDebit" checked style="width: 20px; height: 20px; cursor: pointer;">
+            <span class="auto-debit-status-pill" data-i18n="adStatusPill">-5% INCLUS</span>
+            <input type="checkbox" id="chkAutoDebit" checked disabled style="display: none;">
           </div>
 
           <!-- OPTIONS SUPPLÉMENTAIRES (LIVRAISON +20% & DOUBLE PROTÉINE) -->
@@ -1272,8 +1272,8 @@
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="custCI" data-i18n="lblCustCI">C.I. ou RUC (pour la facture paraguayenne) *</label>
-                <input type="text" id="custCI" class="form-input" placeholder="Ex: 4.567.890-1" data-i18n-placeholder="custCIPlaceholder" required>
+                <label for="custCI" data-i18n="lblCustCI">C.I. ou RUC (Optionnel)</label>
+                <input type="text" id="custCI" class="form-input" placeholder="Optionnel (Ex: 4.567.890-1)" data-i18n-placeholder="custCIPlaceholder">
               </div>
               <div class="form-group">
                 <label for="custAddress" data-i18n="lblCustAddress">Adresse de Livraison ou Retrait au Club</label>
@@ -1746,22 +1746,22 @@
           </div>
         </div>
 
-        <!-- 3. RETRAIT DES PROFITS EN FIN DE MOIS (SUPPRESSION AUTOMATIQUE SINON) -->
+        <!-- 3. RETRAIT DES PROFITS LE 1 DE CHAQUE MOIS (SUPPRESSION AUTOMATIQUE SINON) -->
         <div class="mem-monthend-box" id="memMonthEndBox">
           <div class="mem-monthend-header">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span class="mem-monthend-icon">⚠️</span>
-              <strong style="color: #fff; font-size: 14px;" data-i18n="memMonthEndTitle">Retrait des Profits en Fin de Mois</strong>
+              <strong style="color: #fff; font-size: 14px;" data-i18n="memMonthEndTitle">Retrait des Profits le 1 de Chaque Mois</strong>
             </div>
-            <span class="mem-monthend-badge" id="memMonthEndStatusBadge">📅 Fin de mois</span>
+            <span class="mem-monthend-badge" id="memMonthEndStatusBadge">📅 1 du mois</span>
           </div>
           <p class="mem-monthend-desc" data-i18n="memMonthEndDesc">
-            Tu peux venir retirer tes profits <strong>en fin de mois (du 25 au dernier jour du mois)</strong>. ⚠️ <strong>Attention :</strong> si tu ne retires pas tes profits avant la fin du mois, ils seront <strong>supprimés automatiquement à la fin du mois (remis à 0 ₲)</strong> et tu devras attendre la fin du mois prochain pour retirer tes nouveaux gains.
+            Tu peux venir retirer tes profits <strong>le 1 de chaque mois</strong>. ⚠️ <strong>Attention :</strong> si tu ne retires pas tes profits le 1 du mois, ils seront <strong>supprimés automatiquement (remis à 0 ₲)</strong> et tu devras attendre le 1 du mois prochain pour retirer tes nouveaux gains.
           </p>
           <div id="memExpiredAlert" class="mem-expired-notice" style="display: none;"></div>
           <div class="mem-monthend-actions">
             <button type="button" class="btn-withdraw-monthend" id="btnWithdrawMonthEnd" onclick="window.openWithdrawModal()">
-              <span data-i18n="btnWithdrawMonthEnd">💸 Retirer mes profits de fin de mois</span>
+              <span data-i18n="btnWithdrawMonthEnd">💸 Retirer mes profits (1 de chaque mois)</span>
             </button>
           </div>
         </div>
