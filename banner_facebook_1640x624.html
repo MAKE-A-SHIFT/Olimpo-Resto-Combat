@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bannière Facebook HD 1640x624 - Olimpo Team Areguá</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1640px;
+      height: 624px;
+      overflow: hidden;
+      background: radial-gradient(circle at 75% 50%, #0d2238 0%, #060a0d 70%, #030608 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #ffffff;
+      position: relative;
+    }
+
+    /* Subtle grid pattern */
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 132, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 132, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Meander borders */
+    .top-strip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #0084ff, #38bdf8, #0084ff);
+      box-shadow: 0 0 15px rgba(0, 132, 255, 0.8);
+    }
+    .bottom-strip {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #0084ff, #38bdf8, #0084ff);
+      box-shadow: 0 0 15px rgba(0, 132, 255, 0.8);
+    }
+
+    .main-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      padding: 44px 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 50px;
+    }
+
+    /* LEFT HERO BRAND */
+    .left-col {
+      flex: 1.25;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 132, 255, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #38bdf8 0%, #0084ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 19px;
+      color: #94a3b8;
+      line-height: 1.45;
+      margin-bottom: 24px;
+      max-width: 620px;
+    }
+
+    .hero-sub strong {
+      color: #ffffff;
+    }
+
+    /* BADGES GRID */
+    .badges-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 660px;
+    }
+
+    .badge-item {
+      background: rgba(15, 23, 33, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .badge-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    /* RIGHT SIDE SHOWCASE & CTAS */
+    .right-col {
+      flex: 0.95;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, rgba(16, 27, 39, 0.9) 0%, rgba(9, 14, 20, 0.95) 100%);
+      border: 1.5px solid rgba(0, 132, 255, 0.4);
+      border-radius: 18px;
+      padding: 34px 40px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+
+    .logo-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #0084ff;
+      box-shadow: 0 0 25px rgba(0, 132, 255, 0.6);
+      overflow: hidden;
+      margin-bottom: 14px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-circle img {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+    }
+
+    .center-club-name {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .center-club-sub {
+      font-size: 14px;
+      color: #38bdf8;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .price-callout {
+      background: rgba(0, 132, 255, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 10px 22px;
+      border-radius: 8px;
+      margin-bottom: 22px;
+      width: 100%;
+    }
+
+    .price-callout-val {
+      font-size: 24px;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    .price-callout-lbl {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .cta-wa-giant {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+      padding: 15px 24px;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .cta-trial-sub {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .cta-trial-sub span {
+      color: #fcd34d;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-strip"></div>
+  <div class="bottom-strip"></div>
+  <div class="bg-grid"></div>
+
+  <div class="main-container">
+    <div class="left-col">
+      <div class="brand-pill">🏛️ Club Oficial de Combate &amp; Nutrición Atlética • Areguá</div>
+      <h1 class="hero-title">MANGE, COMBAT, VIE<br><span>POUR L'OLYMPE !</span></h1>
+      <p class="hero-sub">
+        Kickboxing K-1 Rules &amp; Boxe Traditionnelle Anglaise fusionnés avec une <strong>nutrition sportive pesée au gramme</strong>. Cuisiné frais sur place chaque matin.
+      </p>
+
+      <div class="badges-row">
+        <div class="badge-item">
+          <span class="badge-icon">🥊</span>
+          <span>Kickboxing K-1 &amp; Boxe Anglaise (150k/mois)</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-icon">🥗</span>
+          <span>Packs 200g Poulet + Glucides + Fibres</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-icon">🆓</span>
+          <span>1er Jour d'Essai Combat 100% GRATUIT</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-icon">🔄</span>
+          <span>Débit Automatique Bancard (-5% Remise)</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-icon">📍</span>
+          <span>Av. Las Residentas, Areguá, Paraguay</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-icon">⚡</span>
+          <span>Sans Réservation • Lun au Sam 06:00 - 21:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="logo-circle">
+        <img src="logo_olimpo.png" alt="Olimpo Logo">
+      </div>
+      <div class="center-club-name">OLIMPO TEAM AREGUÁ</div>
+      <div class="center-club-sub">FIGHTING CLUB &amp; RESTAURANTE ATHLÉTIQUE</div>
+
+      <div class="price-callout">
+        <div class="price-callout-val">150.000 ₲ / mes</div>
+        <div class="price-callout-lbl">Acceso Ilimitado Club • Menús desde 18.801 ₲ / plato</div>
+      </div>
+
+      <div class="cta-wa-giant">
+        <span>📲</span>
+        <span>WhatsApp: +595 995 620416</span>
+      </div>
+      <div class="cta-trial-sub">
+        Essai Gratuit Combat : <span>+595 984 430018</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

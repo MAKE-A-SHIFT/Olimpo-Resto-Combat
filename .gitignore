@@ -8,6 +8,7 @@ node_modules/
 
 # Temp test screenshots and intermediate extraction files
 *.txt
+!robots.txt
 cmap.json
 localhost_*.png
 preview_*.png

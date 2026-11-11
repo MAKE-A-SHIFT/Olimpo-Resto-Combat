@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://olimpo-resto-combat.vercel.app/</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://olimpo-resto-combat.vercel.app/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://olimpo-resto-combat.vercel.app/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://olimpo-resto-combat.vercel.app/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://olimpo-resto-combat.vercel.app/"/>
+    <image:image>
+      <image:loc>https://olimpo-resto-combat.vercel.app/logo_olimpo.png</image:loc>
+      <image:title>Olimpo Team Kickboxing &amp; Restaurante del Olimpo Logo</image:title>
+      <image:caption>Club de Combate y Restaurante Atlético en Areguá, Paraguay</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://olimpo-resto-combat.vercel.app/flyer_recto_preview.png</image:loc>
+      <image:title>Menú Semanal y Packs de Suscripción Olimpo</image:title>
+      <image:caption>Platos frescos pesados al gramo y planes mensuales</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://olimpo-resto-combat.vercel.app/flyer_verso_preview.png</image:loc>
+      <image:title>Comida Rápida Proteica y Bebidas de Recuperación</image:title>
+      <image:caption>Hamburguesa Olimpo, sándwiches y kéfir artesanal</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://olimpo-resto-combat.vercel.app/#club</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://olimpo-resto-combat.vercel.app/#restaurante</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://olimpo-resto-combat.vercel.app/#tarifas</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://olimpo-resto-combat.vercel.app/#afiliados</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://olimpo-resto-combat.vercel.app/#contacto</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+</urlset>

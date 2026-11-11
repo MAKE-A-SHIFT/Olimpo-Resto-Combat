@@ -1,0 +1,8 @@
+# robots.txt for Olimpo Team Kickboxing & Restaurante del Olimpo (Areguá, Paraguay)
+# https://olimpo-resto-combat.vercel.app/
+
+User-agent: *
+Allow: /
+
+# Host & Sitemap
+Sitemap: https://olimpo-resto-combat.vercel.app/sitemap.xml

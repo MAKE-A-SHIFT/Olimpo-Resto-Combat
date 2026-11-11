@@ -4,9 +4,34 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // --- SMART I18N & CURRENCY DETECTION (SOP PHASE 4.1 & PHASE 9) ---
+  function detectInitialLanguage() {
+    try {
+      const urlLang = new URLSearchParams(window.location.search).get('lang');
+      if (urlLang && ['es', 'fr', 'en'].includes(urlLang.toLowerCase())) {
+        return urlLang.toLowerCase();
+      }
+      const saved = localStorage.getItem('olimpo_lang') || localStorage.getItem('gl_lang_manual');
+      if (saved && ['es', 'fr', 'en'].includes(saved)) {
+        return saved;
+      }
+      const navLangs = navigator.languages || [navigator.language || ''];
+      for (const nl of navLangs) {
+        if (!nl) continue;
+        const code = nl.slice(0, 2).toLowerCase();
+        if (code === 'es') return 'es';
+        if (code === 'fr') return 'fr';
+        if (code === 'en') return 'en';
+      }
+    } catch (e) {
+      console.warn('[Olimpo i18n] Language detection note:', e);
+    }
+    return 'es'; // Target market default (Castellano / Paraguay)
+  }
+
   // --- APPLICATION STATE ---
   const state = {
-    lang: localStorage.getItem('olimpo_lang') || 'es',
+    lang: detectInitialLanguage(),
     selectedCycle: 'mensual', // 'semanal' or 'mensual'
     autoDebitActive: true,
     clubChoice: 'club_monthly', // 'club_monthly', 'club_trial', 'club_already', 'club_none'
