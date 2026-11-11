@@ -1891,25 +1891,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- SIPAP CLIPBOARD COPY HELPER ---
   window.copySipapData = function() {
-    const sipapInfo = `BANCO CONTINENTAL / BASA\nTitular: Olimpo Team Kickboxing & Sports Resto\nRUC: 80099562-4\nCaja de Ahorro Gs: 01-234567-89\nSede: Av. Las Residentas, Areguá`;
+    const sipapInfo = `BANCO FAMILIAR\nTitular: Rodrigo Rafael Noguera Barrientos\nAlias SIPAP: 0984430018\nSede: Olimpo Team, Av. Las Residentas, Areguá`;
     const lang = state.lang || 'es';
     const msg = {
-      es: '✓ ¡Datos SIPAP copiados al portapapeles!',
-      fr: '✓ Coordonnées SIPAP copiées dans le presse-papiers !',
-      en: '✓ SIPAP bank details copied to clipboard!'
+      es: '✓ ¡Alias SIPAP 0984430018 (Banco Familiar) copiado!',
+      fr: '✓ Alias SIPAP 0984430018 (Banco Familiar) copié !',
+      en: '✓ SIPAP Alias 0984430018 (Banco Familiar) copied!'
     }[lang];
     navigator.clipboard.writeText(sipapInfo).then(() => {
       showToast(msg);
     }).catch(() => {
-      showToast(msg);
+      showToast('Alias SIPAP: 0984430018');
     });
   };
 
   // ==========================================================================
-  // PAYMENT PROCESSORS ARCHITECTURE (OLIMPO_PAYMENTS_CONFIG)
+  // PAYMENT PROCESSORS ARCHITECTURE (OLIMPO_PAYMENTS_CONFIG - PAGOPAR & BANCARD)
   // ==========================================================================
   const OLIMPO_PAYMENTS_CONFIG = {
     LIVE_MODE: false,
+    ACTIVE_GATEWAY: 'pagopar', // 'pagopar' or 'bancard'
+    PAGOPAR: {
+      ENVIRONMENT: 'staging',
+      PUBLIC_KEY: 'pk_pagopar_staging_olimpo',
+      PRIVATE_KEY: 'sk_pagopar_staging_olimpo',
+      CHECKOUT_URL: 'https://api.pagopar.com/api/comercios/2.0/pagar',
+      RECURRING_URL: 'https://api.pagopar.com/api/suscripciones/1.0/crear',
+      processPayment: async function(payload) {
+        console.log('[Pagopar Engine] Processing recurring order:', payload);
+        return { status: 'success', redirect: null };
+      }
+    },
     BANCARD_VPOS: {
       ENVIRONMENT: 'staging',
       PUBLIC_KEY: 'pk_olimpo_staging_77a92b',
@@ -1918,24 +1930,19 @@ document.addEventListener('DOMContentLoaded', () => {
       PRODUCTION_URL: 'https://vpos.infonet.com.py/vpos/api/0.3/single_buy',
       TOKENIZE_CARD_URL: 'https://vpos.infonet.com.py/vpos/api/0.3/users/cards/new',
       processPayment: async function(paymentPayload) {
-        console.log('[OLIMPO BANCARD] Dispatching vPOS transaction payload:', paymentPayload);
-        return { success: true, authorizationCode: 'AUTH-' + Math.floor(Math.random() * 900000 + 100000), token: 'tok_card_' + Date.now() };
+        console.log('[Bancard vPOS] Processing recurring debit:', paymentPayload);
+        return { status: 'success', process_id: 'bancard_sim_9918' };
       }
     },
     SIPAP: {
-      BANK_NAME: 'Banco Continental / Basa',
-      ACCOUNT_NUMBER: '01-234567-89',
-      RUC: '80099562-4',
-      ACCOUNT_HOLDER: 'Olimpo Team Kickboxing & Sports Resto'
+      BANK_NAME: 'Banco Familiar',
+      ALIAS: '0984430018',
+      PHONE: '0984430018',
+      ACCOUNT_HOLDER: 'Rodrigo Rafael Noguera Barrientos'
     },
     TIGO_MONEY: {
-      MERCHANT_ID: 'TIGO-OLIMPO-AREGUA-595',
-      SERVICE_ID: 'RECURRING_SUB_FITNESS',
-      NOTIFICATION_URL: 'https://api.olimpoteam.py/webhook/tigo'
-    },
-    QR_SIMPLE_BANCARD: {
-      EMVCO_PAYLOAD_ID: 'PY.COM.BANCARD.QR.80099562',
-      MERCHANT_NAME: 'OLIMPO TEAM KICKBOXING AREGUA'
+      PHONE: '0984430018',
+      ACCOUNT_HOLDER: 'Rodrigo Rafael Noguera Barrientos'
     }
   };
 
@@ -1994,10 +2001,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const gatewayNames = {
-        bancard: 'Bancard vPOS (Tarjetas Crédito/Débito)',
-        sipap: 'SIPAP (Transferencia Bancaria en Guaraníes)',
-        tigo: 'Tigo Money (Billetera Móvil)',
-        qr: 'QR Simple Bancard'
+        bancard: 'Pagopar / Bancard vPOS (Débito Automático)',
+        sipap: 'SIPAP Alias 0984430018 (Banco Familiar - Rodrigo Rafael Noguera)',
+        tigo: 'Tigo Money (0984430018)',
+        qr: 'Alias SIPAP / QR (Banco Familiar - 0984430018)'
       };
 
       // Dual WhatsApp routing:
@@ -2006,12 +2013,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const isTrialOnly = state.clubChoice === 'club_trial' && state.nutritionChoice === 'none';
       const targetPhone = isTrialOnly ? '595984430018' : '595995620416';
 
+      const paymentDetailSnippet = (state.currentGateway === 'sipap' || state.currentGateway === 'qr')
+        ? `🏦 *Datos SIPAP :* Banco Familiar | Titular: Rodrigo Rafael Noguera Barrientos | Alias: 0984430018\n`
+        : (state.currentGateway === 'tigo'
+          ? `📱 *Giro Tigo :* Envío a 0984430018 (Rodrigo Rafael Noguera)\n`
+          : '');
+
       const waMessage = isTrialOnly
         ? `🥊 *RESERVA DE SESIÓN DE PRUEBA GRATUITA - OLIMPO TEAM AREGUÁ*\n` +
           `----------------------------------------\n` +
           `👤 *Atleta :* ${custName}\n` +
           `📱 *WhatsApp :* ${custPhone}\n` +
-          `🆔 *C.I. :* ${custCI}\n` +
+          `🆔 *C.I. :* ${custCI || 'Sin C.I.'}\n` +
           (effectiveRef ? `🤝 *Invitado por (Código Alumno) :* ${effectiveRef}\n` : '') +
           `----------------------------------------\n` +
           `¡Hola! Quiero confirmar mi primera sesión de prueba gratuita en el Club de Combate Olimpo (Av. Las Residentas, Areguá).`
@@ -2019,7 +2032,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `----------------------------------------\n` +
           `👤 *Cliente :* ${custName}\n` +
           `📱 *WhatsApp :* ${custPhone}\n` +
-          `🆔 *C.I. / RUC :* ${custCI}\n` +
+          `🆔 *C.I. / RUC :* ${custCI || 'Consumidor Final (Sin RUC)'}\n` +
           `📍 *Dirección :* ${custAddress}\n` +
           (effectiveRef ? `🤝 *Referido por (Código Alumno) :* ${effectiveRef}\n` : '') +
           `----------------------------------------\n` +
@@ -2029,6 +2042,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `🛵 *Delivery (+20%) :* ${hasDelivery ? `SÍ (+${calc.deliveryCost.toLocaleString('es-PY')} ₲)` : 'No (Retiro en el Club)'}\n` +
           `🥩 *Doble Proteína :* ${hasDoubleProt ? `SÍ (+${calc.extraProteinCost.toLocaleString('es-PY')} ₲)` : 'No'}\n` +
           `💳 *Medio de Pago :* ${gatewayNames[state.currentGateway] || state.currentGateway}\n` +
+          paymentDetailSnippet +
           `----------------------------------------\n` +
           `💰 *TOTAL A PAGAR :* *${calc.finalTotal.toLocaleString('es-PY')} ₲*\n` +
           `----------------------------------------\n` +
@@ -2380,26 +2394,26 @@ document.addEventListener('DOMContentLoaded', () => {
             "lblCustAddress": "Dirección de Delivery o Retiro en el Club",
             "custAddressPlaceholder": "Ej: Retiro en el club de Areguá o dirección completa",
             "blockPayment": "5. Medio de Pago Localizado en Paraguay",
-            "gwBancard": "Bancard vPOS",
-            "gwSipap": "SIPAP Transferencia",
+            "gwBancard": "Pagopar / Bancard",
+            "gwSipap": "SIPAP Alias",
             "gwTigo": "Tigo Money",
-            "gwQr": "QR Bancard",
-            "txtBancardTitle": "🔒 Pasarela Oficial Bancard vPOS (Tarjetas de Crédito & Débito Paraguay)",
+            "gwQr": "QR / Alias SIPAP",
+            "txtBancardTitle": "🔒 Pasarela Oficial Pagopar & Bancard vPOS (Tarjetas de Crédito & Débito Paraguay)",
             "lblCardNum": "Número de Tarjeta (Visa, Mastercard, Panal, Cabal)",
             "lblCardExp": "Fecha de Expiración (MM/AA)",
             "lblCardCvv": "Código de Seguridad CVV",
-            "txtBancardSecurity": "✓ Tokenización segura PCI-DSS certificada por Bancard Paraguay. Listo para débito automático.",
-            "txtSipapTitle": "🏦 Datos Bancarios SIPAP (Transferencia Interbancaria en Guaraníes) :",
+            "txtBancardSecurity": "✓ Tokenización segura PCI-DSS certificada por Bancard & Pagopar Paraguay. Listo para débito automático.",
+            "txtSipapTitle": "🏦 Datos Bancarios SIPAP / SPI (Transferencia por ALIAS en Guaraníes) :",
             "sipapBankLabel": "Banco :",
             "sipapHolderLabel": "Titular :",
-            "sipapRucLabel": "RUC :",
-            "sipapAccountLabel": "Caja de Ahorro Gs :",
+            "sipapAliasLabel": "Alias SIPAP :",
+            "sipapAliasNote": "Transferible gratis e instantáneamente desde cualquier banco (Itaú, Ueno, Continental, Familiar, BNF, etc.) ingresando el Alias.",
             "sipapCityLabel": "Sede :",
-            "btnCopySipap": "📋 Copiar Datos SIPAP para Transferir",
-            "txtTigoTitle": "📱 Débito Instantáneo en Billetera Móvil (Tigo Money / Personal) :",
-            "lblTigoPhone": "Número de Teléfono de Billetera (Paraguay)",
-            "txtTigoNote": "Se enviará una notificación a tu teléfono para ingresar tu PIN y confirmar el pago.",
-            "txtQrTitle": "📲 Escaneá desde la app de tu banco en Paraguay (QR Simple)",
+            "btnCopySipap": "📋 Copiar Alias SIPAP (0984430018)",
+            "txtTigoTitle": "📱 Billetera Móvil Tigo Money (Paraguay) :",
+            "lblTigoPhone": "Tu número de teléfono con billetera activa :",
+            "txtTigoNote": "Enviá tu giro al 0984430018 (Rodrigo Rafael Noguera) y confirmá por WhatsApp.",
+            "txtQrTitle": "📲 Pago por Alias SIPAP desde tu App Bancaria",
             "txtQrCompatible": "Compatible con Itaú, Continental, Ueno, Familiar, Sudameris, Atlas y GNB.",
             "sumDiscountLabel": "Descuento Débito Automático (-5%) :",
             "sumDeliveryLabel": "Delivery Areguá (+20% del abono) :",
@@ -2728,26 +2742,26 @@ document.addEventListener('DOMContentLoaded', () => {
             "lblCustAddress": "Adresse de Livraison ou Retrait au Club",
             "custAddressPlaceholder": "Ex: Retrait au club d'Areguá ou adresse complète",
             "blockPayment": "5. Moyen de Paiement Localisé au Paraguay",
-            "gwBancard": "Bancard vPOS",
-            "gwSipap": "SIPAP Virement",
+            "gwBancard": "Pagopar / Bancard",
+            "gwSipap": "SIPAP Alias",
             "gwTigo": "Tigo Money",
-            "gwQr": "QR Bancard",
-            "txtBancardTitle": "🔒 Passerelle Officielle Bancard vPOS (Cartes de Crédit & Débit Paraguay)",
+            "gwQr": "QR / Alias SIPAP",
+            "txtBancardTitle": "🔒 Passerelle Officielle Pagopar & Bancard vPOS (Cartes de Crédit & Débit Paraguay)",
             "lblCardNum": "Numéro de Carte (Visa, Mastercard, Panal, Cabal)",
             "lblCardExp": "Date d'expiration (MM/AA)",
             "lblCardCvv": "Code CVV",
-            "txtBancardSecurity": "✓ Tokenisation sécurisée PCI-DSS certifiée par Bancard Paraguay. Prêt pour débit automatique.",
-            "txtSipapTitle": "🏦 Coordonnées Bancaires SIPAP (Virement Interbancaire en Guaraníes) :",
+            "txtBancardSecurity": "✓ Tokenisation sécurisée PCI-DSS certifiée par Bancard & Pagopar Paraguay. Prêt pour débit automatique.",
+            "txtSipapTitle": "🏦 Coordonnées Bancaires SIPAP / SPI (Virement direct par ALIAS en Guaraníes) :",
             "sipapBankLabel": "Banque :",
             "sipapHolderLabel": "Titulaire :",
-            "sipapRucLabel": "RUC :",
-            "sipapAccountLabel": "Caisse d'Épargne Gs :",
+            "sipapAliasLabel": "Alias SIPAP :",
+            "sipapAliasNote": "Virement instantané sans frais depuis n'importe quelle banque paraguayenne (Itaú, Ueno, Continental, Familiar, BNF, etc.) via l'Alias.",
             "sipapCityLabel": "Lieu :",
-            "btnCopySipap": "📋 Copier les Données SIPAP pour Virer",
-            "txtTigoTitle": "📱 Débit Instantané sur Portefeuille Mobile (Tigo Money / Personal) :",
-            "lblTigoPhone": "Numéro de Téléphone Portefeuille (Paraguay)",
-            "txtTigoNote": "Une notification push sera envoyée sur votre téléphone pour saisir votre code PIN et approuver le paiement.",
-            "txtQrTitle": "📲 Scannez depuis l'application de votre banque au Paraguay (QR Simple)",
+            "btnCopySipap": "📋 Copier l'Alias SIPAP (0984430018)",
+            "txtTigoTitle": "📱 Portefeuille Mobile Tigo Money (Paraguay) :",
+            "lblTigoPhone": "Ton numéro de téléphone avec portefeuille actif :",
+            "txtTigoNote": "Envoie ton giro au 0984430018 (Rodrigo Rafael Noguera) et confirme sur WhatsApp.",
+            "txtQrTitle": "📲 Paiement par Alias SIPAP depuis votre Application Bancaire",
             "txtQrCompatible": "Compatible avec Itaú, Continental, Ueno, Familiar, Sudameris, Atlas et GNB.",
             "sumDiscountLabel": "Remise Débit Automatique (-5%) :",
             "sumDeliveryLabel": "Livraison Areguá (+20% abonnement) :",
@@ -3076,27 +3090,27 @@ document.addEventListener('DOMContentLoaded', () => {
             "lblCustAddress": "Delivery Address or Club Pickup",
             "custAddressPlaceholder": "Ex: Club pickup at Areguá or full delivery address",
             "blockPayment": "5. Payment Gateway in Paraguay",
-            "gwBancard": "Bancard vPOS",
-            "gwSipap": "SIPAP Bank Transfer",
+            "gwBancard": "Pagopar / Bancard",
+            "gwSipap": "SIPAP Alias",
             "gwTigo": "Tigo Money",
-            "gwQr": "QR Bancard",
-            "txtBancardTitle": "🔒 Official Bancard vPOS Gateway (Credit & Debit Cards Paraguay)",
+            "gwQr": "QR / SIPAP Alias",
+            "txtBancardTitle": "🔒 Official Pagopar & Bancard vPOS Gateway (Credit & Debit Cards Paraguay)",
             "lblCardNum": "Card Number (Visa, Mastercard, Panal, Cabal)",
             "lblCardExp": "Expiration Date (MM/YY)",
             "lblCardCvv": "Security CVV Code",
-            "txtBancardSecurity": "✓ PCI-DSS certified tokenization by Bancard Paraguay. Ready for automatic debit.",
-            "txtSipapTitle": "🏦 SIPAP Bank Details (Interbank Transfer in Guaraníes):",
+            "txtBancardSecurity": "✓ PCI-DSS certified tokenization by Bancard & Pagopar Paraguay. Ready for automatic debit.",
+            "txtSipapTitle": "🏦 SIPAP / SPI Bank Details (Transfer via ALIAS in Guaraníes):",
             "sipapBankLabel": "Bank:",
             "sipapHolderLabel": "Account Holder:",
-            "sipapRucLabel": "RUC Tax ID:",
-            "sipapAccountLabel": "Savings Account Gs:",
+            "sipapAliasLabel": "SIPAP Alias:",
+            "sipapAliasNote": "Instant and free transfer from any Paraguayan bank app (Itaú, Ueno, Continental, Familiar, BNF, etc.) using the Alias.",
             "sipapCityLabel": "Location:",
-            "btnCopySipap": "📋 Copy SIPAP Details for Transfer",
-            "txtTigoTitle": "📱 Instant Mobile Wallet Payment (Tigo Money / Personal):",
-            "lblTigoPhone": "Mobile Wallet Phone Number (Paraguay)",
-            "txtTigoNote": "A push notification will be sent to your phone to confirm with your security PIN.",
-            "txtQrTitle": "📲 Scan from your bank app in Paraguay (Simple QR)",
-            "txtQrCompatible": "Compatible with Itaú, Continental, Ueno, Familiar, Sudameris, Atlas and GNB.",
+            "btnCopySipap": "📋 Copy SIPAP Alias (0984430018)",
+            "txtTigoTitle": "📱 Tigo Money Mobile Wallet (Paraguay):",
+            "lblTigoPhone": "Your mobile wallet phone number:",
+            "txtTigoNote": "Send your money to 0984430018 (Rodrigo Rafael Noguera) and confirm via WhatsApp.",
+            "txtQrTitle": "📲 Payment via SIPAP Alias from your Banking App",
+            "txtQrCompatible": "Compatible with Itaú, Continental, Ueno, Familiar, Sudameris, Atlas, and GNB.",
             "sumDiscountLabel": "Auto-Debit Discount (-5%):",
             "sumDeliveryLabel": "Areguá Delivery (+20%):",
             "sumProtLabel": "Double Protein Portion:",
