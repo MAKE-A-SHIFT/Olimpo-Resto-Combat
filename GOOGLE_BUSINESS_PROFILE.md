@@ -81,14 +81,14 @@
 
 En nuestra academia entrenás con ring oficial, bolsas de 60 kg y coaches experimentados. Nuestra cocina prepara cada mañana platos frescos pesados al gramo (200g de proteína pura, carbohidratos limpios y fibras). 
 
-Membresía club a solo 150.000 ₲/mes y packs de comidas desde 18.801 ₲/plato. Débito automático Bancard con 5% de descuento. ¡Sin reserva previa! Tu primer día de prueba de combate es 100% GRATUITO. Retiro en Av. Las Residentas o delivery a domicilio (+20%).
+Membresía club a solo 150.000 ₲/mes y packs de comidas desde 18.801 ₲/plato. Débito automático mensual simple y seguro. ¡Sin reserva previa! Tu primer día de prueba de combate es 100% GRATUITO. Retiro en Av. Las Residentas o delivery a domicilio (+20%).
 ```
 
 ### Version Français :
 ```text
 Bienvenue à l'Olimpo Team Areguá ! Le premier complexe sportif et gastronomique du Département Central fusionnant Kickboxing K-1 Rules, Boxe Traditionnelle Anglaise et restaurant de nutrition sportive calibrée aux macronutriments. 
 
-Ring de frappe officiel, sacs lourds et coaching d'élite. Plats cuisinés frais chaque matin (200g de poulet/bœuf, glucides propres, légumes). Adhésion club à 150.000 ₲/mois et packs repas dès 18.801 ₲/repas. Débit automatique Bancard (-5%). Sans réservation requise, 1er cours d'essai 100% OFFERT. Retrait Av. Las Residentas ou livraison (+20%).
+Ring de frappe officiel, sacs lourds et coaching d'élite. Plats cuisinés frais chaque matin (200g de poulet/bœuf, glucides propres, légumes). Adhésion club à 150.000 ₲/mois et packs repas dès 18.801 ₲/repas. Débit automatique mensuel sécurisé. Sans réservation requise, 1er cours d'essai 100% OFFERT. Retrait Av. Las Residentas ou livraison (+20%).
 ```
 
 ---
