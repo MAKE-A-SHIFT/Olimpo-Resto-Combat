@@ -93,10 +93,10 @@ Cela signifie que le club ne dispose pas encore d'un compte marchand d'entrepris
    - Compatible avec toutes les banques du Paraguay (Itaú, Ueno, Continental, Familiar, BNF, Atlas, Sudameris).
 2. **Option Tigo Money :**
    - Envoi direct de giro au numéro `0984430018`.
-3. **Débit Automatique (-5% de réduction) :**
-   - Rendu obligatoire et automatique sur tous les abonnements.
-   - Bannière de réassurance `-5% INCLUS`.
-   - Moteur de calcul JS appliquant en continu la remise de 5%.
+3. **Débit Automatique Récurrent (Méthode Standard SaaS) :**
+   - Intégré en mode automatique et continu par défaut sans remise ni surcoût additionnel.
+   - Badge discret `✓ Débit Automatique Inclus` / `ACTIF`.
+   - Facturation directe au prix net sans friction psychologique.
 4. **Architecture Technique Passerelle (Pagopar & Bancard) :**
    - Le code dans `app.js` est structuré via l'objet `OLIMPO_PAYMENTS_CONFIG` prêt à basculer en production dès que vous activez Pagopar.
 
@@ -122,7 +122,24 @@ Le site exécute la fonction `detectInitialLanguage()` dès le premier chargemen
 
 ---
 
-## 5. 🚀 Déploiement Vercel
+## 5. 🤖 Protocole d'Automatisation Navigateur Natif (Chrome DevTools Remote Debugging)
+
+> [!TIP]
+> **Procédure d'accès agent aux sessions authentifiées (Facebook, Google Maps, Banques)**  
+> Afin de permettre à l'agent de naviguer et d'agir directement sur les plateformes nécessitant une connexion humaine (sans exposer de mot de passe ni déclencher de blocages 2FA/CAPTCHA) :
+
+1. **Activation côté utilisateur :**
+   - Ouvrir Google Chrome à l'adresse : `chrome://inspect/#remote-debugging`.
+   - Cocher l'option : **« Allow remote debugging for this browser instance »**.
+   - Le serveur de débogage Chrome démarre en local sur : `127.0.0.1:9222`.
+2. **Connexion & Contrôle Agent :**
+   - L'agent se connecte automatiquement via le serveur MCP officiel Chrome DevTools (`npx chrome-devtools-mcp@latest --autoConnect --allow-unrestricted-paths`).
+   - Le protocole lit le jeton de sécurité de session dans `%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort`.
+   - L'agent peut ainsi inspecter les onglets ouverts (`list_pages`), interagir avec les formulaires connectés (`evaluate_script`, `type_text`, `click`) et prendre des captures d'écran en temps réel sans rupture d'authentification.
+
+---
+
+## 6. 🚀 Déploiement Vercel
 
 Chaque commit poussé sur la branche `main` du repository GitHub :
 **`https://github.com/MAKE-A-SHIFT/Olimpo-Resto-Combat`**
