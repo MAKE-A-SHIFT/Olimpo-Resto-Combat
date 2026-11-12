@@ -511,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
         side: 'Recto',
         tag: 'Página 1 • Recto',
         title: 'Menú Semanal & Packs de Suscripción',
-        desc: 'Los 6 almuerzos completos (Lunes a Sábado), la regla de oro 1/3 y la grilla oficial de packs semanales y mensuales con beneficio de débito automático Bancard (-5%).',
+        desc: 'Los 6 almuerzos completos (Lunes a Sábado), la regla de oro 1/3 y la grilla oficial de packs semanales y mensuales con renovación automática y cocina fresca diaria.',
         preview: 'stories/assets/flyer_recto_preview.png',
         btnZoom: '🔍 Zoom Vista Previa',
         btnPdf: '📄 Ver el menú'
@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         side: 'Recto',
         tag: 'Page 1 • Recto',
         title: 'Menu de la Semaine & Packs d\'Abonnement',
-        desc: 'Les 6 déjeuners complets (Lundi au Samedi), la règle d\'or 1/3 et la grille officielle des packs hebdomadaires et mensuels avec remise débit automatique Bancard (-5%).',
+        desc: 'Les 6 déjeuners complets (Lundi au Samedi), la règle d\'or 1/3 et la grille officielle des packs hebdomadaires et mensuels avec renouvellement automatique et cuisine fraîche chaque jour.',
         preview: 'stories/assets/flyer_recto_preview.png',
         btnZoom: '🔍 Aperçu Zoom',
         btnPdf: '📄 Voir le menu'
@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         side: 'Front',
         tag: 'Page 1 • Front',
         title: 'Weekly Menu & Subscription Packs',
-        desc: 'All 6 athletic lunches (Monday to Saturday), 1/3 golden rule, and official weekly and monthly pricing table with Bancard auto-debit benefit (-5%).',
+        desc: 'All 6 athletic lunches (Monday to Saturday), 1/3 golden rule, and official weekly and monthly pricing table with automatic renewal and fresh daily cooking.',
         preview: 'stories/assets/flyer_recto_preview.png',
         btnZoom: '🔍 Zoom Preview',
         btnPdf: '📄 View the menu'
@@ -719,7 +719,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updatePricingDisplay() {
     const currentData = pricingData[state.selectedCycle] || pricingData.mensual;
-    const isDiscounted = true; // Débit automatique toujours actif (-5% inclus)
     const lang = state.lang || 'es';
 
     const priceUnitLabels = {
@@ -736,9 +735,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!plan) return;
 
       const basePrice = plan.price;
-      const finalPrice = isDiscounted ? Math.round(basePrice * 0.95) : basePrice;
-      const savedAmount = basePrice - finalPrice;
-      const perMealFinal = isDiscounted ? Math.round(plan.perMeal * 0.95) : plan.perMeal;
+      const finalPrice = basePrice;
+      const perMealFinal = plan.perMeal;
 
       const priceElem = document.getElementById(`price_${key}`);
       const strikeWrap = document.getElementById(`strikeWrap_${key}`);
@@ -751,11 +749,8 @@ document.addEventListener('DOMContentLoaded', () => {
         priceElem.innerHTML = `${finalPrice.toLocaleString('es-PY')} ₲ <span>${unitToDisplay}</span>`;
       }
       if (strikeWrap) {
-        strikeWrap.style.display = 'flex';
-        strikeWrap.innerHTML = `
-          <span class="old-price-line">${basePrice.toLocaleString('es-PY')} ₲</span>
-          <span class="discount-save-pill">${priceUnitLabels.save} ${savedAmount.toLocaleString('es-PY')} ₲</span>
-        `;
+        strikeWrap.style.display = 'none';
+        strikeWrap.innerHTML = '';
       }
       if (perMealElem) {
         if (key === 'club_kickboxing') {
@@ -1810,11 +1805,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const subtotalBeforeDiscounts = clubBase + nutritionBase;
 
-    // 5% de remise automatique (débit automatique inclus obligatoirement)
+    // Débito automático estándar (precio base SaaS directo sin recargo ni descuento adicional)
     let discount = 0;
-    if (subtotalBeforeDiscounts > 0 && state.nutritionChoice !== 'plato_unico') {
-      discount = Math.round(subtotalBeforeDiscounts * 0.05);
-    }
 
     // Double protein: +10.000 ₲ per meal
     let extraProteinCost = 0;
@@ -1834,7 +1826,7 @@ document.addEventListener('DOMContentLoaded', () => {
       deliveryCost = Math.round(subtotalBeforeDiscounts * 0.20);
     }
 
-    const finalTotal = Math.max(0, subtotalBeforeDiscounts - discount + extraProteinCost + deliveryCost);
+    const finalTotal = Math.max(0, subtotalBeforeDiscounts + extraProteinCost + deliveryCost);
 
     return {
       packCycle,
@@ -1860,8 +1852,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sumClubPrice) sumClubPrice.textContent = `${calc.clubBase.toLocaleString('es-PY')} ₲`;
     if (sumPlanName) sumPlanName.textContent = calc.nutritionLabel + ' :';
     if (sumPlanPrice) sumPlanPrice.textContent = `${calc.nutritionBase.toLocaleString('es-PY')} ₲`;
+    const wrapSumDiscount = document.getElementById('wrapSumDiscount');
+    if (wrapSumDiscount) {
+      wrapSumDiscount.style.display = 'none';
+    }
     if (sumDiscount) {
-      sumDiscount.textContent = calc.discount > 0 ? `-${calc.discount.toLocaleString('es-PY')} ₲ (5%)` : '0 ₲';
+      sumDiscount.textContent = '0 ₲';
     }
     if (sumDelivery) {
       sumDelivery.textContent = calc.deliveryCost > 0 ? `+${calc.deliveryCost.toLocaleString('es-PY')} ₲ (+20%)` : '0 ₲';
@@ -2038,7 +2034,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `----------------------------------------\n` +
           `🥊 *Paso 1 (Club) :* ${calc.clubLabel}\n` +
           `🥗 *Paso 2 (Nutrición) :* ${calc.nutritionLabel} (${calc.nutritionBase.toLocaleString('es-PY')} ₲)\n` +
-          `🔄 *Débito Automático (-5%) :* ${isAutoDebit ? `SÍ (-${calc.discount.toLocaleString('es-PY')} ₲)` : 'No'}\n` +
+          `🔄 *Débito Automático :* ${isAutoDebit ? 'SÍ (Renovación automática)' : 'No'}\n` +
           `🛵 *Delivery (+20%) :* ${hasDelivery ? `SÍ (+${calc.deliveryCost.toLocaleString('es-PY')} ₲)` : 'No (Retiro en el Club)'}\n` +
           `🥩 *Doble Proteína :* ${hasDoubleProt ? `SÍ (+${calc.extraProteinCost.toLocaleString('es-PY')} ₲)` : 'No'}\n` +
           `💳 *Medio de Pago :* ${gatewayNames[state.currentGateway] || state.currentGateway}\n` +
@@ -2277,11 +2273,11 @@ document.addEventListener('DOMContentLoaded', () => {
             "pdfHint": "Documento oficial en alta resolución • Formato A4 Recto/Verso",
             "pricingPill": "Tarifas & Membresías",
             "pricingTitle": "PLANES DE <span>SUSCRIPCIÓN</span>",
-            "pricingSubtitle": "Elegí tu plan. Activá el <strong>débito automático Bancard</strong> para acceder a un 5% de descuento inmediato y asegurar tus comidas y entrenamientos sin interrupciones.",
+            "pricingSubtitle": "Elegí tu plan. Planes todo incluido con renovación automática segura para garantizar tus comidas y entrenamientos sin interrupciones.",
             "cycleWeekly": "Semana (6 Días)",
             "cycleMonthly": "Mes Completo (Lun a Sáb)",
-            "adControlTitle": "💳 Débito Automático Bancard :",
-            "adControlDisc": "5% de Descuento Inmediato Incluido",
+            "adControlTitle": "💳 Débito Automático :",
+            "adControlDisc": "Renovación Automática Segura",
             "planTypeClub": "Academia de Combate",
             "planTitleClub": "Club Kickboxing & Boxeo",
             "planFeatClub1": "Acceso libre a las clases de <strong>Kickboxing K-1 Rules</strong>",
@@ -2367,8 +2363,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "faqA2": "¡Totalmente! Podés suscribirte únicamente a un pack de nutrición (1 o 2 platos al día) o pedir platos individuales desde 7.000 ₲ hasta 25.000 ₲. ¡Por cada 5 platos comprados, el 6to es 100% GRATIS!",
             "faqQ3": "¿Cuánto cuesta la membresía al club de Kickboxing & Boxeo?",
             "faqA3": "La cuota mensual es de <strong>150.000 ₲ / mes</strong> (150k PYG) con acceso libre a todos los entrenamientos. El primer día de prueba es 100% gratis.",
-            "faqQ4": "¿Cómo funciona el débito automático Bancard?",
-            "faqA4": "Es procesado con seguridad por Bancard Paraguay bajo encriptación PCI-DSS. Accedés a un descuento inmediato del 5% en tu cuota y podés pausar o cancelar en cualquier momento sin costo alguno.",
+            "faqQ4": "¿Cómo funciona el débito automático?",
+            "faqA4": "Es procesado con total seguridad bajo encriptación PCI-DSS. Asegura la continuidad de tus comidas y entrenamientos sin interrupciones y podés pausar o cancelar en cualquier momento sin costo alguno.",
             "modalTitle": "Inscripción & Pago Seguro (Paraguay)",
             "step1Badge": "Paso 1",
             "step1Title": "Entrenamiento en el Club de Combate (Areguá)",
@@ -2379,9 +2375,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "step2Title": "Elegí tu Programa Nutritivo (Cocina del Club)",
             "lblSelectDish": "Seleccioná tu Plato o Street-Food :",
             "lblPlateQuantity": "Cantidad de Platos (¡5 comprados = el 6to GRATIS!) :",
-            "adTitle": "✓ Débito Automático Incluido (-5% de descuento)",
+            "adTitle": "✓ Débito Automático Incluido",
             "adSub": "Pago automático sin complicaciones. Cancelable cuando quieras con 1 clic.",
-            "adStatusPill": "-5% INCLUIDO",
+            "adStatusPill": "ACTIVO",
             "blockServices": "3. Servicios & Delivery",
             "lblDelivery": "<strong>Servicio de Delivery a Domicilio (+20% del abono)</strong> — Retiro en el club gratis.",
             "lblDoubleProt": "Doble Porción de Proteína (+2x Carne/Pollo : +10.000 ₲ por comida)",
@@ -2415,7 +2411,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "txtTigoNote": "Enviá tu giro al 0984430018 (Rodrigo Rafael Noguera) y confirmá por WhatsApp.",
             "txtQrTitle": "📲 Pago por Alias SIPAP desde tu App Bancaria",
             "txtQrCompatible": "Compatible con Itaú, Continental, Ueno, Familiar, Sudameris, Atlas y GNB.",
-            "sumDiscountLabel": "Descuento Débito Automático (-5%) :",
+            "sumDiscountLabel": "Descuento Débito Automático :",
             "sumDeliveryLabel": "Delivery Areguá (+20% del abono) :",
             "sumProtLabel": "Doble Porción de Proteína :",
             "sumTotalLabel": "TOTAL A PAGAR :",
@@ -2428,8 +2424,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "legalArt2Text": "Todas las preparaciones culinarias servidas por el Restaurante del Olimpo cumplen rigurosamente con las normativas sanitarias dictadas por el <strong>Instituto Nacional de Alimentación y Nutrición (INAN)</strong> y el Ministerio de Salud Pública y Bienestar Social del Paraguay. Los macronutrientes se pesan y se preparan frescos en el día. Se respeta estrictamente la cadena de frío para todas las carnes frescas y productos fermentados.",
             "legalArt3Title": "3. Aptitud Física & Práctica de Deportes de Combate (Ley N° 2874/06 del Deporte)",
             "legalArt3Text": "De conformidad con las leyes deportivas del Paraguay, cada socio de las clases de <strong>Kickboxing K-1 Rules</strong> y <strong>Boxeo Tradicional Inglés</strong> manifiesta encontrarse en óptimas condiciones físicas y cardiovasculares. El uso de protecciones personales reglamentarias (vendas, bucal, guantes de boxeo) es obligatorio en sesiones de guanteo.",
-            "legalArt4Title": "4. Débito Automático Bancard & Cancelaciones",
-            "legalArt4Text": "Las membresías con « Débito Automático » cuentan con un 5% de descuento contractual. Los cobros recurrentes son procesados por <strong>Bancard vPOS Paraguay</strong> con certificación PCI-DSS. Podés cancelar o pausar el débito en cualquier momento por WhatsApp (+595 995 620416) con 48 hs de anticipación sin ninguna penalidad.",
+            "legalArt4Title": "4. Débito Automático & Cancelaciones",
+            "legalArt4Text": "Las membresías y planes con renovación automática son procesados de forma segura con certificación PCI-DSS. Podés cancelar o pausar el débito en cualquier momento por WhatsApp (+595 995 620416) con 48 hs de anticipación sin ninguna penalidad.",
             "legalArt5Title": "5. Facturación Legal (Ley N° 6380/19 de Modernización Tributaria)",
             "legalArt5Text": "Todas las operaciones cuentan con Factura Legal oficial paraguaya con IVA incluido (10% y 5%). Los clientes proporcionan su número de RUC o Cédula de Identidad (C.I.) al confirmar su orden.",
             "legalArt6Title": "6. Servicio de Delivery a Domicilio",
@@ -2625,11 +2621,11 @@ document.addEventListener('DOMContentLoaded', () => {
             "pdfHint": "Document officiel en haute résolution • Format A4 Recto/Verso",
             "pricingPill": "Tarifs & Abonnements",
             "pricingTitle": "PLANS D'<span>ABONNEMENT</span>",
-            "pricingSubtitle": "Choisis ton plan. Active le <strong>débit automatique Bancard</strong> pour bénéficier d'une remise fidélité de 5% et sécuriser tes entraînements et repas frais sans coupure.",
+            "pricingSubtitle": "Choisis ton plan. Formules tout compris avec prélèvement automatique sans stress pour sécuriser tes repas frais et tes entraînements.",
             "cycleWeekly": "Semaine (6 Jours)",
             "cycleMonthly": "Mois Complet (Lun au Sam)",
-            "adControlTitle": "💳 Débit Automatique Bancard :",
-            "adControlDisc": "5% de Remise Immédiate Incluse",
+            "adControlTitle": "💳 Débit Automatique :",
+            "adControlDisc": "Renouvellement Automatique Sécurisé",
             "planTypeClub": "Académie de Combat",
             "planTitleClub": "Club Kickboxing & Boxe",
             "planFeatClub1": "Accès libre aux cours de <strong>Kickboxing K-1 Rules</strong>",
@@ -2715,8 +2711,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "faqA2": "Tout à fait ! Tu peux souscrire à un pack de nutrition seul (1 ou 2 plats/jour) ou commander des plats à l'unité dès 7.000 ₲ à 25.000 ₲. Tous les 5 plats achetés, le 6ème est 100% OFFERT !",
             "faqQ3": "Combien coûte l'adhésion au club de Kickboxing & Boxe ?",
             "faqA3": "L'adhésion mensuelle est de <strong>150.000 ₲ / mois</strong> (150k PYG) en accès libre à tous les cours. Le premier jour d'essai est 100% gratuit.",
-            "faqQ4": "Comment fonctionne le débit automatique Bancard ?",
-            "faqA4": "Il est sécurisé par Bancard Paraguay avec cryptage PCI-DSS. Tu profites d'une remise immédiate de 5% sur ton abonnement et tu peux annuler ou suspendre à tout moment sans frais.",
+            "faqQ4": "Comment fonctionne le débit automatique ?",
+            "faqA4": "Il est entièrement sécurisé sous cryptage PCI-DSS. Il assure la continuité de tes repas frais et de tes entraînements sans coupure, et tu peux annuler ou suspendre à tout moment sans frais.",
             "modalTitle": "Inscription & Paiement Sécurisé (Paraguay)",
             "step1Badge": "Étape 1",
             "step1Title": "Entraînement au Club de Combat (Areguá)",
@@ -2727,9 +2723,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "step2Title": "Choisis ton Programme Nutritif (Cuisine du Club)",
             "lblSelectDish": "Sélectionne ton Plat ou Street-Food :",
             "lblPlateQuantity": "Nombre de Plats (5 achetés = le 6ème OFFERT !) :",
-            "adTitle": "✓ Débit Automatique Inclus (-5% de réduction)",
+            "adTitle": "✓ Débit Automatique Inclus",
             "adSub": "Paiement automatique et sans stress. Annulable à tout moment en 1 clic.",
-            "adStatusPill": "-5% INCLUS",
+            "adStatusPill": "ACTIF",
             "blockServices": "3. Services & Livraison",
             "lblDelivery": "<strong>Service Livraison à Domicile (+20% de l'abonnement)</strong> — Retrait au club gratuit sinon.",
             "lblDoubleProt": "Double Portion de Protéine (+2x Viande/Poulet : +10.000 ₲ par repas)",
@@ -2763,7 +2759,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "txtTigoNote": "Envoie ton giro au 0984430018 (Rodrigo Rafael Noguera) et confirme sur WhatsApp.",
             "txtQrTitle": "📲 Paiement par Alias SIPAP depuis votre Application Bancaire",
             "txtQrCompatible": "Compatible avec Itaú, Continental, Ueno, Familiar, Sudameris, Atlas et GNB.",
-            "sumDiscountLabel": "Remise Débit Automatique (-5%) :",
+            "sumDiscountLabel": "Remise Débit Automatique :",
             "sumDeliveryLabel": "Livraison Areguá (+20% abonnement) :",
             "sumProtLabel": "Double Portion Protéine :",
             "sumTotalLabel": "TOTAL À RÉGLER :",
@@ -2776,8 +2772,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "legalArt2Text": "Toutes les préparations culinaires servies par le Restaurante del Olimpo respectent les normes d'hygiène et de manipulation des aliments édictées par l'<strong>Instituto Nacional de Alimentación y Nutrición (INAN)</strong> et le Ministère de la Santé Publique et du Bien-être Social du Paraguay. Les macronutriments sont pesés et préparés le jour même. La chaîne du froid est strictement observée pour l'ensemble des viandes fraîches (poulet, bœuf) et produits laitiers (kéfir artisanal).",
             "legalArt3Title": "3. Aptitude Physique & Pratique des Sports de Combat (Ley N° 2874/06 del Deporte)",
             "legalArt3Text": "Conformément aux lois paraguayennes régissant les activités physiques et sportives, tout adhérent aux cours de <strong>Kickboxing K-1 Rules</strong> et de <strong>Boxe Traditionnelle Anglaise</strong> atteste être en bonne condition cardiovasculaire et apte à la pratique sportive d'intensité modérée à haute. Le port des protections individuelles (bandes, protège-dents, gants réglementaires) est obligatoire lors des séances de sparring contrôlé.",
-            "legalArt4Title": "4. Débit Automatique Bancard & Modalités d'Annulation",
-            "legalArt4Text": "Les abonnements souscrits avec l'option « Débit Automatique » bénéficient d'une réduction contractuelle de 5%. Les règlements sont opérés de manière récurrente via la plateforme sécurisée <strong>Bancard vPOS Paraguay</strong> (certifiée PCI-DSS). L'utilisateur peut suspendre ou annuler son prélèvement automatique à tout moment par simple message WhatsApp au +595 995 620416 au moins 48 heures avant la date de renouvellement, sans aucune pénalité de sortie.",
+            "legalArt4Title": "4. Débit Automatique & Modalités d'Annulation",
+            "legalArt4Text": "Les abonnements et packs souscrits avec renouvellement automatique sont opérés de manière récurrente avec certification PCI-DSS. L'utilisateur peut suspendre ou annuler son prélèvement automatique à tout moment par simple message WhatsApp au +595 995 620416 au moins 48 heures avant la date de renouvellement, sans aucune pénalité de sortie.",
             "legalArt5Title": "5. Facturation Légale (Ley N° 6380/19 de Modernización Tributaria)",
             "legalArt5Text": "Toutes les opérations font l'objet d'une Factura Legal officielle (Tributación Paraguay - DNIT) avec TVA incluse (10% et 5%). Les adhérents et clients fournissent leur numéro de RUC ou Cédula de Identidad (C.I.) lors de la validation pour l'émission fiscale.",
             "legalArt6Title": "6. Service de Livraison à Domicile",
@@ -2973,11 +2969,11 @@ document.addEventListener('DOMContentLoaded', () => {
             "pdfHint": "Official high-resolution document • A4 Front & Back format",
             "pricingPill": "Rates & Memberships",
             "pricingTitle": "SUBSCRIPTION <span>PLANS</span>",
-            "pricingSubtitle": "Choose your plan. Activate <strong>Bancard auto-debit</strong> to get an immediate 5% discount and secure your uninterrupted workouts and fresh meals.",
+            "pricingSubtitle": "Choose your plan. All-inclusive plans with secure automatic renewal to guarantee uninterrupted meals and workouts.",
             "cycleWeekly": "Weekly (6 Days)",
             "cycleMonthly": "Full Month (Mon to Sat)",
-            "adControlTitle": "💳 Bancard Auto-Debit:",
-            "adControlDisc": "5% Instant Discount Included",
+            "adControlTitle": "💳 Auto-Debit:",
+            "adControlDisc": "Secure Automatic Renewal",
             "planTypeClub": "Fight Academy",
             "planTitleClub": "Kickboxing & Boxing Club",
             "planFeatClub1": "Full access to <strong>K-1 Rules Kickboxing</strong> classes",
@@ -3063,8 +3059,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "faqA2": "Absolutely! You can subscribe to a standalone nutrition pack (1 or 2 meals/day) or order individual dishes from 7,000 ₲ to 25,000 ₲. For every 5 meals purchased, the 6th is 100% FREE!",
             "faqQ3": "How much is the Kickboxing & Boxing club membership?",
             "faqA3": "The monthly membership is <strong>150,000 ₲ / month</strong> (150k PYG) with unlimited access to all sessions. The first trial day is 100% free.",
-            "faqQ4": "How does Bancard auto-debit work?",
-            "faqA4": "It is securely processed by Bancard Paraguay under PCI-DSS encryption. You receive an instant 5% discount and can pause or cancel anytime without fees.",
+            "faqQ4": "How does automatic debit work?",
+            "faqA4": "It is securely processed under PCI-DSS encryption. It ensures the uninterrupted flow of your fresh meals and training, and you can pause or cancel anytime without fees.",
             "modalTitle": "Checkout & Secure Payment (Paraguay)",
             "step1Badge": "Step 1",
             "step1Title": "Fight Club Training (Areguá)",
@@ -3075,9 +3071,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "step2Title": "Choose Your Nutrition Plan (Club Kitchen)",
             "lblSelectDish": "Select your Dish or Street-Food:",
             "lblPlateQuantity": "Number of Meals (Buy 5 = 6th FREE!):",
-            "adTitle": "✓ Automatic Debit Included (-5% discount)",
+            "adTitle": "✓ Automatic Debit Included",
             "adSub": "Automatic hassle-free payment. Cancel anytime in 1 click.",
-            "adStatusPill": "-5% INCLUDED",
+            "adStatusPill": "ACTIVE",
             "blockServices": "3. Services & Delivery",
             "lblDelivery": "<strong>Home Delivery Service (+20% of subscription)</strong> — Free pickup at the club otherwise.",
             "lblDoubleProt": "Double Protein Portion (+2x Meat/Chicken: +10,000 ₲ per meal)",
@@ -3111,7 +3107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "txtTigoNote": "Send your money to 0984430018 (Rodrigo Rafael Noguera) and confirm via WhatsApp.",
             "txtQrTitle": "📲 Payment via SIPAP Alias from your Banking App",
             "txtQrCompatible": "Compatible with Itaú, Continental, Ueno, Familiar, Sudameris, Atlas, and GNB.",
-            "sumDiscountLabel": "Auto-Debit Discount (-5%):",
+            "sumDiscountLabel": "Auto-Debit Discount:",
             "sumDeliveryLabel": "Areguá Delivery (+20%):",
             "sumProtLabel": "Double Protein Portion:",
             "sumTotalLabel": "TOTAL DUE:",
@@ -3124,8 +3120,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "legalArt2Text": "All meal preparations served by Restaurante del Olimpo comply strictly with sanitation standards established by Paraguay's <strong>INAN</strong> and the Ministry of Public Health. Macronutrients are weighed and prepared fresh daily. Cold-chain safety is maintained for all meat and probiotic ingredients.",
             "legalArt3Title": "3. Physical Fitness & Combat Sports Practice (Law No. 2874/06)",
             "legalArt3Text": "In accordance with Paraguayan sports laws, all members attending <strong>K-1 Kickboxing</strong> and <strong>Traditional Boxing</strong> certify they are in sound cardiovascular condition. Mandatory protective gear (hand wraps, mouthguard, regulation gloves) is required during controlled sparring.",
-            "legalArt4Title": "4. Bancard Auto-Debit & Cancellation Policy",
-            "legalArt4Text": "Subscriptions with « Auto-Debit » benefit from an immediate 5% discount. Recurring payments are processed via <strong>Bancard vPOS Paraguay</strong> (PCI-DSS certified). You may pause or cancel anytime via WhatsApp (+595 995 620416) at least 48 hours prior to renewal, with zero cancellation fees.",
+            "legalArt4Title": "4. Auto-Debit & Cancellation Policy",
+            "legalArt4Text": "Subscriptions and recurring meal plans are securely processed under PCI-DSS certification. You may pause or cancel auto-debit anytime via WhatsApp (+595 995 620416) with 48 hours notice with zero penalties.",
             "legalArt5Title": "5. Legal Tax Invoicing (Paraguay Law No. 6380/19)",
             "legalArt5Text": "All transactions are issued an official Paraguay Tax Invoice (Factura Legal) with VAT included (10% and 5%). Clients provide their RUC or Cédula (C.I.) during order confirmation.",
             "legalArt6Title": "6. Home Delivery Service",
