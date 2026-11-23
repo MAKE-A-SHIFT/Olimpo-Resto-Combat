@@ -34,8 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lang: detectInitialLanguage(),
     selectedCycle: 'mensual', // 'semanal' or 'mensual'
     autoDebitActive: true,
-    clubChoice: 'club_monthly', // 'club_monthly', 'club_trial', 'club_already', 'club_none'
-    nutritionChoice: 'pack_fighter_pro', // 'pack_fighter_pro', 'pack_1_plato', 'plato_unico', 'none'
+    checkoutType: 'nutrition', // 'nutrition' or 'club' (Strictly separate orders for clean accounting)
+    clubChoice: 'club_monthly', // 'club_monthly', 'club_trial'
+    nutritionChoice: 'pack_fighter_pro', // 'pack_fighter_pro', 'pack_1_plato', 'plato_unico'
     currentDish: 'El Explosivo (Lunes)',
     plateQuantity: 1,
     currentGateway: 'bancard',
@@ -121,15 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
       plato_unico: { price: 25000, perMeal: 25000, name: '1 Plato a elección', meals: '1 comida' },
       pack_1_plato: { price: 140000, perMeal: 23333, name: '1 Plato / día', meals: '6 comidas' },
       pack_fighter_pro: { price: 260000, perMeal: 21666, name: '2 Platos / día (Fighter Pro)', meals: '12 comidas' },
-      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Club Kickboxing & Boxeo', meals: 'Mes completo', isMonthlyOnly: true },
-      combo_elite: { price: 300000, perMeal: 16666, name: 'Combo : Club + 2 Platos / día', meals: 'Total' }
+      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Club Kickboxing & Boxeo', meals: 'Mes completo', isMonthlyOnly: true }
     },
     mensual: {
       plato_unico: { price: 25000, perMeal: 25000, name: '1 Plato a elección', meals: '1 comida' },
       pack_1_plato: { price: 500000, perMeal: 20833, name: '1 Plato / día', meals: 'Mes completo (Lun a Sáb)' },
       pack_fighter_pro: { price: 950000, perMeal: 19791, name: '2 Platos / día (Fighter Pro)', meals: 'Mes completo (2 platos/día)' },
-      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Club Kickboxing & Boxeo', meals: 'Mes completo', isMonthlyOnly: true },
-      combo_elite: { price: 1100000, perMeal: 16500, name: 'Combo : Club + 2 Platos / día', meals: 'Total' }
+      club_kickboxing: { price: 150000, perMeal: 6250, name: 'Club Kickboxing & Boxeo', meals: 'Mes completo', isMonthlyOnly: true }
     }
   };
 
@@ -722,14 +721,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = state.lang || 'es';
 
     const priceUnitLabels = {
-      es: { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado (Cuota mensual)', comboSub: 'Club Ilimitado + 2 Platos/Día' },
-      fr: { sem: '/sem', mes: '/mois', save: 'Économise', perPlate: '/ plat', clubFree: 'Accès Libre Illimité (Paiement mensuel)', comboSub: 'Club Illimité + 2 Plats/Jour' },
-      en: { sem: '/wk', mes: '/mo', save: 'Save', perPlate: '/ meal', clubFree: 'Unlimited Gym Access (Monthly only)', comboSub: 'Unlimited Club + 2 Meals/Day' }
-    }[lang] || { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado (Cuota mensual)', comboSub: 'Club Ilimitado + 2 Platos/Día' };
+      es: { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado (Cuota mensual)' },
+      fr: { sem: '/sem', mes: '/mois', save: 'Économise', perPlate: '/ plat', clubFree: 'Accès Libre Illimité (Paiement mensuel)' },
+      en: { sem: '/wk', mes: '/mo', save: 'Save', perPlate: '/ meal', clubFree: 'Unlimited Gym Access (Monthly only)' }
+    }[lang] || { sem: '/sem', mes: '/mes', save: 'Ahorrás', perPlate: '/ plato', clubFree: 'Acceso Libre Ilimitado (Cuota mensual)' };
 
     const periodUnit = state.selectedCycle === 'semanal' ? priceUnitLabels.sem : priceUnitLabels.mes;
 
-    ['pack_1_plato', 'pack_fighter_pro', 'club_kickboxing', 'combo_elite'].forEach(key => {
+    ['pack_1_plato', 'pack_fighter_pro', 'club_kickboxing'].forEach(key => {
       // El pago del Club de Combate es estrictamente mensual, nunca semanal
       const plan = (key === 'club_kickboxing') ? pricingData.mensual.club_kickboxing : currentData[key];
       if (!plan) return;
@@ -755,8 +754,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (perMealElem) {
         if (key === 'club_kickboxing') {
           perMealElem.textContent = priceUnitLabels.clubFree;
-        } else if (key === 'combo_elite') {
-          perMealElem.textContent = priceUnitLabels.comboSub;
         } else {
           perMealElem.textContent = `${perMealFinal.toLocaleString('es-PY')} ₲ ${priceUnitLabels.perPlate}`;
         }
@@ -848,10 +845,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fighter_pro_mensual: {
       commission: 95000,
       label: { es: 'Pack Fighter Pro Mensual', fr: 'Pack Fighter Pro Mensuel', en: 'Monthly Fighter Pro Pack' }
-    },
-    combo_elite_mensual: {
-      commission: 117500,
-      label: { es: 'Combo Fighter Elite', fr: 'Combo Fighter Elite', en: 'Fighter Elite Combo' }
     },
     pack_semanal: {
       commission: 20000,
@@ -1571,24 +1564,90 @@ document.addEventListener('DOMContentLoaded', () => {
   const sumExtraProtein = document.getElementById('sumExtraProtein');
   const sumTotal = document.getElementById('sumTotal');
 
+  // --- DEDICATED CHECKOUT TYPE SWITCHER & ROUTING (COMPTABILITÉ SÉPARÉE) ---
+  window.switchCheckoutType = function(type) {
+    state.checkoutType = type || 'nutrition';
+    const typeNutritionBtn = document.getElementById('typeNutritionBtn');
+    const typeClubBtn = document.getElementById('typeClubBtn');
+    const sectionNutrition = document.getElementById('sectionCheckoutNutrition');
+    const sectionClub = document.getElementById('sectionCheckoutClub');
+    const servicesDeliveryBlock = document.getElementById('servicesDeliveryBlock');
+    const modalQuoteBox = document.getElementById('modalNutritionQuoteBox');
+    const wrapSumClub = document.getElementById('wrapSumClub');
+    const wrapSumPlan = document.getElementById('wrapSumPlan');
+    const wrapSumDelivery = document.getElementById('wrapSumDelivery');
+    const wrapSumProt = document.getElementById('wrapSumProt');
+
+    if (state.checkoutType === 'club') {
+      if (typeClubBtn) typeClubBtn.classList.add('active');
+      if (typeNutritionBtn) typeNutritionBtn.classList.remove('active');
+      if (sectionClub) sectionClub.style.display = 'block';
+      if (sectionNutrition) sectionNutrition.style.display = 'none';
+      if (servicesDeliveryBlock) servicesDeliveryBlock.style.display = 'none';
+      if (modalQuoteBox) modalQuoteBox.style.display = 'none';
+      if (wrapSumClub) wrapSumClub.style.display = 'flex';
+      if (wrapSumPlan) wrapSumPlan.style.display = 'none';
+      if (wrapSumDelivery) wrapSumDelivery.style.display = 'none';
+      if (wrapSumProt) wrapSumProt.style.display = 'none';
+    } else {
+      if (typeNutritionBtn) typeNutritionBtn.classList.add('active');
+      if (typeClubBtn) typeClubBtn.classList.remove('active');
+      if (sectionNutrition) sectionNutrition.style.display = 'block';
+      if (sectionClub) sectionClub.style.display = 'none';
+      if (servicesDeliveryBlock) servicesDeliveryBlock.style.display = 'block';
+      if (modalQuoteBox) modalQuoteBox.style.display = 'flex';
+      if (wrapSumClub) wrapSumClub.style.display = 'none';
+      if (wrapSumPlan) wrapSumPlan.style.display = 'flex';
+      if (wrapSumDelivery) wrapSumDelivery.style.display = (deliveryCheckbox && deliveryCheckbox.checked) ? 'flex' : 'none';
+      if (wrapSumProt) wrapSumProt.style.display = (doubleProteinCheckbox && doubleProteinCheckbox.checked) ? 'flex' : 'none';
+    }
+
+    recalculateCheckoutSummary();
+    updateSubmitButtonText();
+  };
+
+  function updateSubmitButtonText() {
+    const btnSubmit = document.getElementById('btnSubmitOrder');
+    if (!btnSubmit) return;
+    const lang = state.lang || 'es';
+    if (state.checkoutType === 'club') {
+      const texts = {
+        es: 'Inscribirme al Club & Enviar por WhatsApp (+595 984 430018)',
+        fr: 'Valider l\'Adhésion au Club & Envoyer sur WhatsApp (+595 984 430018)',
+        en: 'Join the Club & Send via WhatsApp (+595 984 430018)'
+      };
+      btnSubmit.textContent = texts[lang] || texts.es;
+    } else {
+      const texts = {
+        es: 'Confirmar Pedido de Comida & Enviar por WhatsApp (+595 995 620416)',
+        fr: 'Valider la Commande Repas & Transmettre sur WhatsApp (+595 995 620416)',
+        en: 'Confirm Meal Order & Send via WhatsApp (+595 995 620416)'
+      };
+      btnSubmit.textContent = texts[lang] || texts.es;
+    }
+  }
+
   window.openCheckout = function(targetKey = 'pack_fighter_pro_mensual', dishName = '') {
     const cycle = state.selectedCycle || 'mensual';
     
-    if (targetKey === 'club_kickboxing') {
+    if (targetKey === 'club_kickboxing' || targetKey === 'club_monthly') {
+      state.checkoutType = 'club';
       state.clubChoice = 'club_monthly';
-      state.nutritionChoice = 'none';
-    } else if (targetKey === 'combo_elite' || targetKey === 'combo_elite_mensual' || targetKey === 'combo_elite_semanal') {
-      state.clubChoice = 'club_already';
-      state.nutritionChoice = targetKey === 'combo_elite' ? (cycle === 'semanal' ? 'combo_elite_semanal' : 'combo_elite_mensual') : targetKey;
+    } else if (targetKey === 'club_trial') {
+      state.checkoutType = 'club';
+      state.clubChoice = 'club_trial';
     } else if (targetKey === 'pack_fighter_pro' || targetKey === 'pack_fighter_pro_mensual' || targetKey === 'pack_fighter_pro_semanal') {
+      state.checkoutType = 'nutrition';
       state.nutritionChoice = targetKey === 'pack_fighter_pro' ? (cycle === 'semanal' ? 'pack_fighter_pro_semanal' : 'pack_fighter_pro_mensual') : targetKey;
     } else if (targetKey === 'pack_1_plato' || targetKey === 'pack_1_plato_mensual' || targetKey === 'pack_1_plato_semanal') {
+      state.checkoutType = 'nutrition';
       state.nutritionChoice = targetKey === 'pack_1_plato' ? (cycle === 'semanal' ? 'pack_1_plato_semanal' : 'pack_1_plato_mensual') : targetKey;
     } else if (targetKey === 'plato_unico') {
-      state.clubChoice = 'club_already';
+      state.checkoutType = 'nutrition';
       state.nutritionChoice = 'plato_unico';
       if (dishName) state.currentDish = dishName;
     } else {
+      state.checkoutType = 'nutrition';
       state.nutritionChoice = targetKey;
     }
 
@@ -1604,8 +1663,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    window.switchCheckoutType(state.checkoutType);
     toggleSingleDishVisibility();
-    recalculateCheckoutSummary();
     if (checkoutModal) checkoutModal.classList.add('open');
   };
 
@@ -1695,148 +1754,101 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = state.lang || 'es';
     const labels = {
       es: {
-        proMensual: '2 Platos / día (Fighter Pro) — 950.000 ₲',
-        proSemanal: '2 Platos / día (Fighter Pro) — 260.000 ₲',
-        pack1Mensual: '1 Plato / día — 500.000 ₲',
-        pack1Semanal: '1 Plato / día — 140.000 ₲',
-        eliteMensual: 'Combo : Club + 2 Platos / día — 1.100.000 ₲',
-        eliteSemanal: 'Combo : Club + 2 Platos / día — 300.000 ₲',
-        noMeals: 'Sin comida (Solo club)',
-        clubCombo: '✓ Club Kickboxing & Boxeo (Incluido)',
-        clubPaid: (p, u) => `✓ Club Kickboxing & Boxeo (${p} ₲/${u})`,
-        clubTrial: '✓ 1er Día de Prueba GRATIS (0 ₲)',
-        clubAlready: '✓ Ya soy miembro del club (0 ₲)',
-        clubNone: '— Sin acceso al club',
-        sem: 'sem',
+        proMensual: '2 Platos / día (Fighter Pro) — 950.000 ₲ / mes',
+        proSemanal: '2 Platos / día (Fighter Pro) — 260.000 ₲ / sem',
+        pack1Mensual: '1 Plato / día — 500.000 ₲ / mes',
+        pack1Semanal: '1 Plato / día — 140.000 ₲ / sem',
+        clubMonthly: 'Membresía Mensual Kickboxing & Boxeo (150.000 ₲ / mes)',
+        clubTrial: '1er Día de Prueba GRATIS (0 ₲)',
         mes: 'mes'
       },
       fr: {
-        proMensual: '2 repas / jour (Fighter Pro) — 950.000 ₲',
-        proSemanal: '2 repas / jour (Fighter Pro) — 260.000 ₲',
-        pack1Mensual: '1 repas / jour — 500.000 ₲',
-        pack1Semanal: '1 repas / jour — 140.000 ₲',
-        eliteMensual: 'Combo : Club + 2 repas / jour — 1.100.000 ₲',
-        eliteSemanal: 'Combo : Club + 2 repas / jour — 300.000 ₲',
-        noMeals: 'Sans repas (Club seul)',
-        clubCombo: '✓ Club Kickboxing & Boxe (Inclus)',
-        clubPaid: (p, u) => `✓ Club Kickboxing & Boxe (${p} ₲/${u})`,
-        clubTrial: '✓ 1er Cours d\'Essai GRATUIT (0 ₲)',
-        clubAlready: '✓ Déjà membre du club (0 ₲)',
-        clubNone: '— Pas d\'accès au club',
-        sem: 'sem',
+        proMensual: '2 repas / jour (Fighter Pro) — 950.000 ₲ / mois',
+        proSemanal: '2 repas / jour (Fighter Pro) — 260.000 ₲ / sem',
+        pack1Mensual: '1 repas / jour — 500.000 ₲ / mois',
+        pack1Semanal: '1 repas / jour — 140.000 ₲ / sem',
+        clubMonthly: 'Abonnement Mensuel Kickboxing & Boxe (150.000 ₲ / mois)',
+        clubTrial: '1er Cours d\'Essai GRATUIT (0 ₲)',
         mes: 'mois'
       },
       en: {
-        proMensual: '2 Meals / day (Fighter Pro) — 950,000 ₲',
-        proSemanal: '2 Meals / day (Fighter Pro) — 260,000 ₲',
-        pack1Mensual: '1 Meal / day — 500,000 ₲',
-        pack1Semanal: '1 Meal / day — 140,000 ₲',
-        eliteMensual: 'Combo: Club + 2 Meals / day — 1,100,000 ₲',
-        eliteSemanal: 'Combo: Club + 2 Meals / day — 300,000 ₲',
-        noMeals: 'No meals (Club only)',
-        clubCombo: '✓ Kickboxing & Boxing Club (Included)',
-        clubPaid: (p, u) => `✓ Kickboxing & Boxing Club (${p} ₲/${u})`,
-        clubTrial: '✓ 1st Trial Day FREE (0 ₲)',
-        clubAlready: '✓ Already a club member (0 ₲)',
-        clubNone: '— No club access',
-        sem: 'wk',
+        proMensual: '2 Meals / day (Fighter Pro) — 950,000 ₲ / mo',
+        proSemanal: '2 Meals / day (Fighter Pro) — 260,000 ₲ / wk',
+        pack1Mensual: '1 Meal / day — 500,000 ₲ / mo',
+        pack1Semanal: '1 Meal / day — 140,000 ₲ / wk',
+        clubMonthly: 'Monthly Kickboxing & Boxing Club (150,000 ₲ / mo)',
+        clubTrial: '1st Trial Day FREE (0 ₲)',
         mes: 'mo'
       }
     }[lang] || {};
 
     let nutritionBase = 0;
-    let nutritionLabel = labels.noMeals;
-    let isCombo = false;
-
-    if (state.nutritionChoice === 'pack_fighter_pro_mensual' || (state.nutritionChoice === 'pack_fighter_pro' && packCycle === 'mensual')) {
-      nutritionBase = 950000;
-      nutritionLabel = labels.proMensual;
-    } else if (state.nutritionChoice === 'pack_fighter_pro_semanal' || (state.nutritionChoice === 'pack_fighter_pro' && packCycle === 'semanal')) {
-      nutritionBase = 260000;
-      nutritionLabel = labels.proSemanal;
-    } else if (state.nutritionChoice === 'pack_1_plato_mensual' || (state.nutritionChoice === 'pack_1_plato' && packCycle === 'mensual')) {
-      nutritionBase = 500000;
-      nutritionLabel = labels.pack1Mensual;
-    } else if (state.nutritionChoice === 'pack_1_plato_semanal' || (state.nutritionChoice === 'pack_1_plato' && packCycle === 'semanal')) {
-      nutritionBase = 140000;
-      nutritionLabel = labels.pack1Semanal;
-    } else if (state.nutritionChoice === 'combo_elite_mensual' || (state.nutritionChoice === 'combo_elite' && packCycle === 'mensual')) {
-      nutritionBase = 1100000;
-      nutritionLabel = labels.eliteMensual;
-      isCombo = true;
-    } else if (state.nutritionChoice === 'combo_elite_semanal' || (state.nutritionChoice === 'combo_elite' && packCycle === 'semanal')) {
-      nutritionBase = 300000;
-      nutritionLabel = labels.eliteSemanal;
-      isCombo = true;
-    } else if (state.nutritionChoice === 'plato_unico') {
-      const selectedDishObj = availableDishesList.find(d => dishSelectElem && dishSelectElem.value === d.id) || availableDishesList[0];
-      const singlePrice = selectedDishObj.price;
-      const qty = state.plateQuantity || 1;
-      nutritionBase = singlePrice * qty;
-      const localizedDishText = dishSelectElem && dishSelectElem.options[dishSelectElem.selectedIndex]
-        ? dishSelectElem.options[dishSelectElem.selectedIndex].text.split('(')[0].trim()
-        : selectedDishObj.name.split('(')[0].trim();
-      nutritionLabel = `${qty}x ${localizedDishText}`;
-    } else {
-      nutritionBase = 0;
-      nutritionLabel = labels.noMeals;
-    }
-
+    let nutritionLabel = '';
     let clubBase = 0;
-    let clubLabel = labels.clubNone;
-
-    if (isCombo) {
-      clubBase = 0;
-      clubLabel = labels.clubCombo;
-    } else if (state.clubChoice === 'club_monthly') {
-      // Le club est strictement mensuel (150.000 ₲ / mois), jamais à la semaine
-      clubBase = 150000;
-      clubLabel = labels.clubPaid('150.000', labels.mes);
-    } else if (state.clubChoice === 'club_trial') {
-      clubBase = 0;
-      clubLabel = labels.clubTrial;
-    } else if (state.clubChoice === 'club_already') {
-      clubBase = 0;
-      clubLabel = labels.clubAlready;
-    } else {
-      clubBase = 0;
-      clubLabel = labels.clubNone;
-    }
-
-    const subtotalBeforeDiscounts = clubBase + nutritionBase;
-
-    // Débito automático estándar (precio base SaaS directo sin recargo ni descuento adicional)
-    let discount = 0;
-
-    // Double protein: +10.000 ₲ per meal
+    let clubLabel = '';
     let extraProteinCost = 0;
-    if (doubleProteinCheckbox && doubleProteinCheckbox.checked && state.nutritionChoice !== 'none') {
-      if (state.nutritionChoice === 'plato_unico') {
-        extraProteinCost = (state.plateQuantity || 1) * 10000;
-      } else if (state.nutritionChoice.includes('1_plato')) {
-        extraProteinCost = (packCycle === 'semanal' ? 6 : 24) * 10000;
-      } else if (state.nutritionChoice.includes('fighter_pro') || state.nutritionChoice.includes('combo_elite')) {
-        extraProteinCost = (packCycle === 'semanal' ? 12 : 48) * 10000;
-      }
-    }
-
-    // Delivery: exactly +20% of subscription subtotal as specified
     let deliveryCost = 0;
-    if (deliveryCheckbox && deliveryCheckbox.checked && subtotalBeforeDiscounts > 0) {
-      deliveryCost = Math.round(subtotalBeforeDiscounts * 0.20);
-    }
+    let finalTotal = 0;
 
-    const finalTotal = Math.max(0, subtotalBeforeDiscounts + extraProteinCost + deliveryCost);
+    if (state.checkoutType === 'club') {
+      if (state.clubChoice === 'club_trial') {
+        clubBase = 0;
+        clubLabel = labels.clubTrial;
+      } else {
+        clubBase = 150000;
+        clubLabel = labels.clubMonthly;
+      }
+      finalTotal = clubBase;
+    } else {
+      if (state.nutritionChoice === 'pack_fighter_pro_mensual' || (state.nutritionChoice === 'pack_fighter_pro' && packCycle === 'mensual')) {
+        nutritionBase = 950000;
+        nutritionLabel = labels.proMensual;
+      } else if (state.nutritionChoice === 'pack_fighter_pro_semanal' || (state.nutritionChoice === 'pack_fighter_pro' && packCycle === 'semanal')) {
+        nutritionBase = 260000;
+        nutritionLabel = labels.proSemanal;
+      } else if (state.nutritionChoice === 'pack_1_plato_mensual' || (state.nutritionChoice === 'pack_1_plato' && packCycle === 'mensual')) {
+        nutritionBase = 500000;
+        nutritionLabel = labels.pack1Mensual;
+      } else if (state.nutritionChoice === 'pack_1_plato_semanal' || (state.nutritionChoice === 'pack_1_plato' && packCycle === 'semanal')) {
+        nutritionBase = 140000;
+        nutritionLabel = labels.pack1Semanal;
+      } else if (state.nutritionChoice === 'plato_unico') {
+        const selectedDishObj = availableDishesList.find(d => dishSelectElem && dishSelectElem.value === d.id) || availableDishesList[0];
+        const singlePrice = selectedDishObj.price;
+        const qty = state.plateQuantity || 1;
+        nutritionBase = singlePrice * qty;
+        const localizedDishText = dishSelectElem && dishSelectElem.options[dishSelectElem.selectedIndex]
+          ? dishSelectElem.options[dishSelectElem.selectedIndex].text.split('(')[0].trim()
+          : selectedDishObj.name.split('(')[0].trim();
+        nutritionLabel = `${qty}x ${localizedDishText}`;
+      } else {
+        nutritionBase = 950000;
+        nutritionLabel = labels.proMensual;
+      }
+
+      if (doubleProteinCheckbox && doubleProteinCheckbox.checked) {
+        if (state.nutritionChoice === 'plato_unico') {
+          extraProteinCost = (state.plateQuantity || 1) * 10000;
+        } else if (state.nutritionChoice.includes('1_plato')) {
+          extraProteinCost = (packCycle === 'semanal' ? 6 : 24) * 10000;
+        } else {
+          extraProteinCost = (packCycle === 'semanal' ? 12 : 48) * 10000;
+        }
+      }
+
+      if (deliveryCheckbox && deliveryCheckbox.checked && nutritionBase > 0) {
+        deliveryCost = Math.round(nutritionBase * 0.20);
+      }
+
+      finalTotal = Math.max(0, nutritionBase + extraProteinCost + deliveryCost);
+    }
 
     return {
       packCycle,
       nutritionBase,
       nutritionLabel,
-      isCombo,
       clubBase,
       clubLabel,
-      subtotalBeforeDiscounts,
-      discount,
       extraProteinCost,
       deliveryCost,
       finalTotal
@@ -1846,25 +1858,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- RECALCULATE CHECKOUT SUMMARY (DOM SYNC) ---
   function recalculateCheckoutSummary() {
     const calc = getCheckoutCalculations();
+    const wrapSumClub = document.getElementById('wrapSumClub');
+    const wrapSumPlan = document.getElementById('wrapSumPlan');
+    const wrapSumDelivery = document.getElementById('wrapSumDelivery');
+    const wrapSumProt = document.getElementById('wrapSumProt');
 
-    // Update DOM summary
-    if (sumClubName) sumClubName.textContent = calc.clubLabel + ' :';
-    if (sumClubPrice) sumClubPrice.textContent = `${calc.clubBase.toLocaleString('es-PY')} ₲`;
-    if (sumPlanName) sumPlanName.textContent = calc.nutritionLabel + ' :';
-    if (sumPlanPrice) sumPlanPrice.textContent = `${calc.nutritionBase.toLocaleString('es-PY')} ₲`;
+    if (state.checkoutType === 'club') {
+      if (wrapSumClub) wrapSumClub.style.display = 'flex';
+      if (wrapSumPlan) wrapSumPlan.style.display = 'none';
+      if (wrapSumDelivery) wrapSumDelivery.style.display = 'none';
+      if (wrapSumProt) wrapSumProt.style.display = 'none';
+      if (sumClubName) sumClubName.textContent = calc.clubLabel + ' :';
+      if (sumClubPrice) sumClubPrice.textContent = `${calc.clubBase.toLocaleString('es-PY')} ₲`;
+    } else {
+      if (wrapSumClub) wrapSumClub.style.display = 'none';
+      if (wrapSumPlan) wrapSumPlan.style.display = 'flex';
+      if (wrapSumDelivery) wrapSumDelivery.style.display = calc.deliveryCost > 0 ? 'flex' : 'none';
+      if (wrapSumProt) wrapSumProt.style.display = calc.extraProteinCost > 0 ? 'flex' : 'none';
+      if (sumPlanName) sumPlanName.textContent = calc.nutritionLabel + ' :';
+      if (sumPlanPrice) sumPlanPrice.textContent = `${calc.nutritionBase.toLocaleString('es-PY')} ₲`;
+      if (sumDelivery) sumDelivery.textContent = `+${calc.deliveryCost.toLocaleString('es-PY')} ₲ (+20%)`;
+      if (sumExtraProtein) sumExtraProtein.textContent = `+${calc.extraProteinCost.toLocaleString('es-PY')} ₲`;
+    }
+
     const wrapSumDiscount = document.getElementById('wrapSumDiscount');
-    if (wrapSumDiscount) {
-      wrapSumDiscount.style.display = 'none';
-    }
-    if (sumDiscount) {
-      sumDiscount.textContent = '0 ₲';
-    }
-    if (sumDelivery) {
-      sumDelivery.textContent = calc.deliveryCost > 0 ? `+${calc.deliveryCost.toLocaleString('es-PY')} ₲ (+20%)` : '0 ₲';
-    }
-    if (sumExtraProtein) {
-      sumExtraProtein.textContent = calc.extraProteinCost > 0 ? `+${calc.extraProteinCost.toLocaleString('es-PY')} ₲` : '0 ₲';
-    }
+    if (wrapSumDiscount) wrapSumDiscount.style.display = 'none';
+    if (sumDiscount) sumDiscount.textContent = '0 ₲';
+
     if (sumTotal) {
       sumTotal.textContent = `${calc.finalTotal.toLocaleString('es-PY')} ₲`;
     }
@@ -1944,7 +1964,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.OLIMPO_PAYMENTS_CONFIG = OLIMPO_PAYMENTS_CONFIG;
 
-  // --- CHECKOUT FORM SUBMISSION & DUAL WHATSAPP TRANSMISSION ---
+  // --- CHECKOUT FORM SUBMISSION & DUAL WHATSAPP TRANSMISSION (STRICT ACCOUNTING SEPARATION) ---
   const checkoutForm = document.getElementById('checkoutForm');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', async (e) => {
@@ -1962,6 +1982,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isAutoDebit = autoDebitCheckbox?.checked || false;
 
       const calc = getCheckoutCalculations();
+      const isClubOrder = state.checkoutType === 'club';
       const finalAmount = calc.finalTotal;
 
       // Credit ambassador in local student DB if referral code is present
@@ -1978,12 +1999,12 @@ document.addEventListener('DOMContentLoaded', () => {
             paidOut: 0
           };
         }
-        const commRate = state.nutritionChoice === 'none' ? 0.15 : 0.10;
-        const commAmount = Math.round(calc.subtotalBeforeDiscounts * commRate);
+        const commRate = isClubOrder ? 0.15 : 0.10;
+        const commAmount = Math.round(finalAmount * commRate);
         db[effectiveRef].referrals = db[effectiveRef].referrals || [];
         db[effectiveRef].referrals.unshift({
           friendName: custName,
-          planKey: state.nutritionChoice !== 'none' ? state.nutritionChoice : 'club_150k',
+          planKey: isClubOrder ? (state.clubChoice || 'club_150k') : state.nutritionChoice,
           commission: commAmount,
           date: new Date().toLocaleDateString('es-PY')
         });
@@ -2003,11 +2024,10 @@ document.addEventListener('DOMContentLoaded', () => {
         qr: 'Alias SIPAP / QR (Banco Familiar - 0984430018)'
       };
 
-      // Dual WhatsApp routing:
-      // If user ONLY booked a Free Trial Session (club_trial + no meals), send to +595 984 430018
-      // Otherwise send to +595 995 620416
-      const isTrialOnly = state.clubChoice === 'club_trial' && state.nutritionChoice === 'none';
-      const targetPhone = isTrialOnly ? '595984430018' : '595995620416';
+      // STRICT ACCOUNTING SEPARATION ROUTING:
+      // CLUB MEMBERSHIP / TRIAL -> Rodrigo Rafael Noguera Barrientos (+595 984 430018)
+      // NUTRITION PACKS & STREET FOOD -> Luck / Cocina Olimpo (+595 995 620416)
+      const targetPhone = isClubOrder ? '595984430018' : '595995620416';
 
       const paymentDetailSnippet = (state.currentGateway === 'sipap' || state.currentGateway === 'qr')
         ? `🏦 *Datos SIPAP :* Banco Familiar | Titular: Rodrigo Rafael Noguera Barrientos | Alias: 0984430018\n`
@@ -2015,35 +2035,63 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `📱 *Giro Tigo :* Envío a 0984430018 (Rodrigo Rafael Noguera)\n`
           : '');
 
-      const waMessage = isTrialOnly
-        ? `🥊 *RESERVA DE SESIÓN DE PRUEBA GRATUITA - OLIMPO TEAM AREGUÁ*\n` +
-          `----------------------------------------\n` +
-          `👤 *Atleta :* ${custName}\n` +
-          `📱 *WhatsApp :* ${custPhone}\n` +
-          `🆔 *C.I. :* ${custCI || 'Sin C.I.'}\n` +
-          (effectiveRef ? `🤝 *Invitado por (Código Alumno) :* ${effectiveRef}\n` : '') +
-          `----------------------------------------\n` +
-          `¡Hola! Quiero confirmar mi primera sesión de prueba gratuita en el Club de Combate Olimpo (Av. Las Residentas, Areguá).`
-        : `🏛️ *NUEVA ORDEN / PEDIDO - OLIMPO TEAM AREGUÁ*\n` +
+      let waMessage = '';
+      if (isClubOrder) {
+        if (state.clubChoice === 'club_trial') {
+          waMessage = `🥊 *RESERVA DE SESIÓN DE PRUEBA GRATUITA - CLUB OLIMPO AREGUÁ*\n` +
+            `----------------------------------------\n` +
+            `👤 *Atleta :* ${custName}\n` +
+            `📱 *WhatsApp :* ${custPhone}\n` +
+            `🆔 *C.I. :* ${custCI || 'Sin C.I.'}\n` +
+            (effectiveRef ? `🤝 *Invitado por (Código Alumno) :* ${effectiveRef}\n` : '') +
+            `----------------------------------------\n` +
+            `🥋 *Profesor :* Rodrigo Rafael Noguera Barrientos\n` +
+            `📍 *Sede :* Club Olimpo, Av. Las Residentas, Areguá\n` +
+            `----------------------------------------\n` +
+            `¡Hola Profesor Rodrigo! Quiero confirmar mi primera sesión de prueba gratuita de Kickboxing & Boxeo en el Club Olimpo.`;
+        } else {
+          waMessage = `🥊 *INSCRIPCIÓN AL CLUB DE COMBATE - OLIMPO TEAM AREGUÁ*\n` +
+            `----------------------------------------\n` +
+            `👤 *Atleta :* ${custName}\n` +
+            `📱 *WhatsApp :* ${custPhone}\n` +
+            `🆔 *C.I. / RUC :* ${custCI || 'Consumidor Final (Sin RUC)'}\n` +
+            `📍 *Sede :* Av. Las Residentas, Areguá\n` +
+            (effectiveRef ? `🤝 *Referido por (Código Alumno) :* ${effectiveRef}\n` : '') +
+            `----------------------------------------\n` +
+            `🥊 *Plan :* Membresía Club Kickboxing K-1 & Boxeo (Acceso Libre Ilimitado)\n` +
+            `🔄 *Débito Automático :* SÍ (Renovación mensual)\n` +
+            `💳 *Medio de Pago :* ${gatewayNames[state.currentGateway] || state.currentGateway}\n` +
+            paymentDetailSnippet +
+            `----------------------------------------\n` +
+            `💰 *TOTAL CUOTA MENSUAL :* *${calc.clubBase.toLocaleString('es-PY')} ₲ / mes*\n` +
+            `----------------------------------------\n` +
+            `🥋 *Profesor Responsable :* Rodrigo Rafael Noguera Barrientos (+595 984 430018)\n` +
+            `ℹ️ *Contabilidad Club :* Pago de cuota deportiva directo al Prof. Rodrigo. (Comidas se gestionan por separado con Cocina).\n` +
+            `_Enviado desde la web oficial Olimpo Team Kickboxing & Restaurante (Areguá)_`;
+        }
+      } else {
+        waMessage = `🥗 *PEDIDO DE NUTRICIÓN ATHLETIC FOOD - COCINA OLIMPO AREGUÁ*\n` +
           `----------------------------------------\n` +
           `👤 *Cliente :* ${custName}\n` +
           `📱 *WhatsApp :* ${custPhone}\n` +
           `🆔 *C.I. / RUC :* ${custCI || 'Consumidor Final (Sin RUC)'}\n` +
-          `📍 *Dirección :* ${custAddress}\n` +
+          `📍 *Dirección de Entrega / Retiro :* ${custAddress}\n` +
           (effectiveRef ? `🤝 *Referido por (Código Alumno) :* ${effectiveRef}\n` : '') +
           `----------------------------------------\n` +
-          `🥊 *Paso 1 (Club) :* ${calc.clubLabel}\n` +
-          `🥗 *Paso 2 (Nutrición) :* ${calc.nutritionLabel} (${calc.nutritionBase.toLocaleString('es-PY')} ₲)\n` +
+          `🥗 *Pack Nutrición :* ${calc.nutritionLabel} (${calc.nutritionBase.toLocaleString('es-PY')} ₲)\n` +
+          (state.nutritionChoice === 'plato_unico' ? `🍽️ *Plato / Street-Food :* ${state.currentDish} (x${state.plateQuantity || 1})\n` : '') +
           `🔄 *Débito Automático :* ${isAutoDebit ? 'SÍ (Renovación automática)' : 'No'}\n` +
-          `🛵 *Delivery (+20%) :* ${hasDelivery ? `SÍ (+${calc.deliveryCost.toLocaleString('es-PY')} ₲)` : 'No (Retiro en el Club)'}\n` +
+          `🛵 *Delivery (+20%) :* ${hasDelivery ? `SÍ (+${calc.deliveryCost.toLocaleString('es-PY')} ₲)` : 'No (Retiro gratuito en el Club)'}\n` +
           `🥩 *Doble Proteína :* ${hasDoubleProt ? `SÍ (+${calc.extraProteinCost.toLocaleString('es-PY')} ₲)` : 'No'}\n` +
           `💳 *Medio de Pago :* ${gatewayNames[state.currentGateway] || state.currentGateway}\n` +
           paymentDetailSnippet +
           `----------------------------------------\n` +
           `💰 *TOTAL A PAGAR :* *${calc.finalTotal.toLocaleString('es-PY')} ₲*\n` +
           `----------------------------------------\n` +
+          `ℹ️ *Contabilidad Cocina :* Gestionado por Restaurante Olimpo (Luck +595 995 620416).\n` +
           `« Entrenar es el 50% del trabajo, la otra mitad es alimentarse como un campeón. »\n` +
-          `_Enviado desde la web oficial Olimpo Team Kickboxing & Restaurante (Av. Las Residentas, Areguá)_`;
+          `_Enviado desde la web oficial Olimpo Team Kickboxing & Restaurante (Areguá)_`;
+      }
 
       const encodedWA = encodeURIComponent(waMessage);
       const waUrl = `https://wa.me/${targetPhone}?text=${encodedWA}`;
@@ -2366,6 +2414,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "faqQ4": "¿Cómo funciona el débito automático?",
             "faqA4": "Es procesado con total seguridad bajo encriptación PCI-DSS. Asegura la continuidad de tus comidas y entrenamientos sin interrupciones y podés pausar o cancelar en cualquier momento sin costo alguno.",
             "modalTitle": "Inscripción & Pago Seguro (Paraguay)",
+            "typeNutritionTitle": "Packs Nutrición & Comida",
+            "typeClubTitle": "Membresía Club de Combate",
+            "noticeFoodAccounting": "Comprobante y contabilidad 100% Cocina Olimpo (Luck). El abono al Club de Combate (150.000 ₲/mes) se abona por separado a Rodrigo.",
+            "noticeClubAccounting": "Comprobante y contabilidad 100% Club de Combate (Prof. Rodrigo Noguera). Los packs de comida se gestionan por separado con la cocina.",
+            "stepNutritionBadge": "Comida",
+            "stepClubBadge": "Club",
             "step1Badge": "Paso 1",
             "step1Title": "Entrenamiento en el Club de Combate (Areguá)",
             "step1Desc": "Kickboxing K-1 Rules & Boxeo Tradicional Inglés. Ring de combate y bolsas pesadas.",
@@ -2488,7 +2542,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "stuRefOptClub": "🥊 Membresía Club (150.000 ₲) → Tu Comisión: +22.500 ₲ (15%)",
             "stuRefOptPack1": "🥗 Pack 1 Plato/Día Mensual (500.000 ₲) → Tu Comisión: +50.000 ₲ (10%)",
             "stuRefOptPro": "⭐ Pack Fighter Pro Mensual (950.000 ₲) → Tu Comisión: +95.000 ₲ (10%)",
-            "stuRefOptElite": "🏆 Combo Fighter Elite (1.100.000 ₲) → Tu Comisión: +117.500 ₲",
             "stuRefOptWeekly": "⚡ Pack Semanal (140k - 260k ₲) → Tu Comisión: +20.000 ₲ (10%)",
             "btnAddReferral": "✅ Validar este Referido",
             "lblCustRefCode": "Código de Referido / Alumno Olimpo (Opcional)",
@@ -2714,6 +2767,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "faqQ4": "Comment fonctionne le débit automatique ?",
             "faqA4": "Il est entièrement sécurisé sous cryptage PCI-DSS. Il assure la continuité de tes repas frais et de tes entraînements sans coupure, et tu peux annuler ou suspendre à tout moment sans frais.",
             "modalTitle": "Inscription & Paiement Sécurisé (Paraguay)",
+            "typeNutritionTitle": "Packs Nourriture Athlétique",
+            "typeClubTitle": "Abonnement Club de Combat",
+            "noticeFoodAccounting": "Comptabilité 100% Restaurant Olimpo. L'abonnement au Club de Combat (150.000 ₲/mois) se commande et se règle séparément.",
+            "noticeClubAccounting": "Comptabilité 100% Académie de Combat (Prof. Rodrigo Noguera). Les packs repas se commandent séparément auprès de la cuisine.",
+            "stepNutritionBadge": "Repas",
+            "stepClubBadge": "Combat",
             "step1Badge": "Étape 1",
             "step1Title": "Entraînement au Club de Combat (Areguá)",
             "step1Desc": "Kickboxing K-1 Rules & Boxe Traditionnelle Anglaise. Ring de frappe et sacs lourds.",
@@ -2836,7 +2895,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "stuRefOptClub": "🥊 Abonnement Club (150.000 ₲) → Ta Commission : +22.500 ₲ (15%)",
             "stuRefOptPack1": "🥗 Pack 1 Plat/Jour Mensuel (500.000 ₲) → Ta Commission : +50.000 ₲ (10%)",
             "stuRefOptPro": "⭐ Pack Fighter Pro Mensuel (950.000 ₲) → Ta Commission : +95.000 ₲ (10%)",
-            "stuRefOptElite": "🏆 Combo Fighter Elite (1.100.000 ₲) → Ta Commission : +117.500 ₲",
             "stuRefOptWeekly": "⚡ Pack Semaine (140k - 260k ₲) → Ta Commission : +20.000 ₲ (10%)",
             "btnAddReferral": "✅ Valider ce Filleul",
             "lblCustRefCode": "Code Parrain / Élève Olimpo (Optionnel)",
@@ -3062,6 +3120,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "faqQ4": "How does automatic debit work?",
             "faqA4": "It is securely processed under PCI-DSS encryption. It ensures the uninterrupted flow of your fresh meals and training, and you can pause or cancel anytime without fees.",
             "modalTitle": "Checkout & Secure Payment (Paraguay)",
+            "typeNutritionTitle": "Athletic Nutrition Packs",
+            "typeClubTitle": "Combat Club Membership",
+            "noticeFoodAccounting": "100% Olimpo Restaurant accounting. Combat Club Membership (150,000 ₲/mo) is ordered and paid separately.",
+            "noticeClubAccounting": "100% Combat Club accounting (Coach Rodrigo Noguera). Meal packs are ordered separately from the kitchen.",
+            "stepNutritionBadge": "Meals",
+            "stepClubBadge": "Club",
             "step1Badge": "Step 1",
             "step1Title": "Fight Club Training (Areguá)",
             "step1Desc": "K-1 Rules Kickboxing & Traditional Boxing. Official ring and heavy bags.",
@@ -3184,7 +3248,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "stuRefOptClub": "🥊 Club Membership (150,000 ₲) → Your Commission: +22,500 ₲ (15%)",
             "stuRefOptPack1": "🥗 Monthly 1 Meal/Day Pack (500,000 ₲) → Your Commission: +50,000 ₲ (10%)",
             "stuRefOptPro": "⭐ Monthly Fighter Pro Pack (950,000 ₲) → Your Commission: +95,000 ₲ (10%)",
-            "stuRefOptElite": "🏆 Fighter Elite Combo (1,100,000 ₲) → Your Commission: +117,500 ₲",
             "stuRefOptWeekly": "⚡ Weekly Pack (140k - 260k ₲) → Your Commission: +20,000 ₲ (10%)",
             "btnAddReferral": "✅ Validate this Referral",
             "lblCustRefCode": "Referral / Olimpo Student Code (Optional)",
@@ -3218,26 +3281,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutTranslations = {
     es: {
       clubChoices: {
-        club_monthly: '🥊 Club Kickboxing & Boxeo (+150.000 ₲ / mes)',
-        club_trial: '🆓 1er Día de Prueba GRATIS (0 ₲)',
-        club_already: '✓ Ya soy miembro del club (0 ₲)',
-        club_none: '— Sin acceso al club'
+        club_monthly: '🥊 Membresía Club Kickboxing & Boxeo (150.000 ₲ / mes)',
+        club_trial: '🆓 1er Día de Prueba GRATIS (0 ₲ — Sin compromiso)'
       },
       optgroups: {
         monthly: '📅 PLANES MENSUALES (Por mes)',
         weekly: '⚡ PLANES SEMANALES (6 días)',
-        single: '🍽️ POR PLATO',
-        none: '🥊 SIN COMIDA'
+        single: '🍽️ POR PLATO'
       },
       plans: {
         pack_fighter_pro_mensual: '2 Platos / día (Fighter Pro) — 950.000 ₲',
         pack_1_plato_mensual: '1 Plato / día — 500.000 ₲',
-        combo_elite_mensual: 'Combo : Club + 2 Platos / día — 1.100.000 ₲',
         pack_fighter_pro_semanal: '2 Platos / día (Fighter Pro) — 260.000 ₲',
         pack_1_plato_semanal: '1 Plato / día — 140.000 ₲',
-        combo_elite_semanal: 'Combo : Club + 2 Platos / día — 300.000 ₲',
-        plato_unico: '1 Plato a elección (desde 7.000 ₲)',
-        none: 'Sin comida (Solo club)'
+        plato_unico: '1 Plato a elección (desde 7.000 ₲)'
       },
       singleDishes: {
         lunes_explosivo: 'El Explosivo (Lunes - Pollo & Arroz) — 25.000 ₲',
@@ -3254,26 +3311,20 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     fr: {
       clubChoices: {
-        club_monthly: '🥊 Club Kickboxing & Boxe (+150.000 ₲ / mois)',
-        club_trial: '🆓 1er Cours d\'Essai GRATUIT (0 ₲)',
-        club_already: '✓ Déjà membre du club (0 ₲)',
-        club_none: '— Pas d\'accès au club'
+        club_monthly: '🥊 Abonnement Club Kickboxing & Boxe (150.000 ₲ / mois)',
+        club_trial: '🆓 1er Cours d\'Essai GRATUIT (0 ₲ — Sans engagement)'
       },
       optgroups: {
         monthly: '📅 AU MOIS (Mensuel)',
         weekly: '⚡ À LA SEMAINE (6 jours)',
-        single: '🍽️ AU PLAT',
-        none: '🥊 SANS REPAS'
+        single: '🍽️ AU PLAT'
       },
       plans: {
         pack_fighter_pro_mensual: '2 repas / jour (Fighter Pro) — 950.000 ₲',
         pack_1_plato_mensual: '1 repas / jour — 500.000 ₲',
-        combo_elite_mensual: 'Combo : Club + 2 repas / jour — 1.100.000 ₲',
         pack_fighter_pro_semanal: '2 repas / jour (Fighter Pro) — 260.000 ₲',
         pack_1_plato_semanal: '1 repas / jour — 140.000 ₲',
-        combo_elite_semanal: 'Combo : Club + 2 repas / jour — 300.000 ₲',
-        plato_unico: '1 plat au choix (dès 7.000 ₲)',
-        none: 'Sans repas (Club seul)'
+        plato_unico: '1 plat au choix (dès 7.000 ₲)'
       },
       singleDishes: {
         lunes_explosivo: 'El Explosivo (Lundi - Poulet & Riz) — 25.000 ₲',
@@ -3291,25 +3342,19 @@ document.addEventListener('DOMContentLoaded', () => {
     en: {
       clubChoices: {
         club_monthly: '🥊 Kickboxing & Boxing Club (+150,000 ₲ / mo)',
-        club_trial: '🆓 1st Trial Day FREE (0 ₲)',
-        club_already: '✓ Already a club member (0 ₲)',
-        club_none: '— No club access'
+        club_trial: '🆓 1st Trial Day FREE (0 ₲ — No commitment)'
       },
       optgroups: {
         monthly: '📅 MONTHLY PLANS',
         weekly: '⚡ WEEKLY PLANS (6 days)',
-        single: '🍽️ PER MEAL',
-        none: '🥊 NO MEALS'
+        single: '🍽️ PER MEAL'
       },
       plans: {
         pack_fighter_pro_mensual: '2 Meals / day (Fighter Pro) — 950,000 ₲',
         pack_1_plato_mensual: '1 Meal / day — 500,000 ₲',
-        combo_elite_mensual: 'Combo: Club + 2 Meals / day — 1,100,000 ₲',
         pack_fighter_pro_semanal: '2 Meals / day (Fighter Pro) — 260,000 ₲',
         pack_1_plato_semanal: '1 Meal / day — 140,000 ₲',
-        combo_elite_semanal: 'Combo: Club + 2 Meals / day — 300,000 ₲',
-        plato_unico: '1 Meal of choice (from 7,000 ₲)',
-        none: 'No meals (Club only)'
+        plato_unico: '1 Meal of choice (from 7,000 ₲)'
       },
       singleDishes: {
         lunes_explosivo: 'The Explosive (Monday - Chicken & Rice) — 25,000 ₲',
@@ -3331,11 +3376,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const planSelect = document.getElementById('checkoutPlanSelect');
     if (planSelect) {
       const optgroups = planSelect.querySelectorAll('optgroup');
-      if (optgroups.length >= 4) {
+      if (optgroups.length >= 3) {
         optgroups[0].label = data.optgroups.monthly;
         optgroups[1].label = data.optgroups.weekly;
         optgroups[2].label = data.optgroups.single;
-        optgroups[3].label = data.optgroups.none;
       }
       for (const opt of planSelect.options) {
         if (data.plans[opt.value]) {

@@ -760,27 +760,6 @@
             </ul>
             <button class="btn-select-plan" onclick="window.openCheckout('pack_fighter_pro')" data-i18n="btnSelectFighter">Elegir Fighter Pro</button>
           </div>
-
-          <!-- PLAN 4: COMBO FIGHTER ELITE (CLUB + 2 PLATS/JOUR) -->
-          <div class="pricing-card elite">
-            <div class="card-lisere-top"></div>
-            <div class="elite-ribbon" data-i18n="ribbonElite">🏆 Transformación Total</div>
-            <span class="plan-type" style="color: var(--brand-blue-dark);" data-i18n="planTypeElite">Pack Híbrido Definitivo</span>
-            <h3 class="plan-title" data-i18n="planTitleElite">Combo Fighter Elite</h3>
-            <div class="plan-price-block">
-              <div class="price-strikethrough-wrap" id="strikeWrap_combo_elite" style="display: none;"></div>
-              <div class="price-main" id="price_combo_elite">1.100.000 ₲ <span>/mes</span></div>
-              <div class="price-per-meal" id="perMeal_combo_elite">Club Ilimitado + 2 Platos/Día</div>
-            </div>
-            <ul class="plan-features-list">
-              <li data-i18n="planFeatElite1"><strong>Acceso completo ilimitado</strong> a Kickboxing & Boxeo</li>
-              <li data-i18n="planFeatElite2"><strong>2 comidas atléticas por día</strong> preparadas en el club</li>
-              <li data-i18n="planFeatElite3">Seguimiento mensual de composición corporal y peso</li>
-              <li data-i18n="planFeatElite4">Prioridad de atención en cocina y delivery</li>
-              <li data-i18n="planFeatElite5">La experiencia total del Olimpo al mejor precio</li>
-            </ul>
-            <button class="btn-select-plan" onclick="window.openCheckout('combo_elite')" data-i18n="btnSelectElite">Elegir Pack Elite</button>
-          </div>
         </div>
       </div>
     </section>
@@ -980,7 +959,6 @@
                     <option value="club_150k" data-i18n="stuRefOptClub">🥊 Abonnement Club (150.000 ₲) → Ta Commission : +22.500 ₲ (15%)</option>
                     <option value="pack_1_mensual" data-i18n="stuRefOptPack1">🥗 Pack 1 Plat/Jour Mensuel (500.000 ₲) → Ta Commission : +50.000 ₲ (10%)</option>
                     <option value="fighter_pro_mensual" data-i18n="stuRefOptPro">⭐ Pack Fighter Pro Mensuel (950.000 ₲) → Ta Commission : +95.000 ₲ (10%)</option>
-                    <option value="combo_elite_mensual" data-i18n="stuRefOptElite">🏆 Combo Fighter Elite (1.100.000 ₲) → Ta Commission : +117.500 ₲</option>
                     <option value="pack_semanal" data-i18n="stuRefOptWeekly">⚡ Pack Semaine (140k - 260k ₲) → Ta Commission : +20.000 ₲ (10%)</option>
                   </select>
                 </div>
@@ -1141,38 +1119,26 @@
       <div class="modal-body">
         <form id="checkoutForm">
           
-          <!-- ÉTAPE 1 : CHOIX DU CLUB (150K / JOUR ESSAI / DÉJÀ MEMBRE / AUCUN) -->
-          <div class="checkout-step-block">
-            <div style="display: flex; align-items: center; margin-bottom: 12px;">
-              <span class="step-num-badge" data-i18n="step1Badge">Étape 1</span>
-              <h4 class="step-title" style="margin: 0;" data-i18n="step1Title">Entraînement au Club de Combat (Areguá)</h4>
-            </div>
-            <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5;" data-i18n="step1Desc">
-              Kickboxing K-1 Rules & Boxe Traditionnelle Anglaise. Ring de frappe et sacs lourds.
-            </p>
-            <div class="form-group" style="margin-bottom: 0;">
-              <select id="checkoutClubChoice" class="form-input">
-                <option value="club_monthly">🥊 Club Kickboxing & Boxe (+150.000 ₲ / mois)</option>
-                <option value="club_trial">🆓 1er Cours d'Essai GRATUIT (0 ₲)</option>
-                <option value="club_already">✓ Déjà membre du club (0 ₲)</option>
-                <option value="club_none">— Pas d'accès au club</option>
-              </select>
-            </div>
+          <!-- SÉLECTION DU TYPE DE COMMANDE (GESTION COMPTABLE SÉPARÉE STRICTE) -->
+          <div class="checkout-type-switcher">
+            <button type="button" class="btn-checkout-type active" id="typeNutritionBtn" onclick="window.switchCheckoutType('nutrition')">
+              <span>🥗</span>
+              <span data-i18n="typeNutritionTitle">Packs Nourriture Athlétique</span>
+            </button>
+            <button type="button" class="btn-checkout-type" id="typeClubBtn" onclick="window.switchCheckoutType('club')">
+              <span>🥊</span>
+              <span data-i18n="typeClubTitle">Abonnement Club de Combat</span>
+            </button>
           </div>
 
-          <!-- BANNIÈRE CITATION NUTRITION CRO PERCUTANTE -->
-          <div class="modal-nutrition-quote-box">
-            <div class="quote-icon">🥊🥗</div>
-            <div class="quote-content">
-              <div class="quote-main" data-i18n="quoteMain">« S'entraîner c'est 50% du travail, l'autre moitié c'est de bien se nourrir. »</div>
-              <div class="quote-sub" data-i18n="quoteSub">« S'entraîner dur sans bien manger, c'est comme ramer sans rames ! » — Règle d'or de l'Olympe</div>
+          <!-- SECTION NOURRITURE (GESTION RESTAURANT OLIMPO) -->
+          <div id="sectionCheckoutNutrition" class="checkout-step-block">
+            <div class="accounting-notice-box">
+              <span style="font-size: 15px;">💡</span>
+              <span data-i18n="noticeFoodAccounting">Comptabilité 100% Restaurant Olimpo. L'abonnement au Club de Combat (150.000 ₲/mois) se commande et se règle séparément.</span>
             </div>
-          </div>
-
-          <!-- ÉTAPE 2 : PROGRAMME NUTRITIF DU CLUB -->
-          <div class="checkout-step-block">
             <div style="display: flex; align-items: center; margin-bottom: 12px;">
-              <span class="step-num-badge" data-i18n="step2Badge">Étape 2</span>
+              <span class="step-num-badge" data-i18n="stepNutritionBadge">Repas</span>
               <h4 class="step-title" style="margin: 0;" data-i18n="step2Title">Choisis ton Programme Nutritif (Cuisine du Club)</h4>
             </div>
             <div class="form-group">
@@ -1180,7 +1146,6 @@
                 <optgroup label="📅 AU MOIS (Mensuel)">
                   <option value="pack_fighter_pro_mensual" selected>2 repas / jour (Fighter Pro) — 950.000 ₲</option>
                   <option value="pack_1_plato_mensual">1 repas / jour — 500.000 ₲</option>
-                  <option value="combo_elite_mensual">Combo : Club + 2 repas / jour — 1.100.000 ₲</option>
                 </optgroup>
                 <optgroup label="⚡ À LA SEMAINE (6 jours)">
                   <option value="pack_fighter_pro_semanal">2 repas / jour (Fighter Pro) — 260.000 ₲</option>
@@ -1188,9 +1153,6 @@
                 </optgroup>
                 <optgroup label="🍽️ AU PLAT">
                   <option value="plato_unico">1 plat au choix (dès 7.000 ₲)</option>
-                </optgroup>
-                <optgroup label="🥊 SANS REPAS">
-                  <option value="none">Sans repas (Club seul)</option>
                 </optgroup>
               </select>
             </div>
@@ -1220,6 +1182,36 @@
             </div>
           </div>
 
+          <!-- SECTION CLUB (GESTION ACADÉMIE DE COMBAT / RODRIGO NOGUERA) -->
+          <div id="sectionCheckoutClub" class="checkout-step-block" style="display: none;">
+            <div class="accounting-notice-box">
+              <span style="font-size: 15px;">🥊</span>
+              <span data-i18n="noticeClubAccounting">Comptabilité 100% Académie de Combat (Prof. Rodrigo Noguera). Les packs repas se commandent séparément auprès de la cuisine.</span>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+              <span class="step-num-badge" data-i18n="stepClubBadge">Combat</span>
+              <h4 class="step-title" style="margin: 0;" data-i18n="step1Title">Entraînement au Club de Combat (Areguá)</h4>
+            </div>
+            <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5;" data-i18n="step1Desc">
+              Kickboxing K-1 Rules & Boxe Traditionnelle Anglaise. Ring de frappe, sacs de 60 kg et coaching expérimenté.
+            </p>
+            <div class="form-group" style="margin-bottom: 0;">
+              <select id="checkoutClubChoice" class="form-input">
+                <option value="club_monthly">🥊 Abonnement Club Kickboxing & Boxe (150.000 ₲ / mois)</option>
+                <option value="club_trial">🆓 1er Cours d'Essai GRATUIT (0 ₲ — Sans engagement)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- BANNIÈRE CITATION NUTRITION CRO PERCUTANTE -->
+          <div class="modal-nutrition-quote-box" id="modalNutritionQuoteBox">
+            <div class="quote-icon">🥊🥗</div>
+            <div class="quote-content">
+              <div class="quote-main" data-i18n="quoteMain">« S'entraîner c'est 50% du travail, l'autre moitié c'est de bien se nourrir. »</div>
+              <div class="quote-sub" data-i18n="quoteSub">« S'entraîner dur sans bien manger, c'est comme ramer sans rames ! » — Règle d'or de l'Olympe</div>
+            </div>
+          </div>
+
           <!-- RECURRING AUTO DEBIT STANDARD -->
           <div class="auto-debit-toggle-bar auto-debit-guarantee-bar">
             <div class="auto-debit-toggle-label">
@@ -1231,12 +1223,12 @@
           </div>
 
           <!-- OPTIONS SUPPLÉMENTAIRES (LIVRAISON +20% & DOUBLE PROTÉINE) -->
-          <div class="checkout-section-block">
-            <h4 class="block-title" data-i18n="blockServices">3. Services & Livraison</h4>
+          <div class="checkout-section-block" id="servicesDeliveryBlock">
+            <h4 class="block-title" data-i18n="blockServices">Services & Livraison</h4>
             <div style="display: flex; flex-direction: column; gap: 10px;">
               <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-body); cursor: pointer;">
                 <input type="checkbox" id="chkDelivery">
-                <span data-i18n="lblDelivery"><strong>Service Livraison à Domicile (+20% de l'abonnement)</strong> — Retrait au club gratuit sinon.</span>
+                <span data-i18n="lblDelivery"><strong>Service Livraison à Domicile (+20% de l'abonnement repas)</strong> — Retrait au club gratuit sinon.</span>
               </label>
               <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-body); cursor: pointer;">
                 <input type="checkbox" id="chkDoubleProtein">
@@ -1389,11 +1381,11 @@
 
           <!-- ORDER SUMMARY (CALCUL DYNAMIQUE) -->
           <div class="order-summary-box">
-            <div class="summary-line">
-              <span id="sumClubName">Club Kickboxing (150k/mois) :</span>
+            <div class="summary-line" id="wrapSumClub" style="display: none;">
+              <span id="sumClubName">Abonnement Club Kickboxing & Boxe :</span>
               <span id="sumClubPrice">150.000 ₲</span>
             </div>
-            <div class="summary-line">
+            <div class="summary-line" id="wrapSumPlan">
               <span id="sumPlanName">Pack Nutrition :</span>
               <span id="sumPlanPrice">950.000 ₲</span>
             </div>
@@ -1401,17 +1393,17 @@
               <span data-i18n="sumDiscountLabel">Remise Débit Automatique :</span>
               <span id="sumDiscount" style="color: var(--green-gain);">0 ₲</span>
             </div>
-            <div class="summary-line">
-              <span data-i18n="sumDeliveryLabel">Livraison Areguá (+20% abonnement) :</span>
+            <div class="summary-line" id="wrapSumDelivery">
+              <span data-i18n="sumDeliveryLabel">Livraison Areguá (+20% abonnement repas) :</span>
               <span id="sumDelivery">0 ₲</span>
             </div>
-            <div class="summary-line">
+            <div class="summary-line" id="wrapSumProt">
               <span data-i18n="sumProtLabel">Double Portion Protéine :</span>
               <span id="sumExtraProtein">0 ₲</span>
             </div>
             <div class="summary-line total">
               <span data-i18n="sumTotalLabel">TOTAL À RÉGLER :</span>
-              <span id="sumTotal">1.045.000 ₲</span>
+              <span id="sumTotal">950.000 ₲</span>
             </div>
           </div>
 
@@ -1424,7 +1416,7 @@
           </div>
 
           <!-- SUBMIT BUTTON -->
-          <button type="submit" class="btn-submit-order" data-i18n="btnSubmitOrder">
+          <button type="submit" id="btnSubmitOrder" class="btn-submit-order" data-i18n="btnSubmitOrder">
             Valider la Commande & Transmettre sur WhatsApp (+595 995 620416)
           </button>
         </form>
@@ -1787,7 +1779,6 @@
                 <option value="club_150k" data-i18n="stuRefOptClub">🥊 Abonnement Club (150.000 ₲) → Ta Commission : +22.500 ₲ (15%)</option>
                 <option value="pack_1_mensual" data-i18n="stuRefOptPack1">🥗 Pack 1 Plat/Jour Mensuel (500.000 ₲) → Ta Commission : +50.000 ₲ (10%)</option>
                 <option value="fighter_pro_mensual" data-i18n="stuRefOptPro">⭐ Pack Fighter Pro Mensuel (950.000 ₲) → Ta Commission : +95.000 ₲ (10%)</option>
-                <option value="combo_elite_mensual" data-i18n="stuRefOptElite">🏆 Combo Fighter Elite (1.100.000 ₲) → Ta Commission : +117.500 ₲</option>
                 <option value="pack_semanal" data-i18n="stuRefOptWeekly">⚡ Pack Semaine (140k - 260k ₲) → Ta Commission : +20.000 ₲ (10%)</option>
               </select>
             </div>
