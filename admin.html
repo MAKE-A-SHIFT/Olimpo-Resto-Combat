@@ -133,6 +133,20 @@
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
 
+    <!-- HONEST CLOUD CONNECTION NOTICE (Shown ONLY when Vercel Storage Upstash Redis isn't connected yet) -->
+    <div id="cloud-setup-banner" class="hidden rounded-2xl bg-amber-50 border-2 border-amber-300 p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+      <div class="flex items-start gap-3">
+        <span class="text-xl">☁️</span>
+        <div>
+          <p data-a18n="cloud_banner_title" class="text-xs sm:text-sm font-extrabold text-amber-950">Synchronisation Multi-Appareils (PC / Téléphone / Tablette)</p>
+          <p data-a18n="cloud_banner_desc" class="text-xs text-amber-900 mt-0.5">Votre base Vercel Storage (Upstash Redis) n'est pas encore connectée au projet Olimpo. Actuellement les ajouts restent dans le cache de cet appareil.</p>
+        </div>
+      </div>
+      <button type="button" onclick="openBackupModal()" data-a18n="cloud_banner_btn" class="px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold cursor-pointer shadow-xs">
+        ⚙️ Activer Vercel Storage (1 min)
+      </button>
+    </div>
+
     <!-- ======================================================================
          STRICT ENTITY SWITCHER : CLUB DE COMBAT VS RESTAURANT OLIMPO
          ====================================================================== -->
@@ -734,11 +748,16 @@
       </div>
       <p data-a18n="backup_desc" class="text-xs text-gray-600 leading-relaxed"></p>
 
-      <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-xs text-emerald-950 flex items-center gap-3">
+      <div id="cloud-setup-instructions" class="rounded-2xl bg-indigo-50 border border-indigo-200 p-4 text-xs text-indigo-950 space-y-1.5">
+        <p data-a18n="cloud_setup_title" class="font-extrabold"></p>
+        <p data-a18n-html="cloud_setup_steps" class="leading-relaxed"></p>
+      </div>
+
+      <div id="cloud-connected-box" class="hidden rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-xs text-emerald-950 flex items-center gap-3">
         <span class="text-xl">☁️</span>
         <div>
-          <p data-a18n="cloud_auto_active_title" class="font-extrabold">Synchronisation Automatique Active</p>
-          <p data-a18n="cloud_auto_active_sub" class="text-[11px] text-emerald-800 mt-0.5">PC • Téléphone • Tablette connectés en direct toutes les 5 secondes.</p>
+          <p data-a18n="cloud_auto_active_title" class="font-extrabold">Synchronisation Vercel Storage Active ✓</p>
+          <p data-a18n="cloud_auto_active_sub" class="text-[11px] text-emerald-800 mt-0.5">PC • Téléphone • Tablette synchronisés en direct via Upstash Redis.</p>
         </div>
       </div>
 
@@ -771,7 +790,6 @@
     <div id="viewer-doc-content" class="flex-1 max-w-5xl w-full mx-auto flex items-center justify-center overflow-auto bg-gray-900/50 rounded-2xl p-2"></div>
   </div>
 
-  <script src="firebase-service.js"></script>
   <script src="admin-translations.js"></script>
   <script src="admin.js"></script>
 </body>

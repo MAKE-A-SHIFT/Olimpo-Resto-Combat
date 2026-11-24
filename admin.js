@@ -14,7 +14,6 @@ const AUTH_VALUE = "Olympus_OK";
 const ADMIN_PASS = "Olympus";
 const ADMIN_LANG_KEY = "olimpo_admin_lang";
 const CLOUD_API_URL = "/api/erp";
-const DIRECT_CLOUD_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a20dabc56f35fc";
 
 // ==========================================================================
 // 1. MULTI-LANGUAGE ENGINE (ES / FR / EN)
@@ -53,6 +52,10 @@ function applyAdminI18n() {
   document.querySelectorAll("[data-a18n]").forEach((el) => {
     const key = el.getAttribute("data-a18n");
     if (key) el.textContent = t(key);
+  });
+  document.querySelectorAll("[data-a18n-html]").forEach((el) => {
+    const key = el.getAttribute("data-a18n-html");
+    if (key) el.innerHTML = t(key);
   });
   document.querySelectorAll("[data-a18n-ph]").forEach((el) => {
     const key = el.getAttribute("data-a18n-ph");
@@ -355,18 +358,34 @@ function setCloudStatus(stateKey) {
 function refreshCloudStatusLabel() {
   const dot = document.getElementById("cloud-sync-dot");
   const txt = document.getElementById("cloud-sync-label");
+  const banner = document.getElementById("cloud-setup-banner");
+  const setupBox = document.getElementById("cloud-setup-instructions");
+  const connectedBox = document.getElementById("cloud-connected-box");
 
   const map = {
     checking: { cls: "bg-amber-400 animate-pulse", key: "sync_checking" },
     ok: { cls: "bg-emerald-500", key: "sync_ok" },
     saving: { cls: "bg-amber-400 animate-pulse", key: "sync_saving" },
     pulling: { cls: "bg-blue-400 animate-pulse", key: "sync_pulling" },
-    not_configured: { cls: "bg-slate-400", key: "sync_offline" },
+    not_configured: { cls: "bg-red-500 animate-pulse", key: "sync_not_configured" },
     offline: { cls: "bg-slate-400", key: "sync_offline" }
   };
   const cfg = map[cloudSyncState] || map.offline;
   if (dot) dot.className = `w-2 h-2 rounded-full inline-block ${cfg.cls}`;
   if (txt) txt.textContent = t(cfg.key);
+
+  if (banner) {
+    if (cloudSyncState === "not_configured") banner.classList.remove("hidden");
+    else banner.classList.add("hidden");
+  }
+  if (setupBox) {
+    if (cloudSyncState === "ok") setupBox.classList.add("hidden");
+    else setupBox.classList.remove("hidden");
+  }
+  if (connectedBox) {
+    if (cloudSyncState === "ok") connectedBox.classList.remove("hidden");
+    else connectedBox.classList.add("hidden");
+  }
 }
 
 let cloudPushTimer = null;
@@ -386,54 +405,57 @@ function saveState(skipCloudPush = false) {
     clearTimeout(cloudPushTimer);
     cloudPushTimer = setTimeout(() => {
       pushToCloud();
-    }, 200);
+    }, 250);
   }
 }
 
 async function pushToCloud() {
   if (isSyncingNow) return;
   isSyncingNow = true;
-  let anyConnected = false;
   const payload = buildLightweightCloudPayload(erpState);
 
   try {
-    // 1. Optional Firebase Firestore if configured
-    if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
-      const fbOk = await window.OlimpoFirebase.syncErpStateToCloud(payload);
-      if (fbOk) anyConnected = true;
+    let res = await fetch(CLOUD_API_URL, {
+      method: "PUT",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-pass": ADMIN_PASS
+      },
+      body: JSON.stringify({ data: payload })
+    });
+
+    if (res.status === 503) {
+      setCloudStatus("not_configured");
+      return;
     }
 
-    // 2. Primary Zero-Config Cloud API (/api/erp on Vercel / Local server)
-    let apiOk = false;
-    try {
-      const res = await fetch(CLOUD_API_URL, {
+    if (res.status === 413) {
+      const ultraLight = {
+        ...payload,
+        members: payload.members.map((m) => ({
+          ...m,
+          documents: (m.documents || []).map((d) => ({ ...d, dataUrl: "" }))
+        }))
+      };
+      res = await fetch(CLOUD_API_URL, {
         method: "PUT",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           "x-admin-pass": ADMIN_PASS
         },
-        body: JSON.stringify({ data: payload })
+        body: JSON.stringify({ data: ultraLight })
       });
-      if (res.ok) {
-        apiOk = true;
-        anyConnected = true;
-      }
-    } catch {}
-
-    // 3. Direct CORS Cloud fallback if /api/erp was unreachable
-    if (!apiOk) {
-      try {
-        const resDirect = await fetch(DIRECT_CLOUD_URL, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: "olimpo_erp_state_v1", data: payload })
-        });
-        if (resDirect.ok) anyConnected = true;
-      } catch {}
     }
 
-    setCloudStatus(anyConnected ? "ok" : "offline");
+    if (res.ok) {
+      setCloudStatus("ok");
+    } else {
+      setCloudStatus("offline");
+    }
+  } catch {
+    setCloudStatus("offline");
   } finally {
     isSyncingNow = false;
   }
@@ -444,74 +466,35 @@ async function syncFromCloud(manual = false) {
   if (manual) setCloudStatus("pulling");
   isSyncingNow = true;
 
-  let anyConnected = false;
-  let remoteErp = null;
   let needPushUp = false;
 
   try {
-    // 1. Check Firebase Firestore if connected
-    if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
-      anyConnected = true;
-      const [fbErp, fbMembers] = await Promise.all([
-        window.OlimpoFirebase.fetchErpStateFromCloud(),
-        window.OlimpoFirebase.fetchAllMembersFromCloud()
-      ]);
-      if (fbErp && Array.isArray(fbErp.members)) {
-        remoteErp = fbErp;
-      }
-      if (fbMembers && Object.keys(fbMembers).length > 0) {
-        mergePublicStudentsIntoErp(fbMembers);
-      }
+    const res = await fetch(`${CLOUD_API_URL}?t=${Date.now()}`, {
+      method: "GET",
+      cache: "no-store",
+      headers: { "x-admin-pass": ADMIN_PASS }
+    });
+
+    if (res.status === 503) {
+      setCloudStatus("not_configured");
+      return;
+    }
+    if (!res.ok) {
+      if (manual) setCloudStatus("offline");
+      return;
     }
 
-    // 2. Check Primary Cloud API (/api/erp)
-    let apiOk = false;
-    try {
-      const res = await fetch(`${CLOUD_API_URL}?t=${Date.now()}`, {
-        method: "GET",
-        cache: "no-store",
-        headers: { "x-admin-pass": ADMIN_PASS }
-      });
-      if (res.ok) {
-        apiOk = true;
-        anyConnected = true;
-        const payload = await res.json();
-        const apiErp = payload?.data;
-        if (apiErp && Array.isArray(apiErp.members)) {
-          if (!remoteErp || (apiErp.updatedAt || 0) > (remoteErp.updatedAt || 0)) {
-            remoteErp = apiErp;
-          }
-        }
-      }
-    } catch {}
-
-    // 3. Direct CORS Cloud fallback if /api/erp was unreachable
-    if (!apiOk) {
-      try {
-        const resDirect = await fetch(`${DIRECT_CLOUD_URL}?t=${Date.now()}`, { cache: "no-store" });
-        if (resDirect.ok) {
-          anyConnected = true;
-          const payloadDirect = await resDirect.json();
-          const directErp = payloadDirect?.data;
-          if (directErp && Array.isArray(directErp.members)) {
-            if (!remoteErp || (directErp.updatedAt || 0) > (remoteErp.updatedAt || 0)) {
-              remoteErp = directErp;
-            }
-          }
-        }
-      } catch {}
-    }
+    const payload = await res.json();
+    const remoteErp = payload?.data;
 
     if (remoteErp && Array.isArray(remoteErp.members)) {
       const localHasData = stateHasData(erpState);
       const remoteHasData = stateHasData(remoteErp);
 
       if (localHasData && !remoteHasData && !remoteErp.explicitlyEmpty) {
-        // Seed Cloud immediately from this populated device instead of overwriting it
         if (erpState.updatedAt === 0) erpState.updatedAt = Date.now();
         needPushUp = true;
       } else if (remoteHasData && !localHasData && !erpState.explicitlyEmpty) {
-        // Fresh phone/tablet opening the panel pulls Cloud data right away
         erpState = normalizeState(remoteErp);
         mergePublicStudentsIntoErp();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(erpState));
@@ -524,12 +507,14 @@ async function syncFromCloud(manual = false) {
       } else if ((erpState.updatedAt || 0) > (remoteErp.updatedAt || 0)) {
         needPushUp = true;
       }
-    } else if (anyConnected) {
+      setCloudStatus("ok");
+    } else {
       if (erpState.updatedAt === 0) erpState.updatedAt = Date.now();
       needPushUp = true;
+      setCloudStatus("ok");
     }
-
-    setCloudStatus(anyConnected ? "ok" : "offline");
+  } catch {
+    setCloudStatus("offline");
   } finally {
     isSyncingNow = false;
   }
@@ -2334,18 +2319,14 @@ function importDatabaseJson(e) {
   reader.readAsText(file);
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   checkAuthOnLoad();
   const policeDateInp = document.getElementById("police-date-input");
   if (policeDateInp) policeDateInp.value = getTodayIso();
 
   mergePublicStudentsIntoErp();
   setAdminLang(currentAdminLang, false);
-
-  if (window.OlimpoFirebase) {
-    await window.OlimpoFirebase.init();
-  }
-  await syncFromCloud(false);
+  syncFromCloud(false);
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible" && isAuthenticated()) {
@@ -2361,8 +2342,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   setInterval(() => {
-    if (document.visibilityState === "visible" && isAuthenticated()) {
+    if (document.visibilityState === "visible" && isAuthenticated() && cloudSyncState === "ok") {
       syncFromCloud(false);
     }
-  }, 5000);
+  }, 15000);
 });

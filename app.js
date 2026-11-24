@@ -1226,37 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-public-event': 'true' },
         body: JSON.stringify(eventPayload)
-      }).then((res) => {
-        if (!res.ok) throw new Error('API fallback');
-      }).catch(async () => {
-        try {
-          const directUrl = 'https://api.restful-api.dev/objects/ff808181a09d98f701a20dabc56f35fc';
-          const rGet = await fetch(`${directUrl}?t=${Date.now()}`, { cache: 'no-store' });
-          let remoteState = null;
-          if (rGet.ok) {
-            const p = await rGet.json();
-            if (p && p.data && Array.isArray(p.data.members)) remoteState = p.data;
-          }
-          const stateToSave = remoteState && (remoteState.updatedAt || 0) > (erp.updatedAt || 0)
-            ? remoteState
-            : erp;
-          if (remoteState && stateToSave === remoteState && eventPayload.member) {
-            const inc = eventPayload.member;
-            const entity = inc.entity === 'restaurant' ? 'restaurant' : 'club';
-            const exists = stateToSave.members.find((m) => m.entity === entity && ((inc.code && m.code === String(inc.code).toUpperCase()) || (inc.email && m.email === inc.email)));
-            if (!exists) {
-              const incomingCopy = erp.members[erp.members.length - 1];
-              if (incomingCopy) stateToSave.members.push(incomingCopy);
-            }
-          }
-          stateToSave.updatedAt = Date.now();
-          await fetch(directUrl, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: 'olimpo_erp_state_v1', data: stateToSave })
-          });
-        } catch {}
-      });
+      }).catch(() => {});
     } catch (err) {
       console.warn('[Olimpo ERP Bridge]', err);
     }
