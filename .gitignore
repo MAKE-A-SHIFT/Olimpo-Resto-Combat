@@ -30,3 +30,4 @@ tools/*.html
 .env
 .env.local
 .vercel
+erp_cloud_local.json

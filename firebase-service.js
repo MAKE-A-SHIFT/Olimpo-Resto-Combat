@@ -282,10 +282,77 @@
         if (!raw) return;
         const dbLocal = JSON.parse(raw);
         for (const code of Object.keys(dbLocal)) {
+          if (code === '__OLIMPO_ERP_STATE__') continue;
           await this.syncMemberToCloud(dbLocal[code]);
         }
       } catch (e) {
         console.warn(e);
+      }
+    },
+
+    async syncErpStateToCloud(erpState) {
+      if (!this.isCloudConnected || !this.db || !this.sdk || !erpState) return false;
+      try {
+        const { doc, setDoc } = this.sdk;
+        // Strip heavy image/pdf dataUrls > 40KB so Firestore 1MB doc limit is never exceeded
+        const lightweightState = {
+          ...erpState,
+          members: (erpState.members || []).map((m) => ({
+            ...m,
+            documents: (m.documents || []).map((d) => ({
+              ...d,
+              dataUrl: d.dataUrl && d.dataUrl.length > 40000 ? '' : d.dataUrl
+            }))
+          }))
+        };
+        const erpRef = doc(this.db, 'members', '__OLIMPO_ERP_STATE__');
+        await setDoc(erpRef, {
+          code: '__OLIMPO_ERP_STATE__',
+          name: 'Olimpo ERP Master State',
+          erpJson: JSON.stringify(lightweightState),
+          updatedAtMs: Number(erpState.updatedAt || Date.now()),
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        return true;
+      } catch (err) {
+        console.warn('[Olimpo Firebase] syncErpStateToCloud warning:', err);
+        return false;
+      }
+    },
+
+    async fetchErpStateFromCloud() {
+      if (!this.isCloudConnected || !this.db || !this.sdk) return null;
+      try {
+        const { doc, getDoc } = this.sdk;
+        const snap = await getDoc(doc(this.db, 'members', '__OLIMPO_ERP_STATE__'));
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data && data.erpJson) {
+            return JSON.parse(data.erpJson);
+          }
+        }
+      } catch (err) {
+        console.warn('[Olimpo Firebase] fetchErpStateFromCloud warning:', err);
+      }
+      return null;
+    },
+
+    async fetchAllMembersFromCloud() {
+      if (!this.isCloudConnected || !this.db || !this.sdk) return {};
+      try {
+        const { collection, getDocs } = this.sdk;
+        const qSnap = await getDocs(collection(this.db, 'members'));
+        const map = {};
+        qSnap.forEach((d) => {
+          const val = d.data();
+          if (val && val.code && val.code !== '__OLIMPO_ERP_STATE__') {
+            map[val.code] = val;
+          }
+        });
+        return map;
+      } catch (err) {
+        console.warn('[Olimpo Firebase] fetchAllMembersFromCloud warning:', err);
+        return {};
       }
     }
   };

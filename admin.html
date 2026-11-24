@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OLIMPO TEAM — ERP Abonados, Documentos &amp; Dirección Financiera</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="logo_olimpo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind = {
+      config: {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+              mono: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    @keyframes pulse-urgent {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+    }
+    .alert-cutoff-pulse {
+      animation: pulse-urgent 1.9s infinite;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+  <!-- ========================================================================
+       SECURITY LOCK OVERLAY (Password: Olympus)
+       ======================================================================== -->
+  <div id="admin-lock-overlay" class="fixed inset-0 z-[100] bg-gray-950/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-white p-7 sm:p-8 shadow-2xl border border-gray-200 text-center">
+      <!-- Language Switcher on Lock Screen -->
+      <div class="flex justify-center mb-5">
+        <div class="inline-flex rounded-full bg-gray-100 p-1 gap-1 border border-gray-200">
+          <button type="button" onclick="setAdminLang('es', true)" data-lang-btn="es" class="admin-lang-btn px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition-all">🇵🇾 ES</button>
+          <button type="button" onclick="setAdminLang('fr', true)" data-lang-btn="fr" class="admin-lang-btn px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition-all">🇫🇷 FR</button>
+          <button type="button" onclick="setAdminLang('en', true)" data-lang-btn="en" class="admin-lang-btn px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition-all">🇬🇧 EN</button>
+        </div>
+      </div>
+
+      <div class="w-16 h-16 rounded-2xl bg-gray-950 text-white mx-auto flex items-center justify-center mb-4 shadow-lg border border-amber-400/40 p-2">
+        <img src="logo_olimpo.png" alt="Olimpo" class="w-full h-full object-contain" />
+      </div>
+      <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">OLIMPO ADMIN ERP</h1>
+      <p data-a18n="lock_subtitle" class="text-xs text-gray-500 mt-1 mb-6">Acceso exclusivo socios • Gestión Abonados, Documentos y Finanzas</p>
+
+      <form onsubmit="unlockAdminOverlay(event)" class="space-y-4 text-left">
+        <div>
+          <label for="overlay-password-input" data-a18n="lock_label" class="block text-xs font-semibold text-gray-700 mb-1.5">Contraseña de acceso</label>
+          <input id="overlay-password-input" type="password" required data-a18n-ph="lock_placeholder" placeholder="Ingresá la contraseña..." class="w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium focus:border-black focus:outline-none" />
+          <p id="overlay-password-error" data-a18n="lock_error" class="hidden text-xs font-semibold text-red-600 mt-1.5">Contraseña incorrecta.</p>
+        </div>
+        <button type="submit" data-a18n="lock_btn" class="w-full py-3.5 rounded-full bg-black hover:bg-gray-800 text-white font-bold text-sm shadow-lg transition-all cursor-pointer">
+          Desbloquear Panel →
+        </button>
+      </form>
+      <a href="index.html" data-a18n="lock_back" class="inline-block mt-5 text-xs text-gray-500 hover:text-gray-900 underline">
+        ← Volver al sitio público
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       STICKY EXECUTIVE HEADER
+       ======================================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Left: Brand & Cloud Sync Pill -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <img src="logo_olimpo.png" alt="OLIMPO" class="w-9 h-9 rounded-full border border-gray-200 shadow-sm object-contain bg-gray-950 p-1" />
+          <div>
+            <div class="font-extrabold text-sm sm:text-base text-gray-900 leading-tight flex items-center gap-2">
+              <span>OLIMPO TEAM</span>
+              <span class="px-2 py-0.5 rounded-full bg-gray-900 text-white text-[10px] font-bold tracking-wider uppercase">ERP 80/20</span>
+            </div>
+            <button type="button" onclick="openBackupModal()" class="flex items-center gap-1.5 text-[11px] text-gray-600 hover:text-gray-900 cursor-pointer text-left">
+              <span id="cloud-sync-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse inline-block"></span>
+              <span id="cloud-sync-label">Connexion serveur Cloud...</span>
+            </button>
+          </div>
+        </a>
+      </div>
+
+      <!-- Right: Language Switcher + Fast Actions -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="inline-flex rounded-full bg-gray-100 p-0.5 gap-0.5 border border-gray-200" role="group" aria-label="Language">
+          <button type="button" onclick="setAdminLang('es', true)" data-lang-btn="es" class="admin-lang-btn px-2.5 py-1.5 rounded-full text-[11px] font-bold cursor-pointer transition-all">🇵🇾 ES</button>
+          <button type="button" onclick="setAdminLang('fr', true)" data-lang-btn="fr" class="admin-lang-btn px-2.5 py-1.5 rounded-full text-[11px] font-bold cursor-pointer transition-all">🇫🇷 FR</button>
+          <button type="button" onclick="setAdminLang('en', true)" data-lang-btn="en" class="admin-lang-btn px-2.5 py-1.5 rounded-full text-[11px] font-bold cursor-pointer transition-all">🇬🇧 EN</button>
+        </div>
+
+        <button type="button" onclick="openMemberModal()" data-a18n="btn_add_member_short" class="px-3.5 py-2 rounded-full bg-[#0070f3] hover:bg-[#005bb5] text-white text-xs font-bold shadow-sm transition-all cursor-pointer">
+          + Membre
+        </button>
+        <button type="button" onclick="openExpenseModal()" data-a18n="btn_add_expense_short" class="px-3 py-2 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-xs font-bold transition-all cursor-pointer">
+          + Matériel
+        </button>
+        <button type="button" onclick="syncFromCloud(true)" title="Sync Cloud" class="p-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700 text-xs transition-all cursor-pointer" aria-label="Sync">
+          🔄
+        </button>
+        <button type="button" onclick="openBackupModal()" title="Cloud & Backup" class="p-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700 text-xs transition-all cursor-pointer" aria-label="Backup">
+          💾
+        </button>
+        <a href="index.html" data-a18n="btn_site" class="px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700 text-xs font-semibold transition-all hidden sm:inline-flex items-center gap-1">
+          ← Site
+        </a>
+        <button type="button" onclick="lockAdmin()" title="Lock" class="p-2 rounded-full border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs transition-all cursor-pointer" aria-label="Lock">
+          🔒
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
+
+    <!-- HONEST CLOUD CONNECTION NOTICE (Shown ONLY when neither API nor Firebase Cloud is connected) -->
+    <div id="cloud-setup-banner" class="hidden rounded-2xl bg-amber-50 border-2 border-amber-300 p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+      <div class="flex items-start gap-3">
+        <span class="text-xl">☁️</span>
+        <div>
+          <p data-a18n="cloud_banner_title" class="text-xs sm:text-sm font-extrabold text-amber-950">Synchronisation Multi-Appareils (PC / Téléphone / Tablette)</p>
+          <p data-a18n="cloud_banner_desc" class="text-xs text-amber-900 mt-0.5">Connectez Firebase ou Vercel Cloud pour partager la base de données entre tous vos appareils.</p>
+        </div>
+      </div>
+      <button type="button" onclick="openBackupModal()" data-a18n="cloud_banner_btn" class="px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold cursor-pointer shadow-xs">
+        ⚙️ Activer le Cloud (Gratuit)
+      </button>
+    </div>
+
+    <!-- ======================================================================
+         STRICT ENTITY SWITCHER : CLUB DE COMBAT VS RESTAURANT OLIMPO
+         ====================================================================== -->
+    <div class="grid sm:grid-cols-2 gap-3">
+      <button type="button" id="entity-tab-club" onclick="setActiveEntity('club')" class="entity-tab-btn text-left rounded-3xl p-4 sm:p-5 border-2 transition-all cursor-pointer flex items-center justify-between gap-3">
+        <div>
+          <div data-a18n="entity_club_tab" class="text-sm sm:text-base font-black tracking-tight">🥊 CLUB DE COMBATE (Kickboxing &amp; Boxeo)</div>
+          <div data-a18n="entity_club_sub" class="text-xs opacity-80 mt-0.5">Prof. Rodrigo • Cuota fija: ₲ 150.000 / mes</div>
+        </div>
+        <span id="entity-badge-club" class="px-3 py-1 rounded-full text-xs font-black bg-white/15">0</span>
+      </button>
+
+      <button type="button" id="entity-tab-restaurant" onclick="setActiveEntity('restaurant')" class="entity-tab-btn text-left rounded-3xl p-4 sm:p-5 border-2 transition-all cursor-pointer flex items-center justify-between gap-3">
+        <div>
+          <div data-a18n="entity_resto_tab" class="text-sm sm:text-base font-black tracking-tight">🥗 RESTAURANT OLIMPO (Packs Comida)</div>
+          <div data-a18n="entity_resto_sub" class="text-xs opacity-80 mt-0.5">Cocina Luck • Planes Nutrición y Platos</div>
+        </div>
+        <span id="entity-badge-restaurant" class="px-3 py-1 rounded-full text-xs font-black bg-gray-200 text-gray-800">0</span>
+      </button>
+    </div>
+
+    <!-- ======================================================================
+         PARTIE 1 (EN HAUT) : RÉSERVES BANCAIRES, STATS 80/20 & DASHBOARD FINANCIER
+         ====================================================================== -->
+    <section id="part-1-finance" class="space-y-6">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <span data-a18n="part1_badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[11px] font-bold uppercase tracking-wider mb-1">
+            Partie 1 • Trésorerie &amp; Pilotage
+          </span>
+          <h2 data-a18n="part1_title" class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Réserves Bancaires &amp; Dashboard Financier</h2>
+        </div>
+        <div id="entity-rate-pill" class="text-xs text-gray-500 font-medium bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-2xs">
+          <span data-a18n="fixed_rate_club_pill">Tarif unique non négociable :</span> <strong class="text-gray-900">₲ 150.000 <span data-a18n="per_month">/ mois</span></strong>
+        </div>
+      </div>
+
+      <!-- 1.1 VISUALISEUR "BANCAIRE" DES FONDS DE L'ENTITÉ -->
+      <div class="grid md:grid-cols-3 gap-4 sm:gap-5">
+        <!-- Réserve CASH -->
+        <div class="rounded-3xl bg-white border-2 border-emerald-200 p-5 sm:p-6 shadow-sm relative overflow-hidden">
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">💵</div>
+              <div>
+                <p data-a18n="cash_sub" class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Caisse Espèces</p>
+                <h3 data-a18n="cash_title" class="text-sm font-bold text-gray-900">Réserve CASH (Espèces)</h3>
+              </div>
+            </div>
+            <button type="button" onclick="openAdjustBalanceModal('cash')" data-a18n="btn_adjust" class="text-[11px] font-semibold text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-full cursor-pointer transition-colors">
+              ⚙️ Ajuster
+            </button>
+          </div>
+          <div id="bank-cash-balance" class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight my-2">
+            ₲ 0
+          </div>
+          <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600">
+            <span><span data-a18n="label_collected">Encaissé :</span> <strong id="bank-cash-in" class="text-emerald-700">+ ₲ 0</strong></span>
+            <span><span data-a18n="label_expenses_short">Matériel :</span> <strong id="bank-cash-out" class="text-red-600">- ₲ 0</strong></span>
+          </div>
+        </div>
+
+        <!-- Réserve BANQUE (Transferencia) -->
+        <div class="rounded-3xl bg-white border-2 border-indigo-200 p-5 sm:p-6 shadow-sm relative overflow-hidden">
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg font-bold">🏦</div>
+              <div>
+                <p data-a18n="bank_sub" class="text-[11px] font-bold uppercase tracking-wider text-indigo-700">Banco Familiar / SIPAP</p>
+                <h3 data-a18n="bank_title" class="text-sm font-bold text-gray-900">Réserve BANQUE (Transferencia)</h3>
+              </div>
+            </div>
+            <button type="button" onclick="openAdjustBalanceModal('transferencia')" data-a18n="btn_adjust" class="text-[11px] font-semibold text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-full cursor-pointer transition-colors">
+              ⚙️ Ajuster
+            </button>
+          </div>
+          <div id="bank-transfer-balance" class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight my-2">
+            ₲ 0
+          </div>
+          <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600">
+            <span><span data-a18n="label_collected">Encaissé :</span> <strong id="bank-transfer-in" class="text-indigo-700">+ ₲ 0</strong></span>
+            <span><span data-a18n="label_expenses_short">Matériel :</span> <strong id="bank-transfer-out" class="text-red-600">- ₲ 0</strong></span>
+          </div>
+        </div>
+
+        <!-- TRÉSORERIE TOTALE NETTE -->
+        <div class="rounded-3xl bg-gray-950 text-white p-5 sm:p-6 shadow-lg relative overflow-hidden">
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-2xl bg-[#34D186]/20 text-[#34D186] flex items-center justify-center text-lg font-bold">💎</div>
+              <div>
+                <p data-a18n="total_sub" class="text-[11px] font-bold uppercase tracking-wider text-[#34D186]">Cash + Banque</p>
+                <h3 data-a18n="total_title" class="text-sm font-bold text-white">Trésorerie Totale Nette</h3>
+              </div>
+            </div>
+            <span id="monthly-runrate-pill" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-emerald-300">
+              ₲ 0
+            </span>
+          </div>
+          <div id="bank-total-balance" class="text-3xl sm:text-4xl font-black text-white tracking-tight my-2">
+            ₲ 0
+          </div>
+          <div class="mt-3">
+            <div class="h-2 w-full rounded-full bg-white/15 overflow-hidden flex">
+              <div id="ratio-bar-cash" class="bg-[#34D186] h-full transition-all duration-300" style="width: 50%"></div>
+              <div id="ratio-bar-bank" class="bg-indigo-400 h-full transition-all duration-300" style="width: 50%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-neutral-300 mt-1.5 font-medium">
+              <span id="ratio-label-cash">Cash : 0%</span>
+              <span id="ratio-label-bank">Banque : 0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.2 GRILLE DES STATISTIQUES PERTINENTES 80/20 -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Stat 1: Membres Entraînés (Passé, Présent, Futur) -->
+        <div class="rounded-2xl bg-white border border-gray-200 p-4 shadow-2xs">
+          <p id="kpi-trained-lbl" data-a18n="kpi_members_trained" class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Membres Entraînés (P • P • F)</p>
+          <div class="mt-2 flex items-baseline gap-2 flex-wrap">
+            <span id="stat-active-count" class="text-2xl sm:text-3xl font-black text-emerald-600">0</span>
+            <span data-a18n="kpi_active" class="text-xs font-semibold text-gray-600">actifs</span>
+            <span class="text-gray-300">/</span>
+            <span id="stat-past-count" class="text-lg font-extrabold text-gray-700">0</span>
+            <span data-a18n="kpi_past" class="text-[11px] font-semibold text-gray-500">passés</span>
+            <span class="text-gray-300">/</span>
+            <span id="stat-future-count" class="text-lg font-extrabold text-blue-600">0</span>
+            <span data-a18n="kpi_future" class="text-[11px] font-semibold text-blue-600">futurs</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-1.5">
+            <span data-a18n="kpi_total_trained_sub">Total historique :</span> <strong id="stat-total-trained" class="text-gray-900">0</strong>
+          </p>
+        </div>
+
+        <!-- Stat 2: Désinscrits & Pertes Potentielles (CLIQUABLE pour filtrer) -->
+        <button type="button" onclick="setMemberFilter('unsubscribed'); document.getElementById('members-grid').scrollIntoView({behavior:'smooth'});" class="text-left rounded-2xl bg-amber-50/70 hover:bg-amber-50 border border-amber-200 hover:border-amber-400 p-4 shadow-2xs transition-all cursor-pointer">
+          <p data-a18n="kpi_churn_title" class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Désinscrits &amp; Pertes</p>
+          <div class="mt-2 flex items-baseline gap-2 flex-wrap">
+            <span id="stat-unsub-count" class="text-2xl sm:text-3xl font-black text-amber-700">0</span>
+            <span data-a18n="kpi_unsubscribed_word" class="text-xs font-semibold text-amber-800">désinscrit(s)</span>
+          </div>
+          <p class="text-[11px] text-red-600 font-bold mt-1.5">
+            <span data-a18n="kpi_potential_loss">Pertes mensuelles est. :</span> <span id="stat-churn-loss">₲ 0</span>
+          </p>
+        </button>
+
+        <!-- Stat 3: Impayés (CLIQUABLE pour détails complets) -->
+        <button type="button" onclick="openUnpaidDetailsModal()" class="text-left rounded-2xl bg-red-50/70 hover:bg-red-50 border-2 border-red-200 hover:border-red-400 p-4 shadow-2xs transition-all cursor-pointer group">
+          <div class="flex items-center justify-between">
+            <p data-a18n="kpi_unpaid_title" class="text-[11px] font-bold uppercase tracking-wider text-red-700">Impayés (Cliquer 🔍)</p>
+            <span data-a18n="kpi_details" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-600 text-white group-hover:scale-105 transition-transform">Détails</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2 flex-wrap">
+            <span id="stat-unpaid-amount" class="text-2xl sm:text-3xl font-black text-red-700">₲ 0</span>
+          </div>
+          <p class="text-[11px] text-red-800 font-medium mt-1.5">
+            <span id="stat-unpaid-months">0</span> <span data-a18n="kpi_unpaid_sub_months">mois impayé(s)</span> / <span id="stat-unpaid-members">0</span> <span data-a18n="kpi_unpaid_sub_members">membre(s)</span>
+          </p>
+        </button>
+
+        <!-- Stat 4: Gains Affiliation du Mois & Bénéfice Net -->
+        <div class="rounded-2xl bg-white border border-gray-200 p-4 shadow-2xs">
+          <p data-a18n="kpi_aff_title" class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Affiliation Mois &amp; Net</p>
+          <div class="mt-2 flex items-baseline gap-2 flex-wrap">
+            <span id="stat-aff-month" class="text-xl sm:text-2xl font-black text-indigo-700">₲ 0</span>
+            <span data-a18n="kpi_aff_month_lbl" class="text-[11px] font-semibold text-gray-500">ce mois-ci</span>
+          </div>
+          <p class="text-[11px] text-gray-600 mt-1.5">
+            <span data-a18n="kpi_period_net">Bénéfice net période :</span> <strong id="stat-period-net" class="text-emerald-700">₲ 0</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- 1.3 DASHBOARD FINANCIER AVEC SÉLECTEUR DE PÉRIODE & 3 GRAPHIQUES -->
+      <div class="rounded-3xl bg-white border border-gray-200 p-5 sm:p-6 shadow-sm space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
+          <div>
+            <h3 data-a18n="fin_title" class="text-lg font-extrabold text-gray-900">Évolution Économique &amp; Dépenses en Matériel</h3>
+            <p data-a18n="fin_desc" class="text-xs text-gray-500">Analyse temps réel : revenus Cash/Transferencia, ratio bénéfice/dépenses et évolution du matériel.</p>
+          </div>
+
+          <div class="inline-flex rounded-full bg-gray-100 p-1 gap-1" role="group">
+            <button type="button" id="period-btn-daily" onclick="setFinancialPeriod('daily')" data-a18n="period_daily" class="period-btn px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer">Journalier</button>
+            <button type="button" id="period-btn-weekly" onclick="setFinancialPeriod('weekly')" data-a18n="period_weekly" class="period-btn px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer">Hebdo</button>
+            <button type="button" id="period-btn-monthly" onclick="setFinancialPeriod('monthly')" data-a18n="period_monthly" class="period-btn px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer">Mensuel</button>
+            <button type="button" id="period-btn-total" onclick="setFinancialPeriod('total')" data-a18n="period_total" class="period-btn px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer">Total</button>
+          </div>
+        </div>
+
+        <!-- Résumé chiffres sur la période choisie -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 bg-gray-50 rounded-2xl p-4 border border-gray-100">
+          <div>
+            <p data-a18n="period_gross" class="text-[11px] font-semibold text-gray-500">Revenus Bruts (Période)</p>
+            <p id="period-revenue" class="text-lg sm:text-xl font-black text-gray-900">₲ 0</p>
+          </div>
+          <div>
+            <p data-a18n="period_expenses" class="text-[11px] font-semibold text-gray-500">Dépenses en Matériel</p>
+            <p id="period-expenses" class="text-lg sm:text-xl font-black text-amber-700">₲ 0</p>
+          </div>
+          <div>
+            <p data-a18n="period_profit" class="text-[11px] font-semibold text-gray-500">Bénéfice Net</p>
+            <p id="period-profit" class="text-lg sm:text-xl font-black text-emerald-700">₲ 0</p>
+          </div>
+          <div>
+            <p data-a18n="period_ratio" class="text-[11px] font-semibold text-gray-500">Ratio Bénéfice / Dépenses</p>
+            <p id="period-ratio" class="text-lg sm:text-xl font-black text-indigo-700">—</p>
+          </div>
+        </div>
+
+        <!-- 3 Courbes / Graphiques -->
+        <div class="grid lg:grid-cols-3 gap-5">
+          <div class="rounded-2xl border border-gray-200 p-4 bg-white">
+            <h4 data-a18n="chart1_title" class="text-xs font-bold uppercase tracking-wider text-gray-600 mb-3">1. Courbe Croissance Économique (CA vs Net)</h4>
+            <div class="relative h-56 w-full">
+              <canvas id="chart-growth"></canvas>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-4 bg-white">
+            <h4 data-a18n="chart2_title" class="text-xs font-bold uppercase tracking-wider text-gray-600 mb-3">2. Courbe Ratio Bénéfice / Dépenses</h4>
+            <div class="relative h-56 w-full">
+              <canvas id="chart-ratio"></canvas>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-4 bg-white">
+            <div class="flex items-center justify-between mb-3">
+              <h4 data-a18n="chart3_title" class="text-xs font-bold uppercase tracking-wider text-gray-600">3. Évolution Dépenses en Matériel</h4>
+              <button type="button" onclick="openExpenseModal()" data-a18n="btn_add_short" class="text-[11px] font-bold text-amber-700 hover:underline cursor-pointer">+ Ajouter</button>
+            </div>
+            <div class="relative h-56 w-full">
+              <canvas id="chart-expenses"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Journal compact des dernières dépenses Matériel -->
+        <div class="pt-2">
+          <div class="flex items-center justify-between mb-2">
+            <h4 data-a18n="recent_expenses_title" class="text-xs font-bold uppercase tracking-wider text-gray-500">Dernières Dépenses en Matériel</h4>
+            <span id="expenses-count-badge" class="text-[11px] text-gray-500">0</span>
+          </div>
+          <div id="expenses-list" class="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="border-gray-200" />
+
+    <!-- ======================================================================
+         PARTIE 2 (EN DESSOUS) : LOGICIEL DE GESTION DES ABONNÉS, ALERTES & DOCUMENTS
+         ====================================================================== -->
+    <section id="part-2-subscribers" class="space-y-8">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <span data-a18n="part2_badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gray-900 text-white text-[11px] font-bold uppercase tracking-wider mb-1">
+            Partie 2 • Logiciel Abonnés
+          </span>
+          <h2 data-a18n="part2_title" class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Gestion des Abonnés, Alertes &amp; Documents</h2>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openExpenseModal()" data-a18n="btn_new_expense" class="px-4 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold shadow-xs transition-all cursor-pointer">
+            + Dépense Matériel
+          </button>
+          <button type="button" onclick="openMemberModal()" data-a18n="btn_new_member" class="px-4 py-2 rounded-full bg-[#0070f3] hover:bg-[#005bb5] text-white text-xs font-bold shadow-sm transition-all cursor-pointer">
+            + Ajouter un Membre
+          </button>
+        </div>
+      </div>
+
+      <!-- 2.1 CENTRE D'ALERTES PRIORITAIRES (ALERTE NIVEAU 1 ROUGE & NIVEAU 2 +2 SEMAINES COUPURE) -->
+      <div id="alerts-center" class="space-y-3"></div>
+
+      <!-- 2.2 CONTRÔLE POLICE & RECHERCHE HISTORIQUE PAR DATE -->
+      <div class="rounded-3xl bg-slate-900 text-white p-5 sm:p-6 shadow-md">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-xl">👮</div>
+            <div>
+              <h3 data-a18n="police_title" class="text-base sm:text-lg font-extrabold text-white">Contrôle Police &amp; Recherche Historique par Date</h3>
+              <p data-a18n="police_desc" class="text-xs text-slate-300">Retrouvez immédiatement quel membre était inscrit ou s'entraînait à une date donnée et consultez ses documents (ID, Fiche signée).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div>
+            <label for="police-date-input" data-a18n="police_date_lbl" class="block text-[11px] font-semibold text-slate-300 mb-1">Date recherchée</label>
+            <input id="police-date-input" type="date" onchange="runPoliceLookup()" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white px-3.5 py-2.5 text-sm font-medium focus:border-blue-400 focus:outline-none" />
+          </div>
+          <div>
+            <label for="police-status-select" data-a18n="police_status_lbl" class="block text-[11px] font-semibold text-slate-300 mb-1">Statut</label>
+            <select id="police-status-select" onchange="runPoliceLookup()" class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white px-3.5 py-2.5 text-sm font-medium focus:border-blue-400 focus:outline-none">
+              <option value="" data-a18n="police_all_statuses">Tous (Présent / Passé / Futur)</option>
+              <option value="active" data-a18n="police_opt_active">🟢 Actifs</option>
+              <option value="unsubscribed" data-a18n="police_opt_past">🚪 Anciens / Désinscrits</option>
+              <option value="future" data-a18n="police_opt_future">📅 Futurs</option>
+            </select>
+          </div>
+          <div>
+            <label for="police-text-input" data-a18n="police_search_lbl" class="block text-[11px] font-semibold text-slate-300 mb-1">Nom / Cédula / Code</label>
+            <input id="police-text-input" type="text" oninput="runPoliceLookup()" data-a18n-ph="police_search_ph" placeholder="Nom, ID ou téléphone..." class="w-full rounded-xl bg-slate-800 border border-slate-700 text-white px-3.5 py-2.5 text-sm font-medium focus:border-blue-400 focus:outline-none" />
+          </div>
+        </div>
+
+        <div id="police-results" class="mt-4 space-y-2"></div>
+      </div>
+
+      <!-- 2.3 FILTRES & GRILLE DES MEMBRES ABONNÉS -->
+      <div>
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="setMemberFilter('all')" id="member-filter-all" data-a18n="filter_all" class="member-filter-btn px-3.5 py-2 rounded-full text-xs font-bold cursor-pointer transition-all">Tous</button>
+            <button type="button" onclick="setMemberFilter('active')" id="member-filter-active" data-a18n="filter_active" class="member-filter-btn px-3.5 py-2 rounded-full text-xs font-bold cursor-pointer transition-all">🟢 Abonnés Actifs</button>
+            <button type="button" onclick="setMemberFilter('unpaid')" id="member-filter-unpaid" data-a18n="filter_unpaid" class="member-filter-btn px-3.5 py-2 rounded-full text-xs font-bold cursor-pointer transition-all">🔴 Impayés / À valider</button>
+            <button type="button" onclick="setMemberFilter('level2')" id="member-filter-level2" data-a18n="filter_l2" class="member-filter-btn px-3.5 py-2 rounded-full text-xs font-bold cursor-pointer transition-all">🚨 Alerte +2 Semaines</button>
+            <button type="button" onclick="setMemberFilter('unsubscribed')" id="member-filter-unsubscribed" data-a18n="filter_unsubscribed" class="member-filter-btn px-3.5 py-2 rounded-full text-xs font-bold cursor-pointer transition-all">🚪 Désinscrits</button>
+            <button type="button" onclick="setMemberFilter('future')" id="member-filter-future" data-a18n="filter_future" class="member-filter-btn px-3.5 py-2 rounded-full text-xs font-bold cursor-pointer transition-all">📅 Futurs</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input id="members-quick-search" type="text" oninput="renderMembersGrid()" data-a18n-ph="members_search_ph" placeholder="Rechercher un membre..." class="rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-medium focus:border-black focus:outline-none" />
+            <span id="members-count-label" class="text-xs font-semibold text-gray-500">0</span>
+          </div>
+        </div>
+
+        <div id="members-grid" class="grid md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      </div>
+
+      <!-- 2.4 TABLEAU CHRONOLOGIQUE PASSÉ - PRÉSENT - FUTUR -->
+      <div class="rounded-3xl bg-white border border-gray-200 p-5 sm:p-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4 mb-4">
+          <div>
+            <h3 data-a18n="timeline_title" class="text-lg font-extrabold text-gray-900">Registre Chronologique : Présent • Futur • Passé</h3>
+            <p data-a18n="timeline_desc" class="text-xs text-gray-500">Historique complet de chaque inscription, période passée et retour au club.</p>
+          </div>
+
+          <div class="inline-flex rounded-full bg-gray-100 p-1 gap-1">
+            <button type="button" onclick="setTimelineTab('active')" id="timeline-tab-active" data-a18n="tab_present" class="timeline-tab-btn px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all">🟢 Présent</button>
+            <button type="button" onclick="setTimelineTab('future')" id="timeline-tab-future" data-a18n="tab_future" class="timeline-tab-btn px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all">📅 Futur</button>
+            <button type="button" onclick="setTimelineTab('past')" id="timeline-tab-past" data-a18n="tab_past" class="timeline-tab-btn px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all">🗄️ Passé</button>
+          </div>
+        </div>
+
+        <div id="timeline-list" class="space-y-3"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODALES D'ACTIONS MÉTIER
+       ======================================================================== -->
+
+  <!-- 1. MODALE DÉTAILS DES IMPAYÉS -->
+  <div id="unpaid-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('unpaid-modal')">
+    <div class="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-gray-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 sm:p-6 bg-red-600 text-white flex items-center justify-between">
+        <div>
+          <h3 data-a18n="modal_unpaid_title" class="text-lg sm:text-xl font-extrabold">Détails des Impayés &amp; Recouvrement</h3>
+          <p data-a18n="modal_unpaid_sub" class="text-xs text-red-100 mt-0.5">Liste exacte des personnes qui nous doivent de l'argent et leur montant respectif</p>
+        </div>
+        <button type="button" onclick="closeModal('unpaid-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold cursor-pointer">✕</button>
+      </div>
+      <div id="unpaid-modal-body" class="p-5 sm:p-6 overflow-y-auto space-y-3 flex-1 bg-gray-50"></div>
+    </div>
+  </div>
+
+  <!-- 2. MODALE AJOUTER / MODIFIER UN MEMBRE -->
+  <div id="member-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('member-modal')">
+    <div class="w-full max-w-lg rounded-3xl bg-white shadow-2xl border border-gray-200 p-6 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="member-modal-title" data-a18n="modal_member_add" class="text-lg font-extrabold text-gray-900">Nouveau Membre</h3>
+        <button type="button" onclick="closeModal('member-modal')" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center cursor-pointer">✕</button>
+      </div>
+      <form onsubmit="submitMemberForm(event)" class="space-y-3.5 text-sm">
+        <input type="hidden" id="mem-form-id" />
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label data-a18n="lbl_mem_name" class="block text-xs font-bold text-gray-700 mb-1">Nom complet *</label>
+            <input id="mem-form-name" type="text" required placeholder="Lucas Martínez" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+          </div>
+          <div>
+            <label data-a18n="lbl_mem_ci" class="block text-xs font-bold text-gray-700 mb-1">N° Cédula (Opcional)</label>
+            <input id="mem-form-ci" type="text" placeholder="4.567.890" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label data-a18n="lbl_mem_phone" class="block text-xs font-bold text-gray-700 mb-1">Téléphone WhatsApp *</label>
+            <input id="mem-form-phone" type="tel" required placeholder="0981 123456" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+          </div>
+          <div>
+            <label data-a18n="lbl_mem_email" class="block text-xs font-bold text-gray-700 mb-1">Email / Code Afiliado</label>
+            <input id="mem-form-code" type="text" placeholder="LUCAS10 o email@..." class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label data-a18n="lbl_mem_status" class="block text-xs font-bold text-gray-700 mb-1">Statut *</label>
+            <select id="mem-form-status" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 focus:border-black focus:outline-none">
+              <option value="active" data-a18n="opt_mem_active">🟢 Abonné Actif dès maintenant</option>
+              <option value="future" data-a18n="opt_mem_future">📅 Inscription Future</option>
+            </select>
+          </div>
+          <div>
+            <label data-a18n="lbl_mem_start" class="block text-xs font-bold text-gray-700 mb-1">Date d'inscription *</label>
+            <input id="mem-form-start" type="date" required class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label data-a18n="lbl_mem_plan" class="block text-xs font-bold text-gray-700 mb-1">Formule / Pack *</label>
+            <input id="mem-form-plan" type="text" required class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+          </div>
+          <div>
+            <label data-a18n="lbl_mem_fee" class="block text-xs font-bold text-gray-700 mb-1">Tarif Mensuel (Gs) *</label>
+            <input id="mem-form-fee" type="number" required step="10000" value="150000" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 font-bold focus:border-black focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label data-a18n="lbl_mem_address" class="block text-xs font-bold text-gray-700 mb-1">Adresse / Notes</label>
+          <input id="mem-form-address" type="text" placeholder="Barrio, Ciudad..." class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+        </div>
+
+        <div id="mem-first-pay-wrapper" class="bg-emerald-50/70 border border-emerald-200 p-3 rounded-2xl">
+          <label data-a18n="lbl_mem_first_pay" class="block text-xs font-bold text-emerald-900 mb-1">1er mois payé ?</label>
+          <select id="mem-form-first-pay" class="w-full rounded-xl border border-emerald-300 bg-white px-3 py-2 text-xs font-bold focus:outline-none">
+            <option value="pending" data-a18n="opt_pay_later">⏳ Valider plus tard (Alerte rouge)</option>
+            <option value="paid_cash" data-a18n="opt_pay_cash">✅ Oui — Payé CASH</option>
+            <option value="paid_transferencia" data-a18n="opt_pay_transf">✅ Oui — Payé TRANSFERENCIA</option>
+          </select>
+        </div>
+
+        <p data-a18n="lbl_mem_docs_note" class="text-[11px] text-gray-500 bg-gray-50 border border-gray-200 rounded-xl p-2.5">
+          📎 Documents (ID, papier signé) : 100% optionnel, téléversable sans blocage depuis la fiche membre.
+        </p>
+
+        <button type="submit" data-a18n="btn_save_member" class="w-full py-3.5 rounded-full bg-[#0070f3] hover:bg-[#005bb5] text-white font-bold text-sm shadow-lg cursor-pointer">
+          Enregistrer le Membre →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. MODALE RÉINSCRIPTION (QUAND UN ANCIEN MEMBRE REVIENT AU CLUB) -->
+  <div id="resubscribe-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('resubscribe-modal')">
+    <div class="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 data-a18n="modal_resub_title" class="text-lg font-extrabold text-gray-900">Enclencher un Nouvel Abonnement</h3>
+        <button type="button" onclick="closeModal('resubscribe-modal')" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center cursor-pointer">✕</button>
+      </div>
+      <p data-a18n="modal_resub_sub" class="text-xs text-gray-500 mb-4">Le membre revient : un nouveau cycle démarre tout en conservant l'historique.</p>
+      <form onsubmit="submitResubscribeForm(event)" class="space-y-3.5 text-sm">
+        <input type="hidden" id="resub-mem-id" />
+        <p id="resub-mem-name" class="font-extrabold text-base text-blue-700 bg-blue-50 px-3.5 py-2 rounded-xl border border-blue-200"></p>
+        <div>
+          <label data-a18n="lbl_resub_date" class="block text-xs font-bold text-gray-700 mb-1">Date de reprise *</label>
+          <input id="resub-start-date" type="date" required class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+        </div>
+        <div>
+          <label data-a18n="lbl_resub_pay" class="block text-xs font-bold text-gray-700 mb-1">Paiement du mois de reprise ?</label>
+          <select id="resub-pay-status" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-xs font-bold">
+            <option value="pending" data-a18n="opt_pay_later">⏳ Valider plus tard (Alerte rouge)</option>
+            <option value="paid_cash" data-a18n="opt_pay_cash">✅ Oui — Payé CASH</option>
+            <option value="paid_transferencia" data-a18n="opt_pay_transf">✅ Oui — Payé TRANSFERENCIA</option>
+          </select>
+        </div>
+        <button type="submit" data-a18n="btn_confirm_resub" class="w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm cursor-pointer">
+          🔄 Enclencher le Nouvel Abonnement →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. MODALE DOCUMENTS OPTIONNELS & IMPRESSION FICHE -->
+  <div id="member-docs-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('member-docs-modal')">
+    <div class="w-full max-w-3xl rounded-3xl bg-white shadow-2xl border border-gray-200 overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="p-5 sm:p-6 bg-gray-950 text-white flex items-center justify-between gap-3">
+        <div>
+          <p data-a18n="modal_docs_kicker" class="text-[11px] font-bold uppercase tracking-wider text-[#34D186]">Espace Documents, ID &amp; Contrôle Police (Non Obligatoire)</p>
+          <h3 id="docs-modal-title" class="text-lg sm:text-xl font-extrabold">Documents du Membre</h3>
+        </div>
+        <button type="button" onclick="closeModal('member-docs-modal')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center font-bold cursor-pointer">✕</button>
+      </div>
+
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-gray-50">
+        <div id="docs-member-summary" class="rounded-2xl bg-white border border-gray-200 p-4 flex flex-wrap items-center justify-between gap-3"></div>
+
+        <div class="rounded-2xl bg-white border-2 border-dashed border-gray-300 p-5">
+          <h4 data-a18n="upload_title" class="text-sm font-extrabold text-gray-900 mb-3">📤 Téléverser un Document (Photo ID, Papier Signé, PDF)</h4>
+          <div class="grid sm:grid-cols-3 gap-3 items-end">
+            <div>
+              <label data-a18n="lbl_doc_type" class="block text-xs font-bold text-gray-600 mb-1">Type de document</label>
+              <select id="upload-doc-type" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 text-xs font-semibold">
+                <option value="Photo ID / Cédula">🪪 Photo ID / Cédula</option>
+                <option value="Fiche Signée / Décharge">📝 Fiche Signée / Décharge</option>
+                <option value="Certificat Médical">🩺 Certificat Médical</option>
+                <option value="Comprobante / Autre">📄 Justificatif / Autre</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label data-a18n="lbl_doc_files" class="block text-xs font-bold text-gray-600 mb-1">Sélectionner fichier(s) — Optionnel</label>
+              <input id="upload-doc-file" type="file" multiple accept="image/*,.pdf" onchange="handleDocumentUpload(event)" class="w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 data-a18n="stored_docs_title" class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Documents archivés dans la fiche de ce membre</h4>
+          <div id="docs-files-grid" class="grid sm:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MODALE HISTORIQUE COMPLET D'UN MEMBRE -->
+  <div id="member-history-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('member-history-modal')">
+    <div class="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-gray-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 bg-gray-900 text-white flex items-center justify-between">
+        <div>
+          <h3 id="mem-history-title" class="text-lg font-extrabold">Historique Membre</h3>
+          <p class="text-xs text-gray-300">OLIMPO TEAM AREGUÁ</p>
+        </div>
+        <button type="button" onclick="closeModal('member-history-modal')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center font-bold cursor-pointer">✕</button>
+      </div>
+      <div id="mem-history-body" class="p-5 overflow-y-auto space-y-4 flex-1 bg-gray-50"></div>
+    </div>
+  </div>
+
+  <!-- 6. MODALE AJOUTER DÉPENSE EN MATÉRIEL -->
+  <div id="expense-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('expense-modal')">
+    <div class="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 data-a18n="modal_exp_title" class="text-lg font-extrabold text-gray-900">Enregistrer Dépense en Matériel</h3>
+        <button type="button" onclick="closeModal('expense-modal')" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center cursor-pointer">✕</button>
+      </div>
+      <form onsubmit="submitExpenseForm(event)" class="space-y-3.5 text-sm">
+        <div>
+          <label data-a18n="lbl_exp_desc" class="block text-xs font-bold text-gray-700 mb-1">Matériel / Motif *</label>
+          <input id="exp-desc" type="text" required placeholder="Gants de boxe, sacs, ingrédients cuisine..." class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label data-a18n="lbl_exp_amount" class="block text-xs font-bold text-gray-700 mb-1">Montant (Gs) *</label>
+            <input id="exp-amount" type="number" required min="1000" step="1000" placeholder="120000" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 font-bold focus:border-black focus:outline-none" />
+          </div>
+          <div>
+            <label data-a18n="lbl_exp_method" class="block text-xs font-bold text-gray-700 mb-1">Payé avec *</label>
+            <select id="exp-method" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 font-semibold focus:border-black focus:outline-none">
+              <option value="cash" data-a18n="opt_from_cash">💵 Réserve CASH</option>
+              <option value="transferencia" data-a18n="opt_from_bank">🏦 Réserve BANQUE</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label data-a18n="lbl_exp_date" class="block text-xs font-bold text-gray-700 mb-1">Date de la dépense *</label>
+          <input id="exp-date" type="date" required class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 focus:border-black focus:outline-none" />
+        </div>
+        <button type="submit" data-a18n="btn_save_exp" class="w-full py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm cursor-pointer">
+          Déduire &amp; Enregistrer
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. MODALE AJUSTER SOLDE INITIAL CASH / BANQUE -->
+  <div id="adjust-balance-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('adjust-balance-modal')">
+    <div class="w-full max-w-sm rounded-3xl bg-white shadow-2xl border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="adjust-modal-title" class="text-lg font-extrabold text-gray-900">Ajuster Solde</h3>
+        <button type="button" onclick="closeModal('adjust-balance-modal')" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center cursor-pointer">✕</button>
+      </div>
+      <form onsubmit="submitAdjustBalance(event)" class="space-y-4 text-sm">
+        <input type="hidden" id="adjust-account-type" />
+        <p data-a18n="adj_desc" class="text-xs text-gray-500">Définissez le solde initial.</p>
+        <div>
+          <label data-a18n="lbl_adj_amount" class="block text-xs font-bold text-gray-700 mb-1">Montant Initial (Gs)</label>
+          <input id="adjust-amount-input" type="number" required step="1000" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3.5 py-2.5 font-bold focus:border-black focus:outline-none" />
+        </div>
+        <button type="submit" data-a18n="btn_save_adj" class="w-full py-3 rounded-full bg-black text-white font-bold text-sm cursor-pointer">
+          Mettre à jour le solde
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. MODALE CLOUD SYNC (FIREBASE & VERCEL API) & SAUVEGARDE JSON -->
+  <div id="backup-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeModal('backup-modal')">
+    <div class="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-gray-200 p-6 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h3 data-a18n="modal_backup_title" class="text-lg font-extrabold text-gray-900">Cloud &amp; Sauvegarde JSON</h3>
+        <button type="button" onclick="closeModal('backup-modal')" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center cursor-pointer">✕</button>
+      </div>
+      <p data-a18n="backup_desc" class="text-xs text-gray-600 leading-relaxed"></p>
+
+      <div id="cloud-firebase-box" class="rounded-2xl bg-indigo-50 border border-indigo-200 p-4 text-xs text-indigo-950 space-y-2">
+        <label data-a18n="lbl_fb_paste" class="block font-bold">Pegar config Firebase Web :</label>
+        <textarea id="admin-fb-config-input" rows="3" placeholder='{ apiKey: "...", authDomain: "...", projectId: "...", ... }' class="w-full rounded-xl border border-indigo-200 bg-white p-2.5 text-[11px] font-mono focus:outline-none focus:border-indigo-500"></textarea>
+        <button type="button" onclick="connectFirebaseFromAdmin()" data-a18n="btn_save_fb" class="w-full py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold cursor-pointer">
+          🔌 Connecter Firebase Cloud (Gratuit)
+        </button>
+      </div>
+
+      <div class="space-y-2.5 pt-1">
+        <button type="button" onclick="syncFromCloud(true); closeModal('backup-modal')" data-a18n="btn_force_sync" class="w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer">
+          🔄 Forcer la Synchronisation Cloud
+        </button>
+        <button type="button" onclick="exportDatabaseJson()" data-a18n="btn_export_json" class="w-full py-3 rounded-full bg-black text-white text-xs font-bold hover:bg-gray-800 cursor-pointer">
+          ⬇️ Télécharger Sauvegarde (.json)
+        </button>
+        <label class="block w-full py-3 rounded-full border-2 border-gray-300 text-center text-xs font-bold text-gray-800 hover:bg-gray-50 cursor-pointer">
+          <span data-a18n="btn_import_json">⬆️ Importer une Sauvegarde (.json)</span>
+          <input type="file" accept=".json" onchange="importDatabaseJson(event)" class="hidden" />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. MODALE VISIONNEUSE DE DOCUMENT PLEIN ÉCRAN -->
+  <div id="doc-viewer-modal" class="fixed inset-0 z-[60] hidden bg-black/90 backdrop-blur-sm flex flex-col p-4" onclick="if(event.target === this) closeModal('doc-viewer-modal')">
+    <div class="flex items-center justify-between text-white pb-3 max-w-5xl w-full mx-auto">
+      <span id="viewer-doc-name" class="text-sm font-bold truncate">Document</span>
+      <div class="flex items-center gap-2">
+        <a id="viewer-doc-download" href="#" download data-a18n="btn_download" class="px-4 py-1.5 rounded-full bg-[#34D186] text-black text-xs font-bold hover:bg-emerald-400">
+          ⬇️ Télécharger
+        </a>
+        <button type="button" onclick="closeModal('doc-viewer-modal')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center font-bold cursor-pointer">✕</button>
+      </div>
+    </div>
+    <div id="viewer-doc-content" class="flex-1 max-w-5xl w-full mx-auto flex items-center justify-center overflow-auto bg-gray-900/50 rounded-2xl p-2"></div>
+  </div>
+
+  <script src="firebase-service.js"></script>
+  <script src="admin-translations.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

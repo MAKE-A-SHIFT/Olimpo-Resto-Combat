@@ -263,6 +263,15 @@
             <span class="join-online-dot"></span>
           </span>
         </button>
+
+        <!-- BOUTON ADMIN (À CÔTÉ DE L'ICÔNE DE PROFIL) -->
+        <button type="button" class="btn-nav-admin" id="btnNavAdmin" onclick="window.openAdminAuthModal()" title="Admin ERP (Olimpo)" aria-label="Espace Administrateur">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="M12 8v4"></path>
+            <path d="M12 16h.01"></path>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
@@ -1790,6 +1799,39 @@
           <div class="student-history-list" id="memModalHistoryList"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN ACCESS PASSWORD MODAL (MOT DE PASSE: Olympus)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminAuthModal" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+    <div class="modal-dialog admin-auth-dialog">
+      <button type="button" class="mem-card-close" onclick="window.closeAdminAuthModal()" aria-label="Fermer">✕</button>
+      <div class="mem-card-header" style="margin-bottom: 18px;">
+        <div class="admin-shield-badge">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h3 class="mem-card-title" id="adminModalTitle" data-i18n="adminModalTitle">Espace Administrateur</h3>
+        <p class="mem-card-sub" data-i18n="adminModalSub">Olimpo Team — Gestion Abonnés, Documents &amp; Finances</p>
+      </div>
+
+      <form onsubmit="window.submitAdminAuth(event)" class="mem-classic-form">
+        <div class="form-group">
+          <label for="adminPasswordInput" data-i18n="lblAdminPass">Mot de passe d'accès</label>
+          <input type="password" id="adminPasswordInput" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
+          <div id="adminPasswordError" class="admin-pass-error" style="display: none;" data-i18n="adminPassError">
+            ⚠️ Mot de passe incorrect. Réessayez.
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit-order mem-classic-submit" data-i18n="btnAdminSubmit">
+          🔐 Accéder au Logiciel →
+        </button>
+      </form>
     </div>
   </div>
 

@@ -50,7 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function getStudentsDB() {
     try {
       const raw = localStorage.getItem('olimpo_students_v1');
-      return raw ? JSON.parse(raw) : {};
+      const parsed = raw ? JSON.parse(raw) : {};
+      if (parsed && parsed.__OLIMPO_ERP_STATE__) {
+        delete parsed.__OLIMPO_ERP_STATE__;
+      }
+      return parsed;
     } catch (e) {
       return {};
     }
@@ -1079,7 +1083,154 @@ document.addEventListener('DOMContentLoaded', () => {
       window.OlimpoFirebase.syncMemberToCloud(db[memberObj.code]);
       window.OlimpoFirebase.subscribeToMember(memberObj.code);
     }
+    window.bridgeMemberOrOrderToErp({
+      member: {
+        entity: 'club',
+        code: db[memberObj.code].code,
+        name: db[memberObj.code].name || db[memberObj.code].code,
+        email: db[memberObj.code].email || '',
+        phone: db[memberObj.code].phone || '',
+        monthlyFee: 150000,
+        disciplineOrPlan: 'Kickboxing K-1 & Boxeo (150.000 ₲/mes)',
+        affiliate: {
+          code: db[memberObj.code].code,
+          clicks: db[memberObj.code].clicks || 0,
+          monthlyEarnings: (db[memberObj.code].referrals || []).reduce((acc, r) => acc + (r.commission || 0), 0),
+          referralsCount: (db[memberObj.code].referrals || []).length,
+          referrals: db[memberObj.code].referrals || []
+        }
+      }
+    });
   }
+
+  // --- ADMIN AUTH MODAL & PASSWORD ("Olympus") + ERP BRIDGE ---
+  const adminAuthModal = document.getElementById('adminAuthModal');
+
+  window.openAdminAuthModal = function() {
+    if (
+      sessionStorage.getItem('olimpo_admin_auth') === 'Olympus_OK' ||
+      localStorage.getItem('olimpo_admin_auth') === 'Olympus_OK'
+    ) {
+      window.location.href = 'admin.html';
+      return;
+    }
+    if (!adminAuthModal) return;
+    const errEl = document.getElementById('adminPasswordError');
+    const inp = document.getElementById('adminPasswordInput');
+    if (errEl) errEl.style.display = 'none';
+    if (inp) inp.value = '';
+    adminAuthModal.classList.add('open');
+    setTimeout(() => inp?.focus(), 100);
+  };
+
+  window.closeAdminAuthModal = function() {
+    if (adminAuthModal) adminAuthModal.classList.remove('open');
+  };
+
+  if (adminAuthModal) {
+    adminAuthModal.addEventListener('click', (e) => {
+      if (e.target === adminAuthModal) window.closeAdminAuthModal();
+    });
+  }
+
+  window.submitAdminAuth = function(e) {
+    e.preventDefault();
+    const inp = document.getElementById('adminPasswordInput');
+    const errEl = document.getElementById('adminPasswordError');
+    const val = (inp?.value || '').trim();
+    if (val.toLowerCase() === 'olympus') {
+      sessionStorage.setItem('olimpo_admin_auth', 'Olympus_OK');
+      localStorage.setItem('olimpo_admin_auth', 'Olympus_OK');
+      if (errEl) errEl.style.display = 'none';
+      window.closeAdminAuthModal();
+      window.location.href = 'admin.html';
+    } else {
+      if (errEl) errEl.style.display = 'block';
+      if (inp) {
+        inp.value = '';
+        inp.focus();
+      }
+    }
+  };
+
+  window.bridgeMemberOrOrderToErp = function(eventPayload) {
+    if (!eventPayload) return;
+    try {
+      const ERP_KEY = 'olimpo_erp_state_v1';
+      const today = new Date().toISOString().slice(0, 10);
+      const raw = localStorage.getItem(ERP_KEY);
+      let erp = raw ? JSON.parse(raw) : {
+        version: 1,
+        updatedAt: 0,
+        initialBalances: { club: { cash: 0, transferencia: 0 }, restaurant: { cash: 0, transferencia: 0 } },
+        members: [],
+        expenses: []
+      };
+      if (!Array.isArray(erp.members)) erp.members = [];
+
+      if (eventPayload.member && typeof eventPayload.member === 'object') {
+        const inc = eventPayload.member;
+        const entity = inc.entity === 'restaurant' ? 'restaurant' : 'club';
+        const match = erp.members.find((m) =>
+          m.entity === entity &&
+          ((inc.code && m.code && m.code.toUpperCase() === String(inc.code).toUpperCase()) ||
+           (inc.email && m.email && m.email.toLowerCase() === String(inc.email).toLowerCase()) ||
+           (inc.phone && m.phone && m.phone === inc.phone))
+        );
+        if (!match) {
+          const fee = Number(inc.monthlyFee) || (entity === 'club' ? 150000 : 500000);
+          erp.members.push({
+            id: inc.id || `mem-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            entity,
+            code: String(inc.code || '').toUpperCase(),
+            name: String(inc.name || inc.code || 'Atleta Olimpo').trim(),
+            ci: String(inc.ci || ''),
+            phone: String(inc.phone || ''),
+            email: String(inc.email || ''),
+            address: String(inc.address || ''),
+            disciplineOrPlan: String(inc.disciplineOrPlan || (entity === 'club' ? 'Kickboxing K-1 & Boxeo (150.000 ₲/mes)' : 'Pack Nutrición')),
+            monthlyFee: fee,
+            status: inc.status || 'active',
+            accessBlocked: false,
+            subscribedSince: inc.subscribedSince || today,
+            unsubscribedAt: null,
+            periods: [{
+              id: `per-${Date.now()}`,
+              startDate: inc.subscribedSince || today,
+              endDate: null,
+              plan: String(inc.disciplineOrPlan || 'Abono'),
+              fee,
+              status: 'active'
+            }],
+            payments: inc.payments || {},
+            affiliate: inc.affiliate || { code: String(inc.code || '').toUpperCase(), clicks: 0, monthlyEarnings: 0, referralsCount: 0, referrals: [] },
+            documents: []
+          });
+        } else {
+          if (inc.ci && !match.ci) match.ci = inc.ci;
+          if (inc.phone && !match.phone) match.phone = inc.phone;
+          if (inc.address && !match.address) match.address = inc.address;
+          if (inc.affiliate) {
+            match.affiliate = { ...(match.affiliate || {}), ...inc.affiliate };
+          }
+        }
+      }
+
+      erp.updatedAt = Date.now();
+      localStorage.setItem(ERP_KEY, JSON.stringify(erp));
+
+      if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected && typeof window.OlimpoFirebase.syncErpStateToCloud === 'function') {
+        window.OlimpoFirebase.syncErpStateToCloud(erp);
+      }
+      fetch('/api/erp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-public-event': 'true' },
+        body: JSON.stringify(eventPayload)
+      }).catch(() => {});
+    } catch (err) {
+      console.warn('[Olimpo ERP Bridge]', err);
+    }
+  };
 
   // --- POP-UP MEMBER AUTH MODAL (3D FLIP CARD & MEMBER SPACE) ---
   const memberAuthModal = document.getElementById('memberAuthModal');
@@ -2093,6 +2244,25 @@ document.addEventListener('DOMContentLoaded', () => {
           `_Enviado desde la web oficial Olimpo Team Kickboxing & Restaurante (Areguá)_`;
       }
 
+      // Sync order / new member directly to Admin ERP (strict entity separation)
+      const isFreeTrial = isClubOrder && state.clubChoice === 'club_trial';
+      if (!isFreeTrial) {
+        window.bridgeMemberOrOrderToErp({
+          member: {
+            entity: isClubOrder ? 'club' : 'restaurant',
+            code: state.activeStudentCode || '',
+            name: custName,
+            ci: custCI,
+            phone: custPhone,
+            address: custAddress,
+            disciplineOrPlan: isClubOrder ? 'Kickboxing K-1 & Boxeo (150.000 ₲/mes)' : calc.nutritionLabel,
+            monthlyFee: isClubOrder ? 150000 : finalAmount,
+            status: 'active',
+            subscribedSince: new Date().toISOString().slice(0, 10)
+          }
+        });
+      }
+
       const encodedWA = encodeURIComponent(waMessage);
       const waUrl = `https://wa.me/${targetPhone}?text=${encodedWA}`;
 
@@ -2568,7 +2738,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "memMonthEndDesc": "Podés retirar tus ganancias <strong>el 1 de cada mes</strong>. ⚠️ <strong>Atención:</strong> si no retirás tus ganancias el 1 del mes, <strong>se eliminarán automáticamente (vuelven a 0 ₲)</strong> y deberás esperar al 1 del mes siguiente para retirar tus nuevas ganancias.",
             "btnWithdrawMonthEnd": "💸 Retirar mis ganancias (1 de cada mes)",
             "btnMemOrderPack": "🥗 Pedir un Pack",
-            "btnMemLogout": "🚪 Cerrar Sesión"
+            "btnMemLogout": "🚪 Cerrar Sesión",
+            "adminModalTitle": "Espacio Administrador",
+            "adminModalSub": "Olimpo Team — Gestión de Socios, Documentos y Finanzas",
+            "lblAdminPass": "Contraseña de acceso",
+            "adminPassError": "⚠️ Contraseña incorrecta. Intentá nuevamente.",
+            "btnAdminSubmit": "🔐 Acceder al Software →"
       },
       "fr": {
             "alertBar": "Cuota del día : 50 plats frais cuisinés chaque matin • Lundi au Samedi à Areguá • Sans Réservation requise",
@@ -2921,7 +3096,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "memMonthEndDesc": "Tu peux venir retirer tes profits <strong>le 1er de chaque mois</strong>. ⚠️ <strong>Attention :</strong> si tu ne retires pas tes profits le 1er du mois, ils seront <strong>supprimés automatiquement (remis à 0 ₲)</strong> et tu devras attendre le 1er du mois prochain pour retirer tes nouveaux gains.",
             "btnWithdrawMonthEnd": "💸 Retirer mes profits (1er du mois)",
             "btnMemOrderPack": "🥗 Commander un Pack",
-            "btnMemLogout": "🚪 Déconnexion"
+            "btnMemLogout": "🚪 Déconnexion",
+            "adminModalTitle": "Espace Administrateur",
+            "adminModalSub": "Olimpo Team — Gestion Abonnés, Documents & Finances",
+            "lblAdminPass": "Mot de passe d'accès",
+            "adminPassError": "⚠️ Mot de passe incorrect. Réessayez.",
+            "btnAdminSubmit": "🔐 Accéder au Logiciel →"
       },
       "en": {
             "alertBar": "Daily capacity: 50 fresh meals cooked every morning • Monday to Saturday in Areguá • No reservation required",
@@ -3274,7 +3454,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "memMonthEndDesc": "You can withdraw your profits <strong>on the 1st of each month</strong>. ⚠️ <strong>Warning:</strong> if you do not withdraw your profits on the 1st of the month, they will be <strong>automatically reset (back to 0 ₲)</strong> and you will have to wait until the 1st of next month to withdraw new earnings.",
             "btnWithdrawMonthEnd": "💸 Withdraw my profits (1st of each month)",
             "btnMemOrderPack": "🥗 Order a Pack",
-            "btnMemLogout": "🚪 Log Out"
+            "btnMemLogout": "🚪 Log Out",
+            "adminModalTitle": "Admin Space",
+            "adminModalSub": "Olimpo Team — Subscribers, Documents & Financial ERP",
+            "lblAdminPass": "Access password",
+            "adminPassError": "⚠️ Incorrect password. Please try again.",
+            "btnAdminSubmit": "🔐 Access Software →"
       }
 };
 
