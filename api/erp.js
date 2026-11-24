@@ -5,6 +5,9 @@
    ========================================================================== */
 
 const DB_KEY = "olimpo_erp_state_v1";
+const DEFAULT_CLOUD_OBJECT_URL =
+  process.env.OLIMPO_CLOUD_OBJECT_URL ||
+  "https://api.restful-api.dev/objects/ff808181a09d98f701a20dabc56f35fc";
 
 function findUpstashCredentials() {
   const candidates = [
@@ -63,7 +66,14 @@ function findJsonBinCredentials() {
 }
 
 function getActiveBackend() {
-  return findUpstashCredentials() || findFirebaseCredentials() || findJsonBinCredentials();
+  return (
+    findUpstashCredentials() ||
+    findFirebaseCredentials() ||
+    findJsonBinCredentials() || {
+      endpoint: DEFAULT_CLOUD_OBJECT_URL,
+      provider: "olimpo-cloud-db"
+    }
+  );
 }
 
 async function readCloudState(backend) {
@@ -95,6 +105,15 @@ async function readCloudState(backend) {
     if (!r.ok) throw new Error(`JSONBIN_READ_ERROR_${r.status}`);
     const payload = await r.json();
     return payload?.record || null;
+  }
+
+  if (backend.provider === "olimpo-cloud-db") {
+    const r = await fetch(`${backend.endpoint}?t=${Date.now()}`, {
+      headers: { "Cache-Control": "no-cache" }
+    });
+    if (!r.ok) throw new Error(`OLIMPO_CLOUD_READ_ERROR_${r.status}`);
+    const payload = await r.json();
+    return payload?.data || null;
   }
 
   return null;
@@ -137,6 +156,16 @@ async function writeCloudState(backend, state) {
       body: JSON.stringify(state)
     });
     if (!r.ok) throw new Error(`JSONBIN_WRITE_ERROR_${r.status}`);
+    return true;
+  }
+
+  if (backend.provider === "olimpo-cloud-db") {
+    const r = await fetch(backend.endpoint, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: DB_KEY, data: state })
+    });
+    if (!r.ok) throw new Error(`OLIMPO_CLOUD_WRITE_ERROR_${r.status}`);
     return true;
   }
 

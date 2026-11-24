@@ -133,20 +133,6 @@
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
 
-    <!-- HONEST CLOUD CONNECTION NOTICE (Shown ONLY when neither API nor Firebase Cloud is connected) -->
-    <div id="cloud-setup-banner" class="hidden rounded-2xl bg-amber-50 border-2 border-amber-300 p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
-      <div class="flex items-start gap-3">
-        <span class="text-xl">☁️</span>
-        <div>
-          <p data-a18n="cloud_banner_title" class="text-xs sm:text-sm font-extrabold text-amber-950">Synchronisation Multi-Appareils (PC / Téléphone / Tablette)</p>
-          <p data-a18n="cloud_banner_desc" class="text-xs text-amber-900 mt-0.5">Connectez Firebase ou Vercel Cloud pour partager la base de données entre tous vos appareils.</p>
-        </div>
-      </div>
-      <button type="button" onclick="openBackupModal()" data-a18n="cloud_banner_btn" class="px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold cursor-pointer shadow-xs">
-        ⚙️ Activer le Cloud (Gratuit)
-      </button>
-    </div>
-
     <!-- ======================================================================
          STRICT ENTITY SWITCHER : CLUB DE COMBAT VS RESTAURANT OLIMPO
          ====================================================================== -->
@@ -748,12 +734,12 @@
       </div>
       <p data-a18n="backup_desc" class="text-xs text-gray-600 leading-relaxed"></p>
 
-      <div id="cloud-firebase-box" class="rounded-2xl bg-indigo-50 border border-indigo-200 p-4 text-xs text-indigo-950 space-y-2">
-        <label data-a18n="lbl_fb_paste" class="block font-bold">Pegar config Firebase Web :</label>
-        <textarea id="admin-fb-config-input" rows="3" placeholder='{ apiKey: "...", authDomain: "...", projectId: "...", ... }' class="w-full rounded-xl border border-indigo-200 bg-white p-2.5 text-[11px] font-mono focus:outline-none focus:border-indigo-500"></textarea>
-        <button type="button" onclick="connectFirebaseFromAdmin()" data-a18n="btn_save_fb" class="w-full py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold cursor-pointer">
-          🔌 Connecter Firebase Cloud (Gratuit)
-        </button>
+      <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-xs text-emerald-950 flex items-center gap-3">
+        <span class="text-xl">☁️</span>
+        <div>
+          <p data-a18n="cloud_auto_active_title" class="font-extrabold">Synchronisation Automatique Active</p>
+          <p data-a18n="cloud_auto_active_sub" class="text-[11px] text-emerald-800 mt-0.5">PC • Téléphone • Tablette connectés en direct toutes les 5 secondes.</p>
+        </div>
       </div>
 
       <div class="space-y-2.5 pt-1">

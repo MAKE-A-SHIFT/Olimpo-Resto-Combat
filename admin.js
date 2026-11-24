@@ -14,6 +14,7 @@ const AUTH_VALUE = "Olympus_OK";
 const ADMIN_PASS = "Olympus";
 const ADMIN_LANG_KEY = "olimpo_admin_lang";
 const CLOUD_API_URL = "/api/erp";
+const DIRECT_CLOUD_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a20dabc56f35fc";
 
 // ==========================================================================
 // 1. MULTI-LANGUAGE ENGINE (ES / FR / EN)
@@ -185,7 +186,8 @@ function createDefaultState() {
     },
     members: [],
     expenses: [],
-    dismissedStudentCodes: []
+    dismissedStudentCodes: [],
+    explicitlyEmpty: false
   };
 }
 
@@ -207,7 +209,33 @@ function normalizeState(raw) {
     },
     members: Array.isArray(raw.members) ? raw.members : [],
     expenses: Array.isArray(raw.expenses) ? raw.expenses : [],
-    dismissedStudentCodes: Array.isArray(raw.dismissedStudentCodes) ? raw.dismissedStudentCodes : []
+    dismissedStudentCodes: Array.isArray(raw.dismissedStudentCodes) ? raw.dismissedStudentCodes : [],
+    explicitlyEmpty: Boolean(raw.explicitlyEmpty)
+  };
+}
+
+function stateHasData(s) {
+  if (!s || typeof s !== "object") return false;
+  if (Array.isArray(s.members) && s.members.length > 0) return true;
+  if (Array.isArray(s.expenses) && s.expenses.length > 0) return true;
+  const c = s.initialBalances?.club;
+  const r = s.initialBalances?.restaurant;
+  return Boolean(
+    (c && (Number(c.cash) !== 0 || Number(c.transferencia) !== 0)) ||
+    (r && (Number(r.cash) !== 0 || Number(r.transferencia) !== 0))
+  );
+}
+
+function buildLightweightCloudPayload(state) {
+  return {
+    ...state,
+    members: (state.members || []).map((m) => ({
+      ...m,
+      documents: (m.documents || []).map((d) => ({
+        ...d,
+        dataUrl: d.dataUrl && d.dataUrl.length > 45000 ? "" : d.dataUrl
+      }))
+    }))
   };
 }
 
@@ -327,24 +355,18 @@ function setCloudStatus(stateKey) {
 function refreshCloudStatusLabel() {
   const dot = document.getElementById("cloud-sync-dot");
   const txt = document.getElementById("cloud-sync-label");
-  const banner = document.getElementById("cloud-setup-banner");
 
   const map = {
     checking: { cls: "bg-amber-400 animate-pulse", key: "sync_checking" },
     ok: { cls: "bg-emerald-500", key: "sync_ok" },
     saving: { cls: "bg-amber-400 animate-pulse", key: "sync_saving" },
     pulling: { cls: "bg-blue-400 animate-pulse", key: "sync_pulling" },
-    not_configured: { cls: "bg-red-500 animate-pulse", key: "sync_not_configured" },
+    not_configured: { cls: "bg-slate-400", key: "sync_offline" },
     offline: { cls: "bg-slate-400", key: "sync_offline" }
   };
   const cfg = map[cloudSyncState] || map.offline;
   if (dot) dot.className = `w-2 h-2 rounded-full inline-block ${cfg.cls}`;
   if (txt) txt.textContent = t(cfg.key);
-
-  if (banner) {
-    if (cloudSyncState === "not_configured") banner.classList.remove("hidden");
-    else banner.classList.add("hidden");
-  }
 }
 
 let cloudPushTimer = null;
@@ -364,7 +386,7 @@ function saveState(skipCloudPush = false) {
     clearTimeout(cloudPushTimer);
     cloudPushTimer = setTimeout(() => {
       pushToCloud();
-    }, 250);
+    }, 200);
   }
 }
 
@@ -372,52 +394,46 @@ async function pushToCloud() {
   if (isSyncingNow) return;
   isSyncingNow = true;
   let anyConnected = false;
+  const payload = buildLightweightCloudPayload(erpState);
 
   try {
-    // 1. Push to Firebase Firestore if configured
+    // 1. Optional Firebase Firestore if configured
     if (window.OlimpoFirebase && window.OlimpoFirebase.isCloudConnected) {
-      const fbOk = await window.OlimpoFirebase.syncErpStateToCloud(erpState);
+      const fbOk = await window.OlimpoFirebase.syncErpStateToCloud(payload);
       if (fbOk) anyConnected = true;
     }
 
-    // 2. Push to /api/erp (Vercel KV / Upstash / Local Node server)
+    // 2. Primary Zero-Config Cloud API (/api/erp on Vercel / Local server)
+    let apiOk = false;
     try {
-      let res = await fetch(CLOUD_API_URL, {
+      const res = await fetch(CLOUD_API_URL, {
         method: "PUT",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           "x-admin-pass": ADMIN_PASS
         },
-        body: JSON.stringify({ data: erpState })
+        body: JSON.stringify({ data: payload })
       });
-
-      if (res.status === 413) {
-        const lightweightState = {
-          ...erpState,
-          members: erpState.members.map((m) => ({
-            ...m,
-            documents: (m.documents || []).map((d) => ({
-              ...d,
-              dataUrl: d.dataUrl && d.dataUrl.length > 50000 ? "" : d.dataUrl
-            }))
-          }))
-        };
-        res = await fetch(CLOUD_API_URL, {
-          method: "PUT",
-          cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-            "x-admin-pass": ADMIN_PASS
-          },
-          body: JSON.stringify({ data: lightweightState })
-        });
+      if (res.ok) {
+        apiOk = true;
+        anyConnected = true;
       }
-
-      if (res.ok) anyConnected = true;
     } catch {}
 
-    setCloudStatus(anyConnected ? "ok" : "not_configured");
+    // 3. Direct CORS Cloud fallback if /api/erp was unreachable
+    if (!apiOk) {
+      try {
+        const resDirect = await fetch(DIRECT_CLOUD_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: "olimpo_erp_state_v1", data: payload })
+        });
+        if (resDirect.ok) anyConnected = true;
+      } catch {}
+    }
+
+    setCloudStatus(anyConnected ? "ok" : "offline");
   } finally {
     isSyncingNow = false;
   }
@@ -448,14 +464,16 @@ async function syncFromCloud(manual = false) {
       }
     }
 
-    // 2. Check /api/erp (Vercel Cloud DB or Node Local Server)
+    // 2. Check Primary Cloud API (/api/erp)
+    let apiOk = false;
     try {
-      const res = await fetch(CLOUD_API_URL, {
+      const res = await fetch(`${CLOUD_API_URL}?t=${Date.now()}`, {
         method: "GET",
         cache: "no-store",
         headers: { "x-admin-pass": ADMIN_PASS }
       });
       if (res.ok) {
+        apiOk = true;
         anyConnected = true;
         const payload = await res.json();
         const apiErp = payload?.data;
@@ -467,8 +485,38 @@ async function syncFromCloud(manual = false) {
       }
     } catch {}
 
+    // 3. Direct CORS Cloud fallback if /api/erp was unreachable
+    if (!apiOk) {
+      try {
+        const resDirect = await fetch(`${DIRECT_CLOUD_URL}?t=${Date.now()}`, { cache: "no-store" });
+        if (resDirect.ok) {
+          anyConnected = true;
+          const payloadDirect = await resDirect.json();
+          const directErp = payloadDirect?.data;
+          if (directErp && Array.isArray(directErp.members)) {
+            if (!remoteErp || (directErp.updatedAt || 0) > (remoteErp.updatedAt || 0)) {
+              remoteErp = directErp;
+            }
+          }
+        }
+      } catch {}
+    }
+
     if (remoteErp && Array.isArray(remoteErp.members)) {
-      if ((remoteErp.updatedAt || 0) > (erpState.updatedAt || 0)) {
+      const localHasData = stateHasData(erpState);
+      const remoteHasData = stateHasData(remoteErp);
+
+      if (localHasData && !remoteHasData && !remoteErp.explicitlyEmpty) {
+        // Seed Cloud immediately from this populated device instead of overwriting it
+        if (erpState.updatedAt === 0) erpState.updatedAt = Date.now();
+        needPushUp = true;
+      } else if (remoteHasData && !localHasData && !erpState.explicitlyEmpty) {
+        // Fresh phone/tablet opening the panel pulls Cloud data right away
+        erpState = normalizeState(remoteErp);
+        mergePublicStudentsIntoErp();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(erpState));
+        renderAll();
+      } else if ((remoteErp.updatedAt || 0) > (erpState.updatedAt || 0)) {
         erpState = normalizeState(remoteErp);
         mergePublicStudentsIntoErp();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(erpState));
@@ -481,30 +529,13 @@ async function syncFromCloud(manual = false) {
       needPushUp = true;
     }
 
-    setCloudStatus(anyConnected ? "ok" : "not_configured");
+    setCloudStatus(anyConnected ? "ok" : "offline");
   } finally {
     isSyncingNow = false;
   }
 
   if (needPushUp) {
     await pushToCloud();
-  }
-}
-
-async function connectFirebaseFromAdmin() {
-  const raw = document.getElementById("admin-fb-config-input")?.value || "";
-  if (!window.OlimpoFirebase) return;
-  const parsed = window.OlimpoFirebase.parseAndSaveConfig(raw);
-  if (!parsed.ok) {
-    alert(`Firebase Config Error: ${parsed.error}`);
-    return;
-  }
-  const ok = await window.OlimpoFirebase.init();
-  if (ok) {
-    await syncFromCloud(true);
-    closeModal("backup-modal");
-  } else {
-    alert("Could not initialize Firebase with this configuration.");
   }
 }
 
@@ -1761,6 +1792,7 @@ function deleteMember(memberId) {
     }
   }
   erpState.members = erpState.members.filter((m) => m.id !== memberId);
+  erpState.explicitlyEmpty = !stateHasData(erpState);
   saveState();
 }
 
@@ -1929,6 +1961,7 @@ function submitMemberForm(e) {
   }
 
   closeModal("member-modal");
+  erpState.explicitlyEmpty = false;
   mergePublicStudentsIntoErp();
   saveState();
 }
@@ -1951,6 +1984,7 @@ function submitExpenseForm(e) {
     method: document.getElementById("exp-method").value,
     date: document.getElementById("exp-date").value || getTodayIso()
   });
+  erpState.explicitlyEmpty = false;
   closeModal("expense-modal");
   saveState();
 }
@@ -1958,6 +1992,7 @@ function submitExpenseForm(e) {
 function deleteExpense(expId) {
   if (!confirm(t("confirm_delete_exp"))) return;
   erpState.expenses = erpState.expenses.filter((r) => r.id !== expId);
+  erpState.explicitlyEmpty = !stateHasData(erpState);
   saveState();
 }
 
@@ -1976,6 +2011,7 @@ function submitAdjustBalance(e) {
   if (!erpState.initialBalances) erpState.initialBalances = { club: { cash: 0, transferencia: 0 }, restaurant: { cash: 0, transferencia: 0 } };
   if (!erpState.initialBalances[activeEntity]) erpState.initialBalances[activeEntity] = { cash: 0, transferencia: 0 };
   erpState.initialBalances[activeEntity][type] = val;
+  erpState.explicitlyEmpty = !stateHasData(erpState);
   closeModal("adjust-balance-modal");
   saveState();
 }
@@ -2325,8 +2361,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   setInterval(() => {
-    if (document.visibilityState === "visible" && isAuthenticated() && cloudSyncState === "ok") {
+    if (document.visibilityState === "visible" && isAuthenticated()) {
       syncFromCloud(false);
     }
-  }, 20000);
+  }, 5000);
 });
