@@ -5,6 +5,7 @@
    ========================================================================== */
 
 const DB_KEY = "olimpo_erp_state_v1";
+const FIREBASE_VAULT_KEY = process.env.FIREBASE_VAULT_KEY || "olimpo_vault_v1/Olympus_Vault_7f9a2c4e8b1d6f3a9e0c";
 
 function findUpstashCredentials() {
   const candidates = [
@@ -46,7 +47,7 @@ function findFirebaseCredentials() {
   const cleanUrl = url.replace(/\/+$/, "");
   const suffix = auth ? `?auth=${encodeURIComponent(auth)}` : "";
   return {
-    endpoint: `${cleanUrl}/${DB_KEY}.json${suffix}`,
+    endpoint: `${cleanUrl}/${FIREBASE_VAULT_KEY}.json${suffix}`,
     provider: "firebase-rtdb"
   };
 }

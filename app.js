@@ -1226,43 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-public-event': 'true' },
         body: JSON.stringify(eventPayload)
-      }).then((res) => {
-        if (!res.ok) throw new Error('RTDB fallback');
-      }).catch(async () => {
-        try {
-          const fbUrl = 'https://olimpo-aregua-default-rtdb.firebaseio.com/olimpo_erp_state_v1.json';
-          const rGet = await fetch(`${fbUrl}?t=${Date.now()}`, { cache: 'no-store' });
-          let remoteState = null;
-          if (rGet.ok) {
-            const raw = await rGet.json();
-            if (raw && typeof raw === 'object') {
-              remoteState = {
-                ...raw,
-                members: Array.isArray(raw.members) ? raw.members : [],
-                expenses: Array.isArray(raw.expenses) ? raw.expenses : []
-              };
-            }
-          }
-          const stateToSave = remoteState && (remoteState.updatedAt || 0) > (erp.updatedAt || 0)
-            ? remoteState
-            : erp;
-          if (remoteState && stateToSave === remoteState && eventPayload.member) {
-            const inc = eventPayload.member;
-            const entity = inc.entity === 'restaurant' ? 'restaurant' : 'club';
-            const exists = stateToSave.members.find((m) => m.entity === entity && ((inc.code && m.code === String(inc.code).toUpperCase()) || (inc.email && m.email === inc.email)));
-            if (!exists) {
-              const incomingCopy = erp.members[erp.members.length - 1];
-              if (incomingCopy) stateToSave.members.push(incomingCopy);
-            }
-          }
-          stateToSave.updatedAt = Date.now();
-          await fetch(fbUrl, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(stateToSave)
-          });
-        } catch {}
-      });
+      }).catch(() => {});
     } catch (err) {
       console.warn('[Olimpo ERP Bridge]', err);
     }

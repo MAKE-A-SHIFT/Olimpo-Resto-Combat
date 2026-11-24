@@ -14,7 +14,6 @@ const AUTH_VALUE = "Olympus_OK";
 const ADMIN_PASS = "Olympus";
 const ADMIN_LANG_KEY = "olimpo_admin_lang";
 const CLOUD_API_URL = "/api/erp";
-const FIREBASE_RTDB_ENDPOINT = "https://olimpo-aregua-default-rtdb.firebaseio.com/olimpo_erp_state_v1.json";
 
 // ==========================================================================
 // 1. MULTI-LANGUAGE ENGINE (ES / FR / EN)
@@ -435,52 +434,42 @@ async function pushToCloud() {
   const payload = buildLightweightCloudPayload(erpState);
 
   try {
-    let ok = false;
-    try {
-      let res = await fetch(CLOUD_API_URL, {
+    let res = await fetch(CLOUD_API_URL, {
+      method: "PUT",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-pass": ADMIN_PASS
+      },
+      body: JSON.stringify({ data: payload })
+    });
+
+    if (res.status === 413) {
+      const ultraLight = {
+        ...payload,
+        members: payload.members.map((m) => ({
+          ...m,
+          documents: (m.documents || []).map((d) => ({ ...d, dataUrl: "" }))
+        }))
+      };
+      res = await fetch(CLOUD_API_URL, {
         method: "PUT",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           "x-admin-pass": ADMIN_PASS
         },
-        body: JSON.stringify({ data: payload })
+        body: JSON.stringify({ data: ultraLight })
       });
-
-      if (res.status === 413) {
-        const ultraLight = {
-          ...payload,
-          members: payload.members.map((m) => ({
-            ...m,
-            documents: (m.documents || []).map((d) => ({ ...d, dataUrl: "" }))
-          }))
-        };
-        res = await fetch(CLOUD_API_URL, {
-          method: "PUT",
-          cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-            "x-admin-pass": ADMIN_PASS
-          },
-          body: JSON.stringify({ data: ultraLight })
-        });
-      }
-      if (res.ok) ok = true;
-    } catch {}
-
-    // Direct Firebase Realtime Database fallback (works cleanly across CORS)
-    if (!ok) {
-      try {
-        const resFb = await fetch(FIREBASE_RTDB_ENDPOINT, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (resFb.ok) ok = true;
-      } catch {}
     }
 
-    setCloudStatus(ok ? "ok" : "offline");
+    if (res.status === 503) {
+      setCloudStatus("not_configured");
+      return;
+    }
+    setCloudStatus(res.ok ? "ok" : "offline");
+  } catch {
+    setCloudStatus("offline");
   } finally {
     isSyncingNow = false;
   }
@@ -492,7 +481,6 @@ async function syncFromCloud(manual = false) {
   isSyncingNow = true;
 
   let needPushUp = false;
-  let connected = false;
   let remoteRaw = null;
 
   try {
@@ -502,25 +490,17 @@ async function syncFromCloud(manual = false) {
         cache: "no-store",
         headers: { "x-admin-pass": ADMIN_PASS }
       });
-      if (res.ok) {
-        connected = true;
-        const payload = await res.json();
-        remoteRaw = payload?.data || null;
+      if (res.status === 503) {
+        setCloudStatus("not_configured");
+        return;
       }
-    } catch {}
-
-    // Direct Firebase Realtime Database fallback if /api/erp was unreachable
-    if (!connected) {
-      try {
-        const resFb = await fetch(`${FIREBASE_RTDB_ENDPOINT}?t=${Date.now()}`, { cache: "no-store" });
-        if (resFb.ok) {
-          connected = true;
-          remoteRaw = await resFb.json();
-        }
-      } catch {}
-    }
-
-    if (!connected) {
+      if (!res.ok) {
+        setCloudStatus("offline");
+        return;
+      }
+      const payload = await res.json();
+      remoteRaw = payload?.data || null;
+    } catch {
       setCloudStatus("offline");
       return;
     }
