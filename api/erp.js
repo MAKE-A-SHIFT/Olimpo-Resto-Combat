@@ -40,7 +40,7 @@ function findUpstashCredentials() {
 }
 
 function findFirebaseCredentials() {
-  const url = process.env.FIREBASE_DB_URL;
+  const url = process.env.FIREBASE_DB_URL || "https://olimpo-aregua-default-rtdb.firebaseio.com";
   if (!url) return null;
   const auth = process.env.FIREBASE_DB_AUTH || "";
   const cleanUrl = url.replace(/\/+$/, "");
@@ -83,9 +83,18 @@ async function readCloudState(backend) {
   }
 
   if (backend.provider === "firebase-rtdb") {
-    const r = await fetch(backend.endpoint);
+    const r = await fetch(`${backend.endpoint}?t=${Date.now()}`, {
+      headers: { "Cache-Control": "no-cache" }
+    });
     if (!r.ok) throw new Error(`FIREBASE_READ_ERROR_${r.status}`);
-    return await r.json();
+    const raw = await r.json();
+    if (!raw || typeof raw !== "object") return null;
+    return {
+      ...createSkeletonState(),
+      ...raw,
+      members: Array.isArray(raw.members) ? raw.members : [],
+      expenses: Array.isArray(raw.expenses) ? raw.expenses : []
+    };
   }
 
   if (backend.provider === "jsonbin") {

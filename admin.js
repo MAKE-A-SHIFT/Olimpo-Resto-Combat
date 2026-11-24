@@ -14,6 +14,7 @@ const AUTH_VALUE = "Olympus_OK";
 const ADMIN_PASS = "Olympus";
 const ADMIN_LANG_KEY = "olimpo_admin_lang";
 const CLOUD_API_URL = "/api/erp";
+const FIREBASE_RTDB_ENDPOINT = "https://olimpo-aregua-default-rtdb.firebaseio.com/olimpo_erp_state_v1.json";
 
 // ==========================================================================
 // 1. MULTI-LANGUAGE ENGINE (ES / FR / EN)
@@ -194,9 +195,28 @@ function createDefaultState() {
   };
 }
 
+function toSafeArray(val) {
+  if (Array.isArray(val)) return val;
+  if (val && typeof val === "object") return Object.values(val);
+  return [];
+}
+
 function normalizeState(raw) {
   const base = createDefaultState();
   if (!raw || typeof raw !== "object") return base;
+  const members = toSafeArray(raw.members).map((m) => ({
+    ...m,
+    periods: toSafeArray(m.periods),
+    documents: toSafeArray(m.documents),
+    payments: m.payments && typeof m.payments === "object" ? m.payments : {},
+    affiliate: {
+      code: m.affiliate?.code || m.code || "",
+      clicks: Number(m.affiliate?.clicks || 0),
+      monthlyEarnings: Number(m.affiliate?.monthlyEarnings || 0),
+      referralsCount: Number(m.affiliate?.referralsCount || 0),
+      referrals: toSafeArray(m.affiliate?.referrals)
+    }
+  }));
   return {
     ...base,
     ...raw,
@@ -210,9 +230,9 @@ function normalizeState(raw) {
         transferencia: Number(raw.initialBalances?.restaurant?.transferencia || 0)
       }
     },
-    members: Array.isArray(raw.members) ? raw.members : [],
-    expenses: Array.isArray(raw.expenses) ? raw.expenses : [],
-    dismissedStudentCodes: Array.isArray(raw.dismissedStudentCodes) ? raw.dismissedStudentCodes : [],
+    members,
+    expenses: toSafeArray(raw.expenses),
+    dismissedStudentCodes: toSafeArray(raw.dismissedStudentCodes),
     explicitlyEmpty: Boolean(raw.explicitlyEmpty)
   };
 }
@@ -415,47 +435,52 @@ async function pushToCloud() {
   const payload = buildLightweightCloudPayload(erpState);
 
   try {
-    let res = await fetch(CLOUD_API_URL, {
-      method: "PUT",
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-pass": ADMIN_PASS
-      },
-      body: JSON.stringify({ data: payload })
-    });
-
-    if (res.status === 503) {
-      setCloudStatus("not_configured");
-      return;
-    }
-
-    if (res.status === 413) {
-      const ultraLight = {
-        ...payload,
-        members: payload.members.map((m) => ({
-          ...m,
-          documents: (m.documents || []).map((d) => ({ ...d, dataUrl: "" }))
-        }))
-      };
-      res = await fetch(CLOUD_API_URL, {
+    let ok = false;
+    try {
+      let res = await fetch(CLOUD_API_URL, {
         method: "PUT",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           "x-admin-pass": ADMIN_PASS
         },
-        body: JSON.stringify({ data: ultraLight })
+        body: JSON.stringify({ data: payload })
       });
+
+      if (res.status === 413) {
+        const ultraLight = {
+          ...payload,
+          members: payload.members.map((m) => ({
+            ...m,
+            documents: (m.documents || []).map((d) => ({ ...d, dataUrl: "" }))
+          }))
+        };
+        res = await fetch(CLOUD_API_URL, {
+          method: "PUT",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-pass": ADMIN_PASS
+          },
+          body: JSON.stringify({ data: ultraLight })
+        });
+      }
+      if (res.ok) ok = true;
+    } catch {}
+
+    // Direct Firebase Realtime Database fallback (works cleanly across CORS)
+    if (!ok) {
+      try {
+        const resFb = await fetch(FIREBASE_RTDB_ENDPOINT, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (resFb.ok) ok = true;
+      } catch {}
     }
 
-    if (res.ok) {
-      setCloudStatus("ok");
-    } else {
-      setCloudStatus("offline");
-    }
-  } catch {
-    setCloudStatus("offline");
+    setCloudStatus(ok ? "ok" : "offline");
   } finally {
     isSyncingNow = false;
   }
@@ -467,27 +492,41 @@ async function syncFromCloud(manual = false) {
   isSyncingNow = true;
 
   let needPushUp = false;
+  let connected = false;
+  let remoteRaw = null;
 
   try {
-    const res = await fetch(`${CLOUD_API_URL}?t=${Date.now()}`, {
-      method: "GET",
-      cache: "no-store",
-      headers: { "x-admin-pass": ADMIN_PASS }
-    });
+    try {
+      const res = await fetch(`${CLOUD_API_URL}?t=${Date.now()}`, {
+        method: "GET",
+        cache: "no-store",
+        headers: { "x-admin-pass": ADMIN_PASS }
+      });
+      if (res.ok) {
+        connected = true;
+        const payload = await res.json();
+        remoteRaw = payload?.data || null;
+      }
+    } catch {}
 
-    if (res.status === 503) {
-      setCloudStatus("not_configured");
+    // Direct Firebase Realtime Database fallback if /api/erp was unreachable
+    if (!connected) {
+      try {
+        const resFb = await fetch(`${FIREBASE_RTDB_ENDPOINT}?t=${Date.now()}`, { cache: "no-store" });
+        if (resFb.ok) {
+          connected = true;
+          remoteRaw = await resFb.json();
+        }
+      } catch {}
+    }
+
+    if (!connected) {
+      setCloudStatus("offline");
       return;
     }
-    if (!res.ok) {
-      if (manual) setCloudStatus("offline");
-      return;
-    }
 
-    const payload = await res.json();
-    const remoteErp = payload?.data;
-
-    if (remoteErp && Array.isArray(remoteErp.members)) {
+    if (remoteRaw && typeof remoteRaw === "object") {
+      const remoteErp = normalizeState(remoteRaw);
       const localHasData = stateHasData(erpState);
       const remoteHasData = stateHasData(remoteErp);
 
@@ -495,24 +534,24 @@ async function syncFromCloud(manual = false) {
         if (erpState.updatedAt === 0) erpState.updatedAt = Date.now();
         needPushUp = true;
       } else if (remoteHasData && !localHasData && !erpState.explicitlyEmpty) {
-        erpState = normalizeState(remoteErp);
+        erpState = remoteErp;
         mergePublicStudentsIntoErp();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(erpState));
         renderAll();
       } else if ((remoteErp.updatedAt || 0) > (erpState.updatedAt || 0)) {
-        erpState = normalizeState(remoteErp);
+        erpState = remoteErp;
         mergePublicStudentsIntoErp();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(erpState));
         renderAll();
       } else if ((erpState.updatedAt || 0) > (remoteErp.updatedAt || 0)) {
         needPushUp = true;
       }
-      setCloudStatus("ok");
     } else {
       if (erpState.updatedAt === 0) erpState.updatedAt = Date.now();
       needPushUp = true;
-      setCloudStatus("ok");
     }
+
+    setCloudStatus("ok");
   } catch {
     setCloudStatus("offline");
   } finally {
@@ -2342,8 +2381,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   setInterval(() => {
-    if (document.visibilityState === "visible" && isAuthenticated() && cloudSyncState === "ok") {
+    if (document.visibilityState === "visible" && isAuthenticated()) {
       syncFromCloud(false);
     }
-  }, 15000);
+  }, 5000);
 });
