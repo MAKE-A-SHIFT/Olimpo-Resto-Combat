@@ -8,11 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function detectInitialLanguage() {
     try {
       const urlLang = new URLSearchParams(window.location.search).get('lang');
-      if (urlLang && ['es', 'fr', 'en'].includes(urlLang.toLowerCase())) {
+      if (urlLang && ['es', 'en'].includes(urlLang.toLowerCase())) {
         return urlLang.toLowerCase();
       }
       const saved = localStorage.getItem('olimpo_lang') || localStorage.getItem('gl_lang_manual');
-      if (saved && ['es', 'fr', 'en'].includes(saved)) {
+      if (saved === 'fr') {
+        localStorage.setItem('olimpo_lang', 'es');
+        return 'es';
+      }
+      if (saved && ['es', 'en'].includes(saved)) {
         return saved;
       }
       const navLangs = navigator.languages || [navigator.language || ''];
@@ -20,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!nl) continue;
         const code = nl.slice(0, 2).toLowerCase();
         if (code === 'es') return 'es';
-        if (code === 'fr') return 'fr';
         if (code === 'en') return 'en';
       }
     } catch (e) {
@@ -3593,6 +3596,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyLanguage(lang) {
+    lang = (lang === 'en') ? 'en' : 'es';
     state.lang = lang;
     localStorage.setItem('olimpo_lang', lang);
     document.documentElement.lang = lang;

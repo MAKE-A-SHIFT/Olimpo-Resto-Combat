@@ -16,13 +16,16 @@ const ADMIN_LANG_KEY = "olimpo_admin_lang";
 const CLOUD_API_URL = "/api/erp";
 
 // ==========================================================================
-// 1. MULTI-LANGUAGE ENGINE (ES / FR / EN)
+// 1. MULTI-LANGUAGE ENGINE (ES / EN)
 // ==========================================================================
 function detectAdminLang() {
+  const savedAdmin = localStorage.getItem(ADMIN_LANG_KEY);
+  const savedSite = localStorage.getItem("olimpo_lang");
+  if (savedAdmin === "fr") localStorage.setItem(ADMIN_LANG_KEY, "es");
+  if (savedSite === "fr") localStorage.setItem("olimpo_lang", "es");
   const saved = localStorage.getItem(ADMIN_LANG_KEY) || localStorage.getItem("olimpo_lang");
-  if (saved && window.ADMIN_I18N?.[saved]) return saved;
+  if (saved === "en" || saved === "es") return saved;
   const nav = (navigator.language || "es").toLowerCase();
-  if (nav.startsWith("fr")) return "fr";
   if (nav.startsWith("en")) return "en";
   return "es";
 }
@@ -40,10 +43,10 @@ function t(key, vars = {}) {
 }
 
 function setAdminLang(lang, manual = false) {
-  if (!window.ADMIN_I18N?.[lang]) return;
-  currentAdminLang = lang;
-  if (manual) localStorage.setItem(ADMIN_LANG_KEY, lang);
-  document.documentElement.lang = lang;
+  const normalized = lang === "en" ? "en" : "es";
+  currentAdminLang = normalized;
+  if (manual) localStorage.setItem(ADMIN_LANG_KEY, normalized);
+  document.documentElement.lang = normalized;
   applyAdminI18n();
   renderAll();
 }
@@ -1817,7 +1820,7 @@ function openUnpaidDetailsModal() {
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="font-extrabold text-base text-gray-900">${escapeHtml(member.name)}</span>
                   ${member.ci ? `<span class="text-xs text-gray-500">ID ${escapeHtml(member.ci)}</span>` : ""}
-                  ${analysis.cutoffAlert ? `<span class="px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">🚨 +2 sem.</span>` : ""}
+                  ${analysis.cutoffAlert ? `<span class="px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">${escapeHtml(t("badge_2weeks"))}</span>` : ""}
                 </div>
                 <p class="text-xs text-gray-600 mt-0.5">${escapeHtml(member.disciplineOrPlan)} • Tel : ${escapeHtml(member.phone || "—")}</p>
                 <p class="text-[11px] text-gray-500 mt-1">
@@ -1857,7 +1860,7 @@ function openMemberModal() {
   document.getElementById("mem-form-status").value = "active";
   document.getElementById("mem-form-start").value = getTodayIso();
   document.getElementById("mem-form-plan").value =
-    activeEntity === "club" ? "Kickboxing K-1 & Boxeo" : "Fighter Pro (2 Platos/día)";
+    activeEntity === "club" ? t("default_plan_club") : t("default_plan_resto");
   document.getElementById("mem-form-fee").value = activeEntity === "club" ? CLUB_MONTHLY_FEE : 950000;
   document.getElementById("mem-form-fee").readOnly = activeEntity === "club";
   document.getElementById("mem-form-address").value = "";
@@ -2039,7 +2042,7 @@ function openMemberHistoryModal(memberId) {
               <p class="font-extrabold text-gray-900">${escapeHtml(p.plan || member.disciplineOrPlan)}</p>
               <p class="text-gray-600">${formatDateFr(p.startDate)} → ${p.endDate ? formatDateFr(p.endDate) : escapeHtml(t("lbl_ongoing"))}</p>
             </div>
-            <span class="font-black text-emerald-700">${formatGs(p.fee || member.monthlyFee)}/mes</span>
+            <span class="font-black text-emerald-700">${formatGs(p.fee || member.monthlyFee)}${escapeHtml(t("per_month"))}</span>
           </div>
         `
         )
@@ -2082,7 +2085,7 @@ function openMemberDocsModal(memberId) {
   document.getElementById("docs-member-summary").innerHTML = `
     <div class="text-xs space-y-1">
       <p class="font-extrabold text-sm text-gray-900">${escapeHtml(member.name)} ${member.ci ? `<span class="text-gray-500 font-medium">(ID ${escapeHtml(member.ci)})</span>` : ""}</p>
-      <p class="text-gray-600">Tel : <strong>${escapeHtml(member.phone || "—")}</strong> • Inscrit : <strong>${formatDateFr(member.subscribedSince)}</strong></p>
+      <p class="text-gray-600">Tel : <strong>${escapeHtml(member.phone || "—")}</strong> • ${escapeHtml(t("lbl_since"))} <strong>${formatDateFr(member.subscribedSince)}</strong></p>
     </div>
     <button type="button" onclick="printMemberWaiver('${member.id}')" class="px-4 py-2.5 rounded-full bg-[#199E5E] hover:bg-[#14824d] text-white text-xs font-extrabold shadow-sm cursor-pointer">
       ${escapeHtml(t("btn_print_waiver"))}
@@ -2198,7 +2201,7 @@ async function viewStoredDocument(memberId, docId) {
 
   const fullDataUrl = (await getFileFromIdb(docId)) || doc.dataUrl;
   if (!fullDataUrl) {
-    alert("Archivo grande guardado localmente en el dispositivo donde se subió.");
+    alert(t("alert_file_origin"));
     return;
   }
   document.getElementById("viewer-doc-name").textContent = `${doc.docType} — ${doc.name}`;
@@ -2222,7 +2225,7 @@ async function downloadStoredDocument(memberId, docId) {
 
   const fullDataUrl = (await getFileFromIdb(docId)) || doc.dataUrl;
   if (!fullDataUrl) {
-    alert("Archivo guardado en el dispositivo de origen.");
+    alert(t("alert_file_origin"));
     return;
   }
   const a = document.createElement("a");
